@@ -591,7 +591,7 @@ const UserLoyaltyAndRewardComponent = () => {
                 {expandedSections.activity && (
                     <div className="p-4 pt-0">
                         <div className="mt-4 overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <table className={`min-w-full divide-y ${darkMode ? "divide-gray-700" : "divide-gray-300"}`}>
                                 <thead className={darkMode ? "bg-gray-700" : "bg-gray-50"}>
                                 <tr>
                                     <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">

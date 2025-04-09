@@ -1,54 +1,33 @@
-import { useState } from "react"
+import {useContext, useState} from "react"
 import { useSelector } from "react-redux"
-import {
-    FiShoppingCart,
-    FiHeart,
-    FiAward,
-    FiCalendar,
-    FiPackage,
-    FiBell,
-    FiChevronRight,
-    FiSearch,
-    FiTag,
-    FiAlertCircle,
-    FiCheckCircle,
-    FiInfo,
-} from "react-icons/fi"
-import {
-    FaCamera,
-    FaGamepad,
-    FaHeadphones,
-    FaLaptop,
-    FaMobileAlt,
-    FaTabletAlt,
-    FaWifi,
-    FaVrCardboard,
-} from "react-icons/fa"
+import {FiShoppingCart, FiHeart, FiAward, FiCalendar, FiPackage, FiBell, FiChevronRight, FiSearch, FiTag, FiAlertCircle, FiCheckCircle, FiInfo} from "react-icons/fi"
+import {FaCamera, FaGamepad, FaHeadphones, FaLaptop, FaMobileAlt, FaTabletAlt, FaWifi, FaVrCardboard} from "react-icons/fa"
+import AuthContext from "../../../Providers/AuthContext.jsx";
+import {useNavigate} from "react-router-dom";
 
 
 const UserOverviewComponent = () => {
 
     // State management
     const darkMode = useSelector((state) => state.darkMode.isDark)
+    const {user: registeredUser} = useContext(AuthContext);
     const [notificationsOpen, setNotificationsOpen] = useState(false)
+    const navigate = useNavigate();
 
 
-    // Fake user data
     const [userData, setUserData] = useState({
-        id: "usr_123456",
-        name: "Alex Johnson",
-        email: "alex.johnson@example.com",
-        profileImage: "/placeholder.svg",
-        membershipTier: "Silver",
-        points: 2750,
-        memberSince: "January 2023",
+        name: registeredUser?.displayName,
+        email: registeredUser?.email,
+        profileImage: registeredUser?.personalDetails?.photoURL,
+        membershipTier: registeredUser?.membershipDetails?.membershipTier,
+        points: registeredUser?.membershipDetails?.points,
         stats: {
-            activeRentals: 3,
-            pastRentals: 12,
-            wishlistedItems: 5,
-            totalSpent: 1245.5,
-            pointsEarned: 2750,
-            reviewsGiven: 8,
+            activeRentals: registeredUser?.stats?.activeRentals,
+            pastRentals: registeredUser?.stats?.pastRentals,
+            wishlistedItems: registeredUser?.stats?.wishlistedItems,
+            totalSpent: registeredUser?.stats?.totalSpent,
+            pointsEarned: registeredUser?.stats?.pointsEarned,
+            reviewsGiven: registeredUser?.stats?.reviewsGiven,
         },
         recentRentals: [
             {
@@ -98,9 +77,9 @@ const UserOverviewComponent = () => {
                 availability: "unavailable",
             },
         ],
-        loyaltyProgress: 55, // Percentage to next tier
-        nextTier: "Gold",
-        pointsToNextTier: 2250,
+        loyaltyProgress: registeredUser?.membershipDetails?.loyaltyProgressPercentage, // Percentage to next tier
+        nextTier: registeredUser?.membershipDetails?.nextTier,
+        pointsToNextTier: registeredUser?.membershipDetails?.pointsToNextTier,
         notifications: [
             {
                 id: "notif001",
@@ -155,6 +134,7 @@ const UserOverviewComponent = () => {
             },
         ],
     })
+    // TODO: Replace rest of the values with the real data from backend.
 
 
     // Format currency
@@ -239,6 +219,7 @@ const UserOverviewComponent = () => {
 
     // Navigate to different sections
     const navigateTo = (path) => {
+        navigate(path);
         console.log(`Navigating to: ${path}`)
         // In a real app, this would use router navigation
         // window.location.href = path
@@ -282,6 +263,21 @@ const UserOverviewComponent = () => {
     }
 
 
+    const handleBrowseGadgetsClick = () => {
+        navigate("/all-gadgets")
+    }
+
+
+    const handleViewRewardsClick = () => {
+        navigate("/dashboard/user/loyalty_and_rewards")
+    }
+
+
+    const handleSettingsClick = () => {
+        navigate("/dashboard/user/settings")
+    }
+
+
     return (
         <div className={`w-full mx-auto rounded-xl ${darkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-800"}`}>
             {/* Welcome, Banner */}
@@ -318,7 +314,7 @@ const UserOverviewComponent = () => {
                                         darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
                                     }`}
                                 >
-                                    <div className="p-4 border-b border-gray-700">
+                                    <div className={`p-4 border-b ${darkMode? "border-gray-700" : "border-gray-300"}`}>
                                         <h3 className="font-bold">Notifications</h3>
                                     </div>
                                     <div className="max-h-96 overflow-y-auto">
@@ -366,7 +362,7 @@ const UserOverviewComponent = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="p-2 border-t border-gray-700">
+                                    <div className={`p-2 border-t ${darkMode? "border-gray-700" : "border-gray-300"}`}>
                                         <button
                                             onClick={markAllNotificationsAsRead}
                                             className={`w-full p-2 text-center text-sm rounded-lg transition-colors cursor-pointer ${
@@ -380,7 +376,7 @@ const UserOverviewComponent = () => {
                             )}
                         </div>
                         <button
-                            onClick={() => navigateTo("/all-gadgets")}
+                            onClick={handleBrowseGadgetsClick}
                             className={`px-4 py-2 rounded-lg transition-colors cursor-pointer ${
                                 darkMode ? "bg-white/10 hover:bg-white/20 text-white" : "bg-white/20 hover:bg-white/30 text-white"
                             }`}
@@ -451,10 +447,10 @@ const UserOverviewComponent = () => {
                             darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200 shadow-sm"
                         }`}
                     >
-                        <div className="p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+                        <div className={`p-4 flex justify-between items-center border-b ${darkMode ? "border-gray-600" : "border-gray-300"}`}>
                             <h2 className="text-lg font-semibold">Recent Rentals</h2>
                             <button
-                                onClick={() => navigateTo("/my-rentals")}
+                                onClick={() => navigateTo("/dashboard/user/my_rentals")}
                                 className={`text-sm flex items-center cursor-pointer ${
                                     darkMode ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-700"
                                 }`}
@@ -463,7 +459,7 @@ const UserOverviewComponent = () => {
                             </button>
                         </div>
 
-                        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                        <div className={`divide-y ${darkMode ? "divide-gray-600" : "divide-gray-300"}`}>
                             {userData.recentRentals.length > 0 ? (
                                 userData.recentRentals.map((rental) => (
                                     <div key={rental.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
@@ -514,9 +510,9 @@ const UserOverviewComponent = () => {
                             )}
                         </div>
 
-                        <div className="p-4 bg-gray-50 dark:bg-gray-700/30 border-t border-gray-200 dark:border-gray-700">
+                        <div className={`p-4 border-t ${darkMode ? "bg-gray-700/30 border-gray-600" : "bg-gray-50 border-gray-300"}`}>
                             <button
-                                onClick={() => navigateTo("/all-gadgets")}
+                                onClick={handleBrowseGadgetsClick}
                                 className={`w-full py-2 rounded-lg transition-colors cursor-pointer ${
                                     darkMode ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
                                 }`}
@@ -532,10 +528,10 @@ const UserOverviewComponent = () => {
                             darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200 shadow-sm"
                         }`}
                     >
-                        <div className="p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+                        <div className={`p-4 flex justify-between items-center border-b  ${darkMode ? "border-gray-700" : "border-gray-200"}`}>
                             <h2 className="text-lg font-semibold">Wishlist</h2>
                             <button
-                                onClick={() => navigateTo("/wishlist")}
+                                onClick={() => navigateTo("/dashboard/user/wishlist")}
                                 className={`text-sm flex items-center cursor-pointer ${
                                     darkMode ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-700"
                                 }`}
@@ -652,7 +648,7 @@ const UserOverviewComponent = () => {
 
                             <div className="mt-4 grid grid-cols-2 gap-2">
                                 <button
-                                    onClick={() => navigateTo("/settings")}
+                                    onClick={handleSettingsClick}
                                     className={`py-2 rounded-lg transition-colors cursor-pointer ${
                                         darkMode
                                             ? "bg-gray-700 hover:bg-gray-600 text-gray-200"
@@ -662,7 +658,7 @@ const UserOverviewComponent = () => {
                                     Settings
                                 </button>
                                 <button
-                                    onClick={() => navigateTo("/loyalty")}
+                                    onClick={handleViewRewardsClick}
                                     className={`py-2 rounded-lg transition-colors cursor-pointer ${
                                         darkMode ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
                                     }`}
@@ -679,7 +675,7 @@ const UserOverviewComponent = () => {
                             darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200 shadow-sm"
                         }`}
                     >
-                        <div className="p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+                        <div className={`p-4 flex justify-between items-center border-b ${ darkMode ? "border-gray-600" : "border-gray-300"}`}>
                             <h2 className="text-lg font-semibold flex items-center gap-2">
                                 Notifications
                                 {unreadNotificationsCount > 0 && (
@@ -694,7 +690,7 @@ const UserOverviewComponent = () => {
                             </h2>
                         </div>
 
-                        <div className="divide-y divide-gray-200 dark:divide-gray-700 max-h-80 overflow-y-auto">
+                        <div className={`divide-y ${darkMode ? "divide-gray-600" : "divide-gray-300"} max-h-80 overflow-y-auto`}>
                             {userData.notifications.length > 0 ? (
                                 userData.notifications.map((notification) => (
                                     <div

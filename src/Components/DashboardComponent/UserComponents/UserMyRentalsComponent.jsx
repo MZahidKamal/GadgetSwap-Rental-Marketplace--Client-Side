@@ -626,7 +626,7 @@ const UserMyRentalsComponent = () => {
                                     </div>
 
                                     {/* Review section */}
-                                    <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                    <div className={`mt-6 pt-4 border-t ${darkMode ? "border-gray-700" : "border-gray-300"}`}>
                                         <div className="flex items-center justify-between">
                                             <h3 className="text-sm font-medium flex items-center gap-2">
                                                 <FiStar className="text-yellow-500" />
