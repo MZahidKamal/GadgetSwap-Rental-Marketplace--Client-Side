@@ -24,17 +24,22 @@ const featuredGadgetsForHomePageSlice = createSlice({
     initialState,
     extraReducers: (builder) => {
         builder.addCase(fetchFeaturedGadgets.pending, (state) => {
-            state.isError = false;
+            state.featuredGadgets = [];
             state.isLoading = true;
+            state.isError = false;
+            state.error = null;
         });
         builder.addCase(fetchFeaturedGadgets.fulfilled, (state, action) => {
             state.featuredGadgets = action.payload;
             state.isLoading = false;
+            state.isError = false;
+            state.error = null;
         });
         builder.addCase(fetchFeaturedGadgets.rejected, (state, action) => {
+            state.featuredGadgets = [];
+            state.isLoading = false;
             state.isError = true;
             state.error = action.error?.message;
-            state.isLoading = false;
         });
     }
 })

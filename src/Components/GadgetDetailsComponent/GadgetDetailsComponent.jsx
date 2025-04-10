@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react"
+import {useState, useEffect, useContext} from "react"
 import {useParams} from "react-router-dom"
 import {
     FiArrowLeft,
@@ -36,16 +36,18 @@ import {
     FaSpeakerDeck,
 } from "react-icons/fa"
 import {useDispatch, useSelector} from "react-redux";
-import {fetchGadgetDetails} from "../../Features/gadgetDetailsById/gadgetDetailsByIdSlice.js";
+import {fetchGadgetDetails} from "../../Features/getGadgetDetailsById/getGadgetDetailsByIdSlice.js";
+import {addOrRemoveWishlistGadget} from "../../Features/gadgetWishlist/gadgetWishlistSlice.js";
+import AuthContext from "../../Providers/AuthContext.jsx";
 
 
 const GadgetDetailsComponent = () => {
 
-    const dispatch = useDispatch();
-    const {gadgetDetails} = useSelector((state) => state.gadgetDetailsById);
-
-
     const darkMode = useSelector((state) => state.darkMode.isDark);
+    const {user: registeredUser} = useContext(AuthContext);
+    const dispatch = useDispatch();
+    const {gadgetDetails} = useSelector((state) => state.getGadgetDetailsById);
+
     const {id} = useParams()
     const [gadget, setGadget] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -55,7 +57,7 @@ const GadgetDetailsComponent = () => {
     const [endDate, setEndDate] = useState("")
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [activeTab, setActiveTab] = useState("details")
-    const [isWishlisted, setIsWishlisted] = useState(false)
+    const [isWishlisted, setIsWishlisted] = useState(registeredUser?.wishlist?.includes(id) || false)
     const [insuranceOption, setInsuranceOption] = useState("basic")
     const [showDatePicker, setShowDatePicker] = useState(false)
 
@@ -96,7 +98,7 @@ const GadgetDetailsComponent = () => {
                     return
                 }
                 setLoading(false)
-            }, 1000)
+            }, 500)
         }
         fetchGadgetDetails().then()
     }, [gadgetDetails, id])
@@ -161,6 +163,10 @@ const GadgetDetailsComponent = () => {
     // Toggle wishlist
     const toggleWishlist = () => {
         setIsWishlisted(!isWishlisted)
+        dispatch(addOrRemoveWishlistGadget({
+            userEmail: registeredUser?.email,
+            gadgetId: id,
+        }))
     }
 
 

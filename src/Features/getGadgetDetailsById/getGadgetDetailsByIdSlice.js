@@ -11,7 +11,7 @@ const initialState = {
 
 
 export const fetchGadgetDetails = createAsyncThunk(
-    'gadgetDetailsById/fetchGadgetDetails',
+    'getGadgetDetailsById/fetchGadgetDetails',
     async (id) => {
         const response = await fetch(`${BASE_URL}/gadgets/get_gadget_details_by_id/${id}`, {});
         return await response.json();
@@ -19,8 +19,8 @@ export const fetchGadgetDetails = createAsyncThunk(
 )
 
 
-const gadgetDetailsByIdSlice = createSlice({
-    name: 'gadgetDetailsById',
+const getGadgetDetailsByIdSlice = createSlice({
+    name: 'getGadgetDetailsById',
     initialState,
     extraReducers: (builder) => {
         builder.addCase(fetchGadgetDetails.pending, (state) => {
@@ -40,4 +40,4 @@ const gadgetDetailsByIdSlice = createSlice({
 })
 
 
-export default gadgetDetailsByIdSlice.reducer;
+export default getGadgetDetailsByIdSlice.reducer;

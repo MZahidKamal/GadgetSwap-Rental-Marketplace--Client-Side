@@ -21,21 +21,16 @@ const getInitialTheme = () => {
 
 const darkLightThemeSlice = createSlice({
     name: "darkLightTheme",
-    initialState: getInitialTheme(), // Call helper to set initial state
+    initialState: getInitialTheme(), // Call a function to set initial state
     reducers: {
         toggleDarkTheme: (state) => {
             state.isDark = !state.isDark; // Toggle theme
             state.source = "user-preference"; // Update source
             localStorage.setItem("gadgetswap-theme", JSON.stringify({ isDark: state.isDark, source: state.source })); // Save full object
         },
-        setTheme: (state, action) => {
-            state.isDark = action.payload; // Set theme explicitly (Not used in this project, but optionally developed.)
-            state.source = "user-preference";
-            localStorage.setItem("gadgetswap-theme", JSON.stringify({ isDark: state.isDark, source: state.source })); // Save full object
-        },
     },
 });
 
 
-export const { toggleDarkTheme, setTheme } = darkLightThemeSlice.actions;
+export const { toggleDarkTheme } = darkLightThemeSlice.actions;
 export default darkLightThemeSlice.reducer;

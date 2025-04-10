@@ -14,6 +14,7 @@ export const fetchAllGadgets = createAsyncThunk(
     'allGadgetsForGadgetsPage/fetchAllGadgets',
     async () => {
         const response = await fetch(`${BASE_URL}/gadgets/get_all_gadgets_for_gadgets_page`, {});
+        // console.log(response)
         return await response.json();
     }
 )
