@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "Wishlist add/remove feature in Gadget details page is implemented using Redux successfully."
+git commit -m "Displaying Wishlist feature in different components is implemented using Redux successfully."
 git push
 
 // Necessary Git commands.----------------------------------------------------------------------------------------------

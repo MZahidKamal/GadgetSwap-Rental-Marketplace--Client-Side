@@ -1,43 +1,10 @@
 import {useState, useEffect, useContext} from "react"
 import {useParams} from "react-router-dom"
-import {
-    FiArrowLeft,
-    FiStar,
-    FiCalendar,
-    FiClock,
-    FiHeart,
-    FiShare2,
-    FiChevronLeft,
-    FiChevronRight,
-    FiMenu,
-    FiX,
-    FiMessageSquare,
-    FiShield,
-    FiCheckCircle,
-    FiAlertCircle,
-    FiInfo,
-    FiPackage,
-    FiBarChart2,
-    FiLayers,
-} from "react-icons/fi"
-import {
-    FaMobileAlt,
-    FaLaptop,
-    FaTabletAlt,
-    FaHeadphones,
-    FaCamera,
-    FaGamepad,
-    FaVolumeUp,
-    FaVrCardboard,
-    FaPlane,
-    FaProjectDiagram,
-    FaClock,
-    FaWifi,
-    FaSpeakerDeck,
-} from "react-icons/fa"
+import { FiArrowLeft, FiStar, FiCalendar, FiClock, FiHeart, FiShare2, FiChevronLeft, FiChevronRight, FiMenu, FiX, FiMessageSquare, FiShield, FiCheckCircle, FiAlertCircle, FiInfo, FiPackage, FiBarChart2, FiLayers } from "react-icons/fi"
+import { FaMobileAlt, FaLaptop, FaTabletAlt, FaHeadphones, FaCamera, FaGamepad, FaVolumeUp, FaVrCardboard, FaPlane, FaProjectDiagram, FaClock, FaWifi, FaSpeakerDeck } from "react-icons/fa"
 import {useDispatch, useSelector} from "react-redux";
 import {fetchGadgetDetails} from "../../Features/getGadgetDetailsById/getGadgetDetailsByIdSlice.js";
-import {addOrRemoveWishlistGadget} from "../../Features/gadgetWishlist/gadgetWishlistSlice.js";
+import {addOrRemoveWishlistGadget, getWishlistGadgetsDetails} from "../../Features/gadgetWishlist/gadgetWishlistSlice.js";
 import AuthContext from "../../Providers/AuthContext.jsx";
 
 
@@ -161,12 +128,10 @@ const GadgetDetailsComponent = () => {
 
 
     // Toggle wishlist
-    const toggleWishlist = () => {
+    const toggleWishlist = async () => {
         setIsWishlisted(!isWishlisted)
-        dispatch(addOrRemoveWishlistGadget({
-            userEmail: registeredUser?.email,
-            gadgetId: id,
-        }))
+        await dispatch(addOrRemoveWishlistGadget({userEmail: registeredUser?.email, gadgetId: id}));
+        await dispatch(getWishlistGadgetsDetails(registeredUser?.email));
     }
 
 
