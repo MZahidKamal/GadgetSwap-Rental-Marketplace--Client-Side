@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react"
+import {useContext, useEffect} from "react"
 import {FiHeart, FiPackage, FiStar, FiTrash2, FiShoppingCart, FiEye, FiWifi} from "react-icons/fi"
 import {useDispatch, useSelector} from "react-redux"
 import {FaCamera, FaGamepad, FaHeadphones, FaLaptop, FaMobileAlt, FaTabletAlt, FaVrCardboard} from "react-icons/fa"
@@ -15,7 +15,7 @@ const UserWishlistComponent = () => {
     const dispatch = useDispatch();
     const {wishlistGadgetDetails} = useSelector((state) => state.gadgetWishlist);
 
-    const [wishlistItems, setWishlistItems] = useState([]);
+    //const [wishlistItems, setWishlistItems] = useState([]);
     const navigateTo = useNavigate();
 
 
@@ -25,17 +25,6 @@ const UserWishlistComponent = () => {
             dispatch(getWishlistGadgetsDetails(registeredUser?.email))
         }
     }, [dispatch, registeredUser?.email]);
-
-
-    // After fetching get wishlist gadget details data
-    useEffect(() => {
-        const getWishlistGadgetsDetails = async () => {
-            if (wishlistGadgetDetails !== null) {
-                setWishlistItems(wishlistGadgetDetails)
-            }
-        }
-        getWishlistGadgetsDetails().then();
-    }, [wishlistGadgetDetails]);
 
 
     // Format currency
@@ -82,10 +71,8 @@ const UserWishlistComponent = () => {
 
     // Handle rent now
     const handleRentNow = (id) => {
-        // In a real app, this would navigate to checkout or rental page
         console.log(`Renting gadget with ID: ${id}`)
-        // For demo purposes, let's mark it as unavailable
-        setWishlistItems(wishlistItems.map((item) => (item.id === id ? { ...item, availability: "unavailable" } : item)))
+        // TODO: Make this rent now feature functional.
     }
 
 
@@ -109,9 +96,9 @@ const UserWishlistComponent = () => {
         >
 
             {/* Wishlist Grid */}
-            {wishlistItems.length > 0 ? (
+            {wishlistGadgetDetails?.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {wishlistItems.map((item) => (
+                    {wishlistGadgetDetails?.map((item) => (
                         <div
                             key={item?._id}
                             className={`rounded-xl overflow-hidden shadow-sm transition-all hover:shadow-md ${

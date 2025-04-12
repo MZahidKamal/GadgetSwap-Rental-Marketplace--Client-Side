@@ -419,7 +419,7 @@ const UserOverviewComponent = () => {
                                 </div>
                                 <span className={`text-xs font-medium ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Saved</span>
                             </div>
-                            <div className="text-2xl font-bold">{userData?.stats?.wishlistedItems}</div>
+                            <div className="text-2xl font-bold">{wishlistGadgetDetails?.length}</div>
                             <div className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Wishlist</div>
                         </div>
 

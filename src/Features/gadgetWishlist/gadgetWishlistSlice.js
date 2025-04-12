@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { BASE_URL } from "../../SharedUtilities/SharedUtilities.jsx";
+import {getUserProfileDetails} from "../userProfileDetails/userProfileDetailsSlice.js";
 
 
 const initialState = {
@@ -48,7 +49,10 @@ export const addOrRemoveWishlistGadget = createAsyncThunk(
             if (data.status !== 200) throw new Error(data.message || "Failed to update wishlist");
 
             // Dispatch getWishlistGadgetsDetails after success
-            await dispatch(getWishlistGadgetsDetails({ userEmail }));
+            await Promise.all([
+                await dispatch(getWishlistGadgetsDetails({ userEmail })),
+                await dispatch(getUserProfileDetails(userEmail))
+            ])
 
             return data.data;
         }

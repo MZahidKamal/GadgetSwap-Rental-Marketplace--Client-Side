@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {FiEye, FiEyeOff, FiUser, FiMail, FiLock, FiCheck} from 'react-icons/fi';
 import {FcGoogle} from 'react-icons/fc';
 import {useSelector} from "react-redux";
@@ -9,7 +9,6 @@ import AuthContext from "../../Providers/AuthContext.jsx";
 const SignUpComponent = () => {
 
     const {signUpNewUser, signInWithGoogle} = useContext(AuthContext)
-    const navigate = useNavigate();
     const darkMode = useSelector((state) => state.darkMode.isDark);
 
 
@@ -183,16 +182,12 @@ const SignUpComponent = () => {
 
             // Signing up using firebase.
             await signUpNewUser(fullName, email, password);
-
-            // Redirect to sign-in page
-            navigate('/sign-in');
         }
     };
 
 
     const handleGoogleSignIn = async () => {
         await signInWithGoogle();
-        console.log('Sign in with Google clicked');
     };
 
 
@@ -468,7 +463,7 @@ const SignUpComponent = () => {
                     <div>
                         <button
                             type="submit"
-                            className={`group relative w-full flex justify-center py-2 px-4 border border-transparent rounded-lg text-sm font-medium text-white ${
+                            className={`group relative w-full flex justify-center py-2 px-4 border border-transparent rounded-lg text-sm font-medium text-white cursor-pointer ${
                                 darkMode
                                     ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
                                     : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'
@@ -504,7 +499,7 @@ const SignUpComponent = () => {
                         <button
                             type="button"
                             onClick={handleGoogleSignIn}
-                            className={`group relative w-full flex justify-center py-2 px-4 border ${
+                            className={`group relative w-full flex justify-center py-2 px-4 border cursor-pointer ${
                                 darkMode
                                     ? 'border-gray-600 bg-gray-700/50 text-white hover:bg-gray-600/50'
                                     : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'

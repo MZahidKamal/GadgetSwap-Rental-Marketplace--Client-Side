@@ -184,7 +184,7 @@ const HowItWorksComponent = () => {
                 <div className="absolute inset-0 opacity-5">
                     <img
                         src="https://images.unsplash.com/photo-1581090700227-8e3b56af796a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-                        alt="Tech background"
+                        alt="" //TODO: This visual problem need to be solved.
                         className="w-full h-full object-cover"
                     />
                 </div>

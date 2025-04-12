@@ -3,6 +3,7 @@ import {useParams} from "react-router-dom"
 import { FiArrowLeft, FiStar, FiCalendar, FiClock, FiHeart, FiShare2, FiChevronLeft, FiChevronRight, FiMenu, FiX, FiMessageSquare, FiShield, FiCheckCircle, FiAlertCircle, FiInfo, FiPackage, FiBarChart2, FiLayers } from "react-icons/fi"
 import { FaMobileAlt, FaLaptop, FaTabletAlt, FaHeadphones, FaCamera, FaGamepad, FaVolumeUp, FaVrCardboard, FaPlane, FaProjectDiagram, FaClock, FaWifi, FaSpeakerDeck } from "react-icons/fa"
 import {useDispatch, useSelector} from "react-redux";
+import {getUserProfileDetails} from "../../Features/userProfileDetails/userProfileDetailsSlice.js"
 import {fetchGadgetDetails} from "../../Features/getGadgetDetailsById/getGadgetDetailsByIdSlice.js";
 import {addOrRemoveWishlistGadget, getWishlistGadgetsDetails} from "../../Features/gadgetWishlist/gadgetWishlistSlice.js";
 import AuthContext from "../../Providers/AuthContext.jsx";
@@ -13,6 +14,7 @@ const GadgetDetailsComponent = () => {
     const darkMode = useSelector((state) => state.darkMode.isDark);
     const {user: registeredUser} = useContext(AuthContext);
     const dispatch = useDispatch();
+    const {userProfileDetails} = useSelector(state => state.userProfileDetails);
     const {gadgetDetails} = useSelector((state) => state.getGadgetDetailsById);
 
     const {id} = useParams()
@@ -24,9 +26,7 @@ const GadgetDetailsComponent = () => {
     const [endDate, setEndDate] = useState("")
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [activeTab, setActiveTab] = useState("details")
-    const [isWishlisted, setIsWishlisted] = useState(registeredUser?.wishlist?.includes(id) || false)
     const [insuranceOption, setInsuranceOption] = useState("basic")
-    const [showDatePicker, setShowDatePicker] = useState(false)
 
 
     // Category icons mapping
@@ -50,7 +50,8 @@ const GadgetDetailsComponent = () => {
     // Fetch gadget details on mount
     useEffect(() => {
         dispatch(fetchGadgetDetails(id));
-    }, [dispatch, id]);
+        dispatch(getUserProfileDetails(registeredUser?.email));
+    }, [dispatch, id, registeredUser?.email]);
 
 
     // Fetch gadget details data
@@ -65,7 +66,7 @@ const GadgetDetailsComponent = () => {
                     return
                 }
                 setLoading(false)
-            }, 500)
+            }, 200)
         }
         fetchGadgetDetails().then()
     }, [gadgetDetails, id])
@@ -129,7 +130,7 @@ const GadgetDetailsComponent = () => {
 
     // Toggle wishlist
     const toggleWishlist = async () => {
-        setIsWishlisted(!isWishlisted)
+        //setIsWishlisted(!isWishlisted)
         await dispatch(addOrRemoveWishlistGadget({userEmail: registeredUser?.email, gadgetId: id}));
         await dispatch(getWishlistGadgetsDetails(registeredUser?.email));
     }
@@ -148,12 +149,6 @@ const GadgetDetailsComponent = () => {
     }
 
 
-    // Toggle date picker visibility
-    const toggleDatePicker = () => {
-        setShowDatePicker(!showDatePicker)
-    }
-
-
     // Calculate total price
     const calculateTotalPrice = () => {
         if (!gadget) return {basePrice: 0, insuranceFee: 0, total: 0}
@@ -169,6 +164,20 @@ const GadgetDetailsComponent = () => {
             insuranceFee: insuranceFee.toFixed(2),
             total: (basePrice + insuranceFee).toFixed(2),
         }
+    }
+
+
+    const handleRentNowClick = () => {
+        const rentalDetails = {
+            gadgetId: id,
+            startDate: startDate,
+            endDate: endDate,
+            rentalDuration: rentalDuration,
+            insuranceOption: insuranceOption,
+            userEmail: registeredUser?.email,
+            userFullName: registeredUser?.displayName
+        }
+        console.log(rentalDetails);
     }
 
 
@@ -376,9 +385,9 @@ const GadgetDetailsComponent = () => {
                             className={`p-2 rounded-full ${
                                 darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-white hover:bg-gray-100 shadow-sm"
                             }`}
-                            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                            aria-label={userProfileDetails?.wishlist?.includes(id) ? "Remove from wishlist" : "Add to wishlist"}
                         >
-                            <FiHeart size={20} className={isWishlisted ? "text-red-500 fill-current" : ""}/>
+                            <FiHeart size={20} className={userProfileDetails?.wishlist?.includes(id) ? "text-red-500 fill-current" : ""}/>
                         </button>
 
                         <button
@@ -941,6 +950,7 @@ const GadgetDetailsComponent = () => {
                                     : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                             }`}
                             disabled={!startDate}
+                            onClick={handleRentNowClick}
                         >
                             {startDate ? "Rent Now" : "Select a start date"}
                         </button>
@@ -953,9 +963,9 @@ const GadgetDetailsComponent = () => {
                                     darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"
                                 }`}
                             >
-                                <FiHeart className={`mr-2 ${isWishlisted ? "text-red-500 fill-current" : ""}`}
+                                <FiHeart className={`mr-2 ${userProfileDetails?.wishlist?.includes(id) ? "text-red-500 fill-current" : ""}`}
                                          size={16}/>
-                                {isWishlisted ? "Saved" : "Save"}
+                                {userProfileDetails?.wishlist?.includes(id) ? "Saved" : "Save"}
                             </button>
 
                             <button

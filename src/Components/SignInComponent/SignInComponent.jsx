@@ -9,9 +9,9 @@ import AuthContext from "../../Providers/AuthContext.jsx";
 
 const SignInComponent = () => {
 
-    const {signInExistingUsers} = useContext(AuthContext);
-    const navigate = useNavigate();
     const darkMode = useSelector((state) => state.darkMode.isDark);
+    const {user: registeredUser, signInExistingUsers, signInWithGoogle} = useContext(AuthContext);
+    const navigate = useNavigate();
 
 
     // Form state
@@ -138,17 +138,16 @@ const SignInComponent = () => {
             // Signing in using firebase.
             await signInExistingUsers(email, password);
 
-            // Redirect to home page
-            navigate('/');
+            // Redirect to dashboard page
+            if (registeredUser) {
+                await navigate(registeredUser?.role === 'admin' ? '/dashboard/admin/total_overview' : '/dashboard/user/overview');
+            }
         }
     };
 
 
-    const handleGoogleSignIn = () => {
-        // In a real app, this would integrate with Google OAuth
-        console.log('Sign in with Google clicked');
-        // After successful authentication, redirect to home
-        // navigate('/');
+    const handleGoogleSignIn = async () => {
+        await signInWithGoogle();
     };
 
 
@@ -310,7 +309,7 @@ const SignInComponent = () => {
                     <div>
                         <button
                             type="submit"
-                            className={`group relative w-full flex justify-center py-2 px-4 border border-transparent rounded-lg text-sm font-medium text-white ${
+                            className={`group relative w-full flex justify-center py-2 px-4 border border-transparent rounded-lg text-sm font-medium text-white cursor-pointer ${
                                 darkMode
                                     ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
                                     : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'
@@ -346,7 +345,7 @@ const SignInComponent = () => {
                         <button
                             type="button"
                             onClick={handleGoogleSignIn}
-                            className={`group relative w-full flex justify-center py-2 px-4 border ${
+                            className={`group relative w-full flex justify-center py-2 px-4 border cursor-pointer ${
                                 darkMode
                                     ? 'border-gray-600 bg-gray-700/50 text-white hover:bg-gray-600/50'
                                     : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
