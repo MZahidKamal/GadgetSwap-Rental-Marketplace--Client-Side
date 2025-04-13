@@ -1,6 +1,8 @@
 {
   "_id": "12345678987654321",
   "user_email": "example_user@domain.com",
+  "total_count": 4,
+  "unseen_count": 2,
   "notification_chain": [
     {
       "type": "rental",

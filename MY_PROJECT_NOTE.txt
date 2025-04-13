@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "Successfully implemented axiosPublic and axiosSecure for secure API calls with JWT authentication."
+git commit -m "UserMessagesComponent design prototype is updated and bug-fixed successfully."
 git push
 
 // Necessary Git commands.----------------------------------------------------------------------------------------------

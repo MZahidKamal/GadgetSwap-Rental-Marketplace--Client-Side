@@ -1,6 +1,7 @@
 {
   "_id": "12345678987654321",
-  "user_email": "example_user@domain.com",
+  "user_email": "example_user@domain.com","total_messages_count": 2,
+  "total_count": 3,
   "activity_history_chain": [
     {
       "type": "rental",

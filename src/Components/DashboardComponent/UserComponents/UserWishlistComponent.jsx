@@ -23,9 +23,9 @@ const UserWishlistComponent = () => {
     // Fetch wishlist gadget details on mount
     useEffect(() => {
         if (registeredUser?.email) {
-            dispatch(getWishlistGadgetsDetails(registeredUser?.email))
+            dispatch(getWishlistGadgetsDetails({userEmail: registeredUser?.email, axiosSecure}))
         }
-    }, [dispatch, registeredUser?.email]);
+    }, [axiosSecure, dispatch, registeredUser?.email]);
 
 
     // Format currency
