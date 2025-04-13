@@ -16,6 +16,7 @@ const DashboardPage = () => {
     const { user: registeredUser, signOutCurrentUser } = useContext(AuthContext)
     const dispatch = useDispatch()
     const {userProfileDetails} = useSelector(state => state.userProfileDetails);
+    const {userMessagesChain} = useSelector((state) => state.userMessages);
 
     const axiosSecure = useAxiosSecure();
     const [user, setUser] = useState({})
@@ -349,15 +350,14 @@ const DashboardPage = () => {
                                                     >
                                                         {tab.icon}
                                                         <span>{tab.name}</span>
-                                                        {tab.id === "messages" &&
-                                                            dashboardData.recentMessages.filter((m) => !m.read).length > 0 && (
-                                                                <span
-                                                                    className={`ml-auto px-2 py-0.5 text-xs rounded-full ${
-                                                                        darkMode ? "bg-blue-900/50 text-blue-400" : "bg-blue-100 text-blue-600"
-                                                                    }`}
-                                                                >
-                                                                    {dashboardData.recentMessages.filter((m) => !m.read).length}
-                                                                </span>
+                                                        {tab.id === "messages" && userMessagesChain?.unreadByUser_count > 0 && (
+                                                            <span
+                                                                className={`ml-auto px-2 py-0.5 text-xs rounded-full ${
+                                                                    darkMode ? "bg-blue-900/50 text-blue-400" : "bg-blue-100 text-blue-600"
+                                                                }`}
+                                                            >
+                                                                {userMessagesChain?.unreadByUser_count}
+                                                            </span>
                                                             )}
                                                         {tab.id === "wishlist" && userProfileDetails?.wishlist?.length > 0 && (
                                                             <span

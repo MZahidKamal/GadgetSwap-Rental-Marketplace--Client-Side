@@ -64,6 +64,7 @@ const gadgetWishlistSlice = createSlice({
 
         //To get the all gadget details from a user's wishlist array.
         builder.addCase(getWishlistGadgetsDetails.pending, (state) => {
+            state.wishlistGadgetDetails = [];
             state.isLoading = true;
             state.isError = false;
             state.error = null;
@@ -75,6 +76,7 @@ const gadgetWishlistSlice = createSlice({
             state.error = null;
         });
         builder.addCase(getWishlistGadgetsDetails.rejected, (state, action) => {
+            state.wishlistGadgetDetails = [];
             state.isLoading = false;
             state.isError = true;
             state.error = action.payload; // Use rejectWithValue message
@@ -83,6 +85,7 @@ const gadgetWishlistSlice = createSlice({
 
         //To add or remove a gadget id to or from a user's wishlist array.
         builder.addCase(addOrRemoveWishlistGadget.pending, (state) => {
+            state.wishlist = [];
             state.isLoading = true;
             state.isError = false;
             state.error = null;
@@ -94,6 +97,7 @@ const gadgetWishlistSlice = createSlice({
             state.error = null;
         });
         builder.addCase(addOrRemoveWishlistGadget.rejected, (state, action) => {
+            state.wishlist = [];
             state.isLoading = false;
             state.isError = true;
             state.error = action.payload; // Use rejectWithValue message

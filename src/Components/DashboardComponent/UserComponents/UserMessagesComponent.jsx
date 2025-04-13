@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect, useContext } from "react"
 import { FiSend, FiCalendar, FiChevronDown, FiInfo, FiFilter, FiClock } from "react-icons/fi"
-import { useSelector } from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import AuthContext from "../../../Providers/AuthContext.jsx"
+import {getUserMessagesChain, addANewMessageToUserMessagesChain} from "../../../Features/userMessages/userMessagesSlice.js"
+import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx";
 
 
 const UserMessagesComponent = () => {
@@ -9,104 +11,12 @@ const UserMessagesComponent = () => {
     // State management
     const darkMode = useSelector((state) => state.darkMode.isDark)
     const { user: registeredUser } = useContext(AuthContext)
-
-    // Initial fake messages data
-    const initialMessages = [
-        {
-            id: 1,
-            sender: "user",
-            text: "Hello, I'm interested in renting the MacBook Pro. Is it available next week?",
-            timestamp: new Date("2023-11-01T09:30:00").getTime(),
-            readByAdmin: true,
-        },
-        {
-            id: 2,
-            sender: "admin",
-            text: "Hi Alex! Yes, the MacBook Pro is available for rent next week. When exactly do you need it?",
-            timestamp: new Date("2023-11-01T09:35:00").getTime(),
-            readByUser: true,
-        },
-        {
-            id: 3,
-            sender: "user",
-            text: "Great! I need it from Monday to Friday. What's the total cost for 5 days?",
-            timestamp: new Date("2023-11-01T09:40:00").getTime(),
-            readByAdmin: true,
-        },
-        {
-            id: 4,
-            sender: "admin",
-            text: "For 5 days, the total would be $175. That includes insurance and a charger. Would you like to proceed with the booking?",
-            timestamp: new Date("2023-11-01T09:45:00").getTime(),
-            readByUser: true,
-        },
-        {
-            id: 5,
-            sender: "user",
-            text: "That sounds good. Yes, I'd like to proceed with the booking.",
-            timestamp: new Date("2023-11-01T09:50:00").getTime(),
-            readByAdmin: true,
-        },
-        {
-            id: 6,
-            sender: "admin",
-            text: "Perfect! I've created a booking for you. You can pick up the MacBook Pro on Monday at our main location. Is there anything else you need?",
-            timestamp: new Date("2023-11-01T09:55:00").getTime(),
-            readByUser: true,
-        },
-        {
-            id: 7,
-            sender: "user",
-            text: "No, that's all for now. Thank you for your help!",
-            timestamp: new Date("2023-11-01T10:00:00").getTime(),
-            readByAdmin: true,
-        },
-        {
-            id: 8,
-            sender: "admin",
-            text: "You're welcome! If you have any other questions, feel free to ask. Have a great day!",
-            timestamp: new Date("2023-11-01T10:05:00").getTime(),
-            readByUser: true,
-        },
-        {
-            id: 9,
-            sender: "user",
-            text: "Quick question - does the MacBook come with any software pre-installed?",
-            timestamp: new Date(new Date().setDate(new Date().getDate() - 1)).getTime(),
-            readByAdmin: true,
-        },
-        {
-            id: 10,
-            sender: "admin",
-            text: "Yes, it comes with macOS and basic software like Safari, Pages, Numbers, and Keynote. If you need any specific software, please let us know in advance.",
-            timestamp: new Date(new Date().setDate(new Date().getDate() - 1)).getTime() + 300000,
-            readByUser: true,
-        },
-        {
-            id: 11,
-            sender: "user",
-            text: "That's perfect. I'll see you on Monday!",
-            timestamp: new Date(new Date().setDate(new Date().getDate() - 1)).getTime() + 600000,
-            readByAdmin: true,
-        },
-        {
-            id: 12,
-            sender: "admin",
-            text: "Looking forward to it! We're open from 9 AM to 6 PM.",
-            timestamp: new Date().getTime() - 3600000,
-            readByUser: true,
-        },
-        {
-            id: 13,
-            sender: "user",
-            text: "I'll be there around 10 AM. See you then!",
-            timestamp: new Date().getTime() - 1800000,
-            readByAdmin: true,
-        },
-    ]
+    const dispatch = useDispatch();
+    const {userMessagesChain} = useSelector((state) => state.userMessages)
 
     // States
-    const [messages, setMessages] = useState(initialMessages)
+    const axiosSecure = useAxiosSecure();
+    const [messages, setMessages] = useState(null)
     const [newMessage, setNewMessage] = useState("")
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
     const [showScrollButton, setShowScrollButton] = useState(false)
@@ -115,6 +25,22 @@ const UserMessagesComponent = () => {
     // Refs
     const messagesEndRef = useRef(null)
     const messagesContainerRef = useRef(null)
+
+
+    // Fetch user's messages chain on mount
+    useEffect(() => {
+        if (registeredUser?.email) {
+            dispatch(getUserMessagesChain({ userEmail: registeredUser?.email, axiosSecure }))
+        }
+    }, [axiosSecure, dispatch, registeredUser?.email]);
+
+
+    // After fetching setting the message chain in state
+    useEffect(() => {
+        if(userMessagesChain) {
+            setMessages(userMessagesChain?.message_chain);
+        }
+    }, [userMessagesChain]);
 
 
     // Format timestamp to readable time
@@ -185,37 +111,29 @@ const UserMessagesComponent = () => {
 
 
     // Handle sending a new message
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         if (newMessage.trim() === "") return
 
-        const newMsg = {
-            id: messages.length + 1,
+        const userMessageObj = {
             sender: "user",
             text: newMessage,
             timestamp: new Date().getTime(),
             readByAdmin: false,
         }
-
-        setMessages((prevMessages) => [...prevMessages, newMsg])
+        // console.log("User Message:", userMessageObj)
+        dispatch(addANewMessageToUserMessagesChain({ userEmail: registeredUser?.email, newMessageObj: userMessageObj, axiosSecure }))
         setNewMessage("")
-
-        // Log the user message to console
-        console.log("User Message:", newMsg)
 
         // Simulate admin response after 1 second
         setTimeout(() => {
             const adminResponse = {
-                id: messages.length + 2,
                 sender: "admin",
                 text: "Thanks for your message! Our team will get back to you shortly.",
                 timestamp: new Date().getTime(),
-                readByUser: false,
+                readByUser: true,
             }
-
-            setMessages((prevMessages) => [...prevMessages, adminResponse])
-
-            // Log the admin message to console
-            console.log("Admin Response:", adminResponse)
+            // console.log("Admin Response:", adminResponse)
+            dispatch(addANewMessageToUserMessagesChain({ userEmail: registeredUser?.email, newMessageObj: adminResponse, axiosSecure }))
         }, 1500)
     }
 
@@ -223,8 +141,8 @@ const UserMessagesComponent = () => {
     // Handle key press in message input
     const handleKeyPress = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault()
-            handleSendMessage()
+            e.preventDefault();
+            handleSendMessage().then();
         }
     }
 
@@ -306,7 +224,7 @@ const UserMessagesComponent = () => {
         const nextDay = new Date(selectedDate)
         nextDay.setDate(nextDay.getDate() + 1)
 
-        return messages.filter((message) => {
+        return messages?.filter((message) => {
             const messageDate = new Date(message.timestamp)
             return messageDate >= selectedDateObj && messageDate < nextDay
         })
@@ -398,7 +316,7 @@ const UserMessagesComponent = () => {
                     </div>
 
                     <div className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                        {showAllMessages ? messages.length : getFilteredMessages().length} messages
+                        {showAllMessages ? messages?.length : getFilteredMessages()?.length} messages
                         {showAllMessages ? " (all)" : ""}
                     </div>
                 </div>
@@ -409,7 +327,7 @@ const UserMessagesComponent = () => {
                     className="px-10 py-4 h-[calc(100vh-300px)] min-h-[400px] overflow-y-auto"
                     onScroll={handleScroll}
                 >
-                    {getFilteredMessages().length === 0 ? (
+                    {getFilteredMessages()?.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full">
                             <FiInfo size={48} className={`mb-4 ${darkMode ? "text-gray-600" : "text-gray-300"}`} />
                             <p className={`text-center ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
@@ -417,8 +335,8 @@ const UserMessagesComponent = () => {
                             </p>
                         </div>
                     ) : (
-                        getFilteredMessages().map((message, index) => (
-                            <div key={message.id} className="message-item">
+                        getFilteredMessages()?.map((message, index) => (
+                            <div key={index} className="message-item">
                                 {shouldDisplayDate(message, index) && (
                                     <div className="flex justify-center my-4">
                                         <div

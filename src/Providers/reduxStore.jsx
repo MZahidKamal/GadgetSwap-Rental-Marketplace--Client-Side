@@ -5,6 +5,7 @@ import allGadgetsForGadgetsPageReducer from "../Features/allGadgetsForGadgetsPag
 import getGadgetDetailsByIdReducer from "../Features/getGadgetDetailsById/getGadgetDetailsByIdSlice.js";
 import userProfileDetailsReducer from "../Features/userProfileDetails/userProfileDetailsSlice.js";
 import gadgetWishlistReducer from "../Features/gadgetWishlist/gadgetWishlistSlice.js";
+import userMessagesReducer from "../Features/userMessages/userMessagesSlice.js";
 
 
 const reduxStore = configureStore({
@@ -15,6 +16,7 @@ const reduxStore = configureStore({
         getGadgetDetailsById: getGadgetDetailsByIdReducer,
         userProfileDetails: userProfileDetailsReducer,
         gadgetWishlist: gadgetWishlistReducer,
+        userMessages: userMessagesReducer,
     },
 });
 
