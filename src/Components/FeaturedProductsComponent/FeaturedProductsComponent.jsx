@@ -1,25 +1,10 @@
 import React, {useState, useEffect, useCallback, useMemo} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {
-    FiStar,
-    FiMenu,
-    FiX,
-} from 'react-icons/fi';
-import {
-    IoSparklesOutline,
-} from 'react-icons/io5';
+import {FiStar,FiMenu,FiX} from 'react-icons/fi';
+import {IoSparklesOutline} from 'react-icons/io5';
 import {useDispatch, useSelector} from "react-redux";
 import {fetchFeaturedGadgets} from "../../Features/featuredGadgetsForHomePage/featuredGadgetsForHomePageSlice.js";
-import {
-    FaCamera,
-    FaClock,
-    FaGamepad,
-    FaHeadphones,
-    FaLaptop,
-    FaMobileAlt, FaPlane, FaProjectDiagram,
-    FaTabletAlt,
-    FaVolumeUp, FaVrCardboard, FaWifi
-} from "react-icons/fa";
+import {FaCamera, FaGamepad, FaLaptop, FaMobileAlt, FaPlane, FaProjectDiagram, FaVolumeUp, FaVrCardboard, FaWifi} from "react-icons/fa";
 
 
 const FeaturedProductsComponent = () => {
@@ -33,10 +18,6 @@ const FeaturedProductsComponent = () => {
     const [displayedGadgets, setDisplayedGadgets] = useState([]);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
-
-
-    // Gadget data with categories
-    /*const gadgetsData = useMemo(() => [featuredGadgets?.data], [featuredGadgets?.data]);*/
 
 
     // Categories configuration
@@ -66,13 +47,12 @@ const FeaturedProductsComponent = () => {
     // Fetch gadgets data
     useEffect(() => {
         const fetchFeaturedGadgets = async () => {
-            if (featuredGadgets?.data?.length > 0) {
-                // console.log(featuredGadgets?.data);
-                setGadgetsData(featuredGadgets?.data);
+            if (featuredGadgets?.length > 0) {
+                setGadgetsData(featuredGadgets);
             }
         }
         fetchFeaturedGadgets().then()
-    }, [featuredGadgets?.data])
+    }, [featuredGadgets])
 
 
     // Get random gadget from each category

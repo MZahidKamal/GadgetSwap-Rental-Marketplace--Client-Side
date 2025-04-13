@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {BASE_URL} from "../../SharedUtilities/SharedUtilities.jsx";
+import useAxiosPublic from "../../CustomHooks/useAxiosPublic.jsx";
 
 
 const initialState = {
@@ -12,9 +12,17 @@ const initialState = {
 
 export const fetchFeaturedGadgets = createAsyncThunk(
     'featuredGadgetsForHomePage/fetchFeaturedGadgets',
-    async () => {
-        const response = await fetch(`${BASE_URL}/gadgets/featured_gadgets_for_home_page`, {});
-        return await response.json();
+    async (rejectWithValue) => {
+        try {
+            const axiosPublic = useAxiosPublic();
+            const response = await axiosPublic.get(`/gadgets/featured_gadgets_for_home_page`, {});
+            if (response?.data?.status !== 200)
+                throw new Error(response?.data?.message || "Failed to fetch gadget details");
+            return response?.data?.data;
+        }
+        catch (error) {
+            return rejectWithValue(error.message);
+        }
     }
 )
 
@@ -39,7 +47,7 @@ const featuredGadgetsForHomePageSlice = createSlice({
             state.featuredGadgets = [];
             state.isLoading = false;
             state.isError = true;
-            state.error = action.error?.message;
+            state.error = action.payload;
         });
     }
 })

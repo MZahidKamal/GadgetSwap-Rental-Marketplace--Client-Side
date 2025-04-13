@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react"
 import {Link, useLocation, useNavigate} from "react-router-dom"
 import {useDispatch, useSelector} from "react-redux"
-import { FaCamera, FaGamepad, FaHeadphones, FaLaptop, FaMobileAlt, FaTabletAlt } from "react-icons/fa"
 import {FiHome, FiUsers, FiPackage, FiShoppingCart, FiHeart, FiMessageSquare, FiSettings, FiLogOut, FiX, FiHelpCircle, FiCreditCard, FiMenu, FiUser, FiAward} from "react-icons/fi"
 import AuthContext from "../../Providers/AuthContext.jsx"
 import { Outlet } from "react-router"
 import LoadingSkeleton from "./LoadingSkeleton.jsx";
 import {getUserProfileDetails} from "../../Features/userProfileDetails/userProfileDetailsSlice.js";
+import useAxiosSecure from "../../CustomHooks/useAxiosSecure.jsx";
 
 
 const DashboardPage = () => {
@@ -17,6 +17,7 @@ const DashboardPage = () => {
     const dispatch = useDispatch()
     const {userProfileDetails} = useSelector(state => state.userProfileDetails);
 
+    const axiosSecure = useAxiosSecure();
     const [user, setUser] = useState({})
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isMobileView, setIsMobileView] = useState(false)
@@ -29,9 +30,9 @@ const DashboardPage = () => {
     // Fetch user profile detail on mount
     useEffect(() => {
         if (registeredUser?.email){
-            dispatch(getUserProfileDetails(registeredUser?.email));
+            dispatch(getUserProfileDetails({userEmail: registeredUser?.email, axiosSecure}));
         }
-    }, [dispatch, registeredUser?.email]);
+    }, [axiosSecure, dispatch, registeredUser?.email]);
 
 
     // After fetching get user profile details data

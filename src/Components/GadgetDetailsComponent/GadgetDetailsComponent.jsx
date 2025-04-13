@@ -5,8 +5,9 @@ import { FaMobileAlt, FaLaptop, FaTabletAlt, FaHeadphones, FaCamera, FaGamepad, 
 import {useDispatch, useSelector} from "react-redux";
 import {getUserProfileDetails} from "../../Features/userProfileDetails/userProfileDetailsSlice.js"
 import {fetchGadgetDetails} from "../../Features/getGadgetDetailsById/getGadgetDetailsByIdSlice.js";
-import {addOrRemoveWishlistGadget, getWishlistGadgetsDetails} from "../../Features/gadgetWishlist/gadgetWishlistSlice.js";
+import {addOrRemoveWishlistGadget} from "../../Features/gadgetWishlist/gadgetWishlistSlice.js";
 import AuthContext from "../../Providers/AuthContext.jsx";
+import useAxiosSecure from "../../CustomHooks/useAxiosSecure.jsx";
 
 
 const GadgetDetailsComponent = () => {
@@ -17,6 +18,7 @@ const GadgetDetailsComponent = () => {
     const {userProfileDetails} = useSelector(state => state.userProfileDetails);
     const {gadgetDetails} = useSelector((state) => state.getGadgetDetailsById);
 
+    const axiosSecure = useAxiosSecure();
     const {id} = useParams()
     const [gadget, setGadget] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -50,8 +52,8 @@ const GadgetDetailsComponent = () => {
     // Fetch gadget details on mount
     useEffect(() => {
         dispatch(fetchGadgetDetails(id));
-        dispatch(getUserProfileDetails(registeredUser?.email));
-    }, [dispatch, id, registeredUser?.email]);
+        dispatch(getUserProfileDetails({userEmail: registeredUser?.email, axiosSecure}));
+    }, [axiosSecure, dispatch, id, registeredUser?.email]);
 
 
     // Fetch gadget details data
@@ -59,9 +61,8 @@ const GadgetDetailsComponent = () => {
         const fetchGadgetDetails = async () => {
             setLoading(true)
             setTimeout(() => {
-                if (gadgetDetails?.data !== null) {
-                    // console.log(gadgetDetails?.data)
-                    setGadget(gadgetDetails?.data)
+                if (gadgetDetails !== null) {
+                    setGadget(gadgetDetails)
                     setLoading(false)
                     return
                 }
@@ -130,9 +131,7 @@ const GadgetDetailsComponent = () => {
 
     // Toggle wishlist
     const toggleWishlist = async () => {
-        //setIsWishlisted(!isWishlisted)
-        await dispatch(addOrRemoveWishlistGadget({userEmail: registeredUser?.email, gadgetId: id}));
-        await dispatch(getWishlistGadgetsDetails(registeredUser?.email));
+        await dispatch(addOrRemoveWishlistGadget({userEmail: registeredUser?.email, gadgetId: id, axiosSecure}));
     }
 
 
@@ -340,7 +339,7 @@ const GadgetDetailsComponent = () => {
                                     Reviews
                                 </button>
                             </li>
-                            <li>
+                            {registeredUser && <li>
                                 <button
                                     onClick={() => {
                                         handleTabChange("rental")
@@ -356,7 +355,7 @@ const GadgetDetailsComponent = () => {
                                 >
                                     Rental Options
                                 </button>
-                            </li>
+                            </li>}
                         </ul>
                     </nav>
                 </div>
@@ -380,24 +379,25 @@ const GadgetDetailsComponent = () => {
                     </button>
 
                     <div className="flex items-center space-x-2">
-                        <button
+                        {registeredUser && <button
                             onClick={toggleWishlist}
-                            className={`p-2 rounded-full ${
+                            className={`p-2 rounded-full cursor-pointer ${
                                 darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-white hover:bg-gray-100 shadow-sm"
                             }`}
                             aria-label={userProfileDetails?.wishlist?.includes(id) ? "Remove from wishlist" : "Add to wishlist"}
                         >
-                            <FiHeart size={20} className={userProfileDetails?.wishlist?.includes(id) ? "text-red-500 fill-current" : ""}/>
-                        </button>
+                            <FiHeart size={20}
+                                     className={userProfileDetails?.wishlist?.includes(id) ? "text-red-500 fill-current" : ""}/>
+                        </button>}
 
-                        <button
+                        {registeredUser && <button
                             className={`p-2 rounded-full ${
                                 darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-white hover:bg-gray-100 shadow-sm"
                             }`}
                             aria-label="Share"
                         >
                             <FiShare2 size={20}/>
-                        </button>
+                        </button>}
                         <button
                             onClick={toggleMobileMenu}
                             className={`p-2 rounded-full lg:hidden ${
@@ -544,7 +544,7 @@ const GadgetDetailsComponent = () => {
                                     >
                                         Reviews
                                     </button>
-                                    <button
+                                    {registeredUser && <button
                                         onClick={() => handleTabChange("rental")}
                                         className={`py-4 px-1 border-b-2 font-medium text-sm ${
                                             activeTab === "rental"
@@ -553,7 +553,7 @@ const GadgetDetailsComponent = () => {
                                         }`}
                                     >
                                         Rental Options
-                                    </button>
+                                    </button>}
                                 </nav>
                             </div>
                         </div>
@@ -749,7 +749,7 @@ const GadgetDetailsComponent = () => {
                                 </div>
                             )}
 
-                            {activeTab === "rental" && (
+                            {registeredUser && activeTab === "rental" && (
                                 <div className="space-y-6">
                                     <div className={`p-4 rounded-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
                                         <h3 className="font-medium mb-4">Rental Period</h3>
@@ -943,7 +943,7 @@ const GadgetDetailsComponent = () => {
                         </div>
 
                         {/* Rent Now Button */}
-                        <button
+                        {registeredUser && <button
                             className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
                                 startDate
                                     ? "bg-blue-600 hover:bg-blue-700 text-white"
@@ -953,38 +953,30 @@ const GadgetDetailsComponent = () => {
                             onClick={handleRentNowClick}
                         >
                             {startDate ? "Rent Now" : "Select a start date"}
-                        </button>
+                        </button>}
 
                         {/* Quick Actions */}
                         <div className="flex gap-3 mt-4">
-                            <button
+                            {registeredUser && <button
                                 onClick={toggleWishlist}
                                 className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center ${
                                     darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"
                                 }`}
                             >
-                                <FiHeart className={`mr-2 ${userProfileDetails?.wishlist?.includes(id) ? "text-red-500 fill-current" : ""}`}
-                                         size={16}/>
+                                <FiHeart
+                                    className={`mr-2 ${userProfileDetails?.wishlist?.includes(id) ? "text-red-500 fill-current" : ""}`}
+                                    size={16}/>
                                 {userProfileDetails?.wishlist?.includes(id) ? "Saved" : "Save"}
-                            </button>
+                            </button>}
 
-                            <button
-                                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center ${
-                                    darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"
-                                }`}
-                            >
-                                <FiMessageSquare className="mr-2" size={16}/>
-                                Contact Owner
-                            </button>
-
-                            <button
+                            {registeredUser && <button
                                 className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center ${
                                     darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"
                                 }`}
                             >
                                 <FiShare2 className="mr-2" size={16}/>
                                 Share
-                            </button>
+                            </button>}
                         </div>
                     </div>
                 </div>
@@ -1046,639 +1038,5 @@ const GadgetDetailsComponent = () => {
     )
 }
 
-// Mock data for gadgets
-/*const mockGadgetsData = [
-    // Smartphone
-    {
-        id: "smartphone1",
-        name: "iPhone 15 Pro Max",
-        category: "Smartphones",
-        brand: "Apple",
-        model: "A2849",
-        description:
-            "Experience the latest Apple iPhone with A17 Pro chip, 48MP camera system, and titanium design. This device features a stunning Super Retina XDR display with ProMotion technology, all-day battery life, and the powerful iOS 17 operating system. Perfect for photography, gaming, and everyday use.",
-        specifications: {
-            display: "6.7-inch Super Retina XDR OLED",
-            processor: "A17 Pro chip",
-            storage: "256GB",
-            camera: "48MP main, 12MP ultrawide, 12MP telephoto",
-            battery: "4,422 mAh",
-            os: "iOS 17",
-        },
-        included: [
-            "iPhone 15 Pro Max device",
-            "USB-C to USB-C cable",
-            "Documentation",
-            "Protective case",
-            "Screen protector (pre-applied)",
-        ],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 24.99,
-            deposit: 200.0,
-            basicInsuranceFee: 2.99,
-            premiumInsuranceFee: 5.99,
-        },
-        availability: {
-            total_unit: 5,
-            status: true,
-            blockedDates: ["2023-12-24", "2023-12-25", "2023-12-31", "2024-01-01"],
-        },
-        ratings: [4.8, 5.0, 4.9, 5.0, 4.7],
-        average_rating: 4.9,
-        reviews: [
-            {
-                reviewer_id: "user123",
-                reviewer_name: "Sarah M.",
-                reviewer_email: "sarah@example.com",
-                review_text:
-                    "Amazing phone! It was in perfect condition and the battery lasted all day. The camera quality is outstanding.",
-            },
-            {
-                reviewer_id: "user456",
-                reviewer_name: "Michael T.",
-                reviewer_email: "michael@example.com",
-                review_text:
-                    "Great experience renting this iPhone. The owner was very responsive and the pickup process was smooth.",
-            },
-        ],
-        totalRentalCount: 28,
-    },
-
-    // Laptop
-    {
-        id: "laptop1",
-        name: 'MacBook Pro 16" M3 Max',
-        category: "Laptops",
-        brand: "Apple",
-        model: "A2485",
-        description:
-            "The most powerful MacBook Pro ever is here. With the blazing-fast M3 Max chip, stunning Liquid Retina XDR display, and up to 32 hours of battery life. Perfect for professional video editing, 3D rendering, software development, and any demanding creative work.",
-        specifications: {
-            display: "16-inch Liquid Retina XDR",
-            processor: "Apple M3 Max",
-            storage: "1TB SSD",
-            memory: "32GB unified memory",
-            graphics: "30-core GPU",
-            battery: "Up to 22 hours",
-        },
-        included: [
-            'MacBook Pro 16" device',
-            "140W USB-C Power Adapter",
-            "USB-C to MagSafe 3 Cable",
-            "Documentation",
-            "Protective sleeve",
-        ],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 49.99,
-            deposit: 500.0,
-            basicInsuranceFee: 5.99,
-            premiumInsuranceFee: 12.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-20", "2023-12-21", "2023-12-22"],
-        },
-        ratings: [4.9, 5.0, 4.8, 5.0, 4.9],
-        average_rating: 4.9,
-        reviews: [
-            {
-                reviewer_id: "user789",
-                reviewer_name: "David L.",
-                reviewer_email: "david@example.com",
-                review_text:
-                    "Incredible machine! I needed it for a video editing project and it handled 4K footage like a breeze. Highly recommend.",
-            },
-            {
-                reviewer_id: "user101",
-                reviewer_name: "Jennifer K.",
-                reviewer_email: "jennifer@example.com",
-                review_text:
-                    "Perfect condition and super fast. Battery life is amazing - I worked all day without needing to plug in.",
-            },
-        ],
-        totalRentalCount: 42,
-    },
-
-    // Tablet
-    {
-        id: "tablet1",
-        name: 'iPad Pro 12.9" M2',
-        category: "Tablets",
-        brand: "Apple",
-        model: "A2436",
-        description:
-            "The ultimate iPad experience with the powerful M2 chip, stunning Liquid Retina XDR display, and support for Apple Pencil and Magic Keyboard. Perfect for digital artists, designers, and professionals who need desktop-class performance in a portable device.",
-        specifications: {
-            display: "12.9-inch Liquid Retina XDR",
-            processor: "Apple M2 chip",
-            storage: "512GB",
-            camera: "12MP wide, 10MP ultra-wide",
-            battery: "Up to 10 hours",
-            connectivity: "Wi-Fi 6E, Bluetooth 5.3",
-        },
-        included: [
-            'iPad Pro 12.9" device',
-            "USB-C Charging Cable",
-            "20W USB-C Power Adapter",
-            "Documentation",
-            "Protective case",
-        ],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 29.99,
-            deposit: 300.0,
-            basicInsuranceFee: 3.99,
-            premiumInsuranceFee: 7.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-15", "2023-12-16"],
-        },
-        ratings: [4.8, 4.7, 5.0, 4.9, 4.8],
-        average_rating: 4.8,
-        reviews: [
-            {
-                reviewer_id: "user202",
-                reviewer_name: "Emma S.",
-                reviewer_email: "emma@example.com",
-                review_text:
-                    "Perfect for my design work while traveling. The display is gorgeous and the Apple Pencil works flawlessly.",
-            },
-        ],
-        totalRentalCount: 35,
-    },
-
-    // Smartwatch
-    {
-        id: "smartwatch1",
-        name: "Apple Watch Ultra 2",
-        category: "Smartwatches",
-        brand: "Apple",
-        model: "A2686",
-        description:
-            "The most rugged and capable Apple Watch ever, with a robust titanium case, precision dual-frequency GPS, up to 36 hours of battery life, and three specialized bands for outdoor adventures, water sports, and endurance training.",
-        specifications: {
-            display: "49mm Always-On Retina LTPO OLED",
-            processor: "S9 SiP",
-            storage: "64GB",
-            battery: "Up to 36 hours (72 hours in Low Power Mode)",
-            water_resistance: "100m water resistant",
-            connectivity: "LTE, Wi-Fi, Bluetooth 5.3",
-        },
-        included: [
-            "Apple Watch Ultra 2",
-            "Alpine Loop, Trail Loop, or Ocean Band",
-            "Fast Charging USB-C Cable",
-            "Documentation",
-        ],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 14.99,
-            deposit: 150.0,
-            basicInsuranceFee: 1.99,
-            premiumInsuranceFee: 3.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-10", "2023-12-11", "2023-12-12"],
-        },
-        ratings: [4.9, 4.8, 5.0, 4.7, 4.9],
-        average_rating: 4.9,
-        reviews: [
-            {
-                reviewer_id: "user303",
-                reviewer_name: "Alex H.",
-                reviewer_email: "alex@example.com",
-                review_text:
-                    "Perfect for my hiking trip! The GPS accuracy is incredible and the battery lasted the entire weekend.",
-            },
-        ],
-        totalRentalCount: 22,
-    },
-
-    // Camera
-    {
-        id: "camera1",
-        name: "Sony Alpha a7R V",
-        category: "Cameras",
-        brand: "Sony",
-        model: "ILCE-7RM5",
-        description:
-            "Sony's flagship mirrorless camera with a 61MP full-frame sensor, 8K video recording, and advanced AI-based autofocus. Perfect for professional photographers and videographers who demand the highest image quality and performance.",
-        specifications: {
-            sensor: "61MP full-frame Exmor R CMOS",
-            processor: "BIONZ XR",
-            iso_range: "100-32000 (expandable to 50-102400)",
-            video: "8K 24p, 4K 60p, Full HD 120p",
-            stabilization: "5-axis in-body image stabilization",
-            autofocus: "759-point phase-detection AF",
-        },
-        included: [
-            "Sony Alpha a7R V camera body",
-            "FE 24-70mm f/2.8 GM II lens",
-            "NP-FZ100 rechargeable battery",
-            "Battery charger",
-            "Neck strap",
-            "64GB SD card",
-            "Camera bag",
-        ],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 59.99,
-            deposit: 800.0,
-            basicInsuranceFee: 7.99,
-            premiumInsuranceFee: 15.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-05", "2023-12-06", "2023-12-07"],
-        },
-        ratings: [4.9, 5.0, 4.8, 4.9, 5.0],
-        average_rating: 4.9,
-        reviews: [
-            {
-                reviewer_id: "user404",
-                reviewer_name: "Chris P.",
-                reviewer_email: "chris@example.com",
-                review_text:
-                    "Incredible camera! Used it for a professional photoshoot and the image quality is outstanding. The autofocus is lightning fast and accurate.",
-            },
-        ],
-        totalRentalCount: 31,
-    },
-
-    // Gaming
-    {
-        id: "gaming1",
-        name: "PlayStation 5 Pro",
-        category: "Gaming",
-        brand: "Sony",
-        model: "CFI-2000",
-        description:
-            "The most powerful PlayStation console ever, with enhanced GPU, ray tracing capabilities, and support for 8K gaming. Includes a DualSense controller, 3D audio, and ultra-high speed SSD for near-instant load times.",
-        specifications: {
-            cpu: "Custom 8-core AMD Zen 2",
-            gpu: "Custom AMD RDNA 3 (Enhanced)",
-            storage: "2TB SSD",
-            resolution: "Up to 8K",
-            frame_rate: "Up to 120fps",
-            ray_tracing: "Hardware-accelerated",
-        },
-        included: [
-            "PlayStation 5 Pro console",
-            "DualSense wireless controller",
-            "HDMI cable",
-            "Power cord",
-            "USB cable",
-            "2 games of your choice",
-        ],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 24.99,
-            deposit: 250.0,
-            basicInsuranceFee: 2.99,
-            premiumInsuranceFee: 5.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-25", "2023-12-26", "2023-12-27"],
-        },
-        ratings: [4.8, 4.9, 5.0, 4.7, 4.8],
-        average_rating: 4.8,
-        reviews: [
-            {
-                reviewer_id: "user505",
-                reviewer_name: "Ryan M.",
-                reviewer_email: "ryan@example.com",
-                review_text:
-                    "Amazing gaming experience! The graphics are incredible and load times are practically non-existent. Great selection of games too.",
-            },
-        ],
-        totalRentalCount: 45,
-    },
-
-    // Audio
-    {
-        id: "audio1",
-        name: "Sonos Era 300",
-        category: "Audio",
-        brand: "Sonos",
-        model: "Era 300",
-        description:
-            "A premium spatial audio smart speaker with Dolby Atmos, voice control, and multi-room capabilities. Delivers an immersive sound experience with six powerful drivers that direct sound in all directions for a truly spatial audio experience.",
-        specifications: {
-            drivers: "6 Class-D digital amplifiers",
-            connectivity: "Wi-Fi 6, Bluetooth 5.0, AirPlay 2",
-            voice_control: "Amazon Alexa, Sonos Voice Control",
-            audio_formats: "Dolby Atmos, Stereo, Spatial Audio",
-            dimensions: "6.3 x 10.2 x 7.3 inches",
-            weight: "9.85 lbs",
-        },
-        included: ["Sonos Era 300 speaker", "Power cable", "Quick start guide", "1-month free Sonos Radio HD subscription"],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 19.99,
-            deposit: 200.0,
-            basicInsuranceFee: 2.49,
-            premiumInsuranceFee: 4.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-18", "2023-12-19"],
-        },
-        ratings: [4.7, 4.8, 4.9, 4.7, 4.8],
-        average_rating: 4.8,
-        reviews: [
-            {
-                reviewer_id: "user606",
-                reviewer_name: "Lisa K.",
-                reviewer_email: "lisa@example.com",
-                review_text:
-                    "Incredible sound quality! The spatial audio really makes a difference, and it was perfect for our house party.",
-            },
-        ],
-        totalRentalCount: 27,
-    },
-
-    // Headphones
-    {
-        id: "headphones1",
-        name: "Apple AirPods Max",
-        category: "Headphones",
-        brand: "Apple",
-        model: "A2096",
-        description:
-            "Premium over-ear headphones with active noise cancellation, spatial audio, and exceptional sound quality. Features Apple's H1 chips, nine microphones, and up to 20 hours of battery life for an unparalleled listening experience.",
-        specifications: {
-            drivers: "40mm dynamic drivers",
-            chip: "Apple H1 (dual)",
-            battery: "Up to 20 hours",
-            connectivity: "Bluetooth 5.0, Lightning port",
-            features: "Active Noise Cancellation, Transparency mode, Spatial Audio",
-            weight: "384.8g",
-        },
-        included: ["AirPods Max", "Smart Case", "Lightning to USB-C Cable", "Documentation"],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 24.99,
-            deposit: 250.0,
-            basicInsuranceFee: 2.99,
-            premiumInsuranceFee: 5.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-01", "2023-12-02"],
-        },
-        ratings: [4.9, 4.8, 5.0, 4.9, 4.8],
-        average_rating: 4.9,
-        reviews: [
-            {
-                reviewer_id: "user707",
-                reviewer_name: "Thomas B.",
-                reviewer_email: "thomas@example.com",
-                review_text:
-                    "The sound quality is incredible, and the noise cancellation is the best I've ever experienced. Perfect for my long flight!",
-            },
-        ],
-        totalRentalCount: 38,
-    },
-
-    // Speakers
-    {
-        id: "speakers1",
-        name: "Bang & Olufsen Beosound A5",
-        category: "Speakers",
-        brand: "Bang & Olufsen",
-        model: "Beosound A5",
-        description:
-            "Portable luxury speaker with wooden handle, 12-hour battery life, and 360° sound. Crafted with premium materials including solid oak, Kvadrat textile, and pearl-blasted aluminum for stunning sound and design.",
-        specifications: {
-            drivers: "4 drivers with 280 watts total power",
-            battery: "Up to 12 hours playback",
-            connectivity: "Wi-Fi, Bluetooth 5.2, AirPlay 2, Chromecast",
-            water_resistance: "IP65 dust and water resistant",
-            dimensions: "11.6 x 6.7 x 8.3 inches",
-            weight: "7.7 lbs",
-        },
-        included: ["Beosound A5 speaker", "Power adapter", "Quick start guide", "Cleaning cloth"],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 34.99,
-            deposit: 300.0,
-            basicInsuranceFee: 3.99,
-            premiumInsuranceFee: 7.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-28", "2023-12-29", "2023-12-30"],
-        },
-        ratings: [4.7, 4.8, 4.6, 4.7, 4.8],
-        average_rating: 4.7,
-        reviews: [
-            {
-                reviewer_id: "user808",
-                reviewer_name: "Olivia P.",
-                reviewer_email: "olivia@example.com",
-                review_text:
-                    "Absolutely stunning speaker, both in terms of design and sound quality. Perfect for our beach day and outdoor dinner party.",
-            },
-        ],
-        totalRentalCount: 19,
-    },
-
-    // VR
-    {
-        id: "vr1",
-        name: "Meta Quest 3",
-        category: "VR",
-        brand: "Meta",
-        model: "Quest 3",
-        description:
-            "Advanced standalone VR headset with mixed reality capabilities, high-resolution display, and powerful performance. Experience immersive gaming, fitness, social, and productivity applications without the need for a PC or console.",
-        specifications: {
-            processor: "Snapdragon XR2 Gen 2",
-            display: "2064 x 2208 per eye",
-            storage: "128GB",
-            tracking: "Inside-out 6DoF tracking",
-            battery: "Up to 3 hours",
-            weight: "515g",
-        },
-        included: [
-            "Meta Quest 3 headset",
-            "Two Touch Plus controllers",
-            "Charging cable and adapter",
-            "Glasses spacer",
-            "2 free games",
-        ],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 24.99,
-            deposit: 250.0,
-            basicInsuranceFee: 2.99,
-            premiumInsuranceFee: 5.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-13", "2023-12-14"],
-        },
-        ratings: [4.8, 4.7, 4.9, 4.8, 4.7],
-        average_rating: 4.8,
-        reviews: [
-            {
-                reviewer_id: "user909",
-                reviewer_name: "Nathan K.",
-                reviewer_email: "nathan@example.com",
-                review_text:
-                    "Amazing VR experience! The mixed reality features are game-changing, and the resolution is crystal clear. Had a blast with the included games.",
-            },
-        ],
-        totalRentalCount: 33,
-    },
-
-    // Drones
-    {
-        id: "drone1",
-        name: "DJI Mavic 3 Pro",
-        category: "Drones",
-        brand: "DJI",
-        model: "Mavic 3 Pro",
-        description:
-            "Professional drone with Hasselblad camera system, 4/3 CMOS sensor, and 46-minute flight time. Capture stunning aerial photography and videography with 5.1K video, 10-bit D-Log color profile, and omnidirectional obstacle sensing.",
-        specifications: {
-            camera: 'Hasselblad 4/3 CMOS + 1/1.3" tele camera',
-            video: "5.1K/50fps, 4K/120fps",
-            photo: "20MP, 10-bit RAW",
-            flight_time: "Up to 46 minutes",
-            range: "15km video transmission",
-            max_speed: "47 mph (75 kph)",
-        },
-        included: [
-            "DJI Mavic 3 Pro drone",
-            "RC Pro controller",
-            "3 batteries",
-            "Battery charging hub",
-            "ND filter set",
-            "Carrying case",
-            "64GB microSD card",
-        ],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 49.99,
-            deposit: 500.0,
-            basicInsuranceFee: 5.99,
-            premiumInsuranceFee: 12.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-08", "2023-12-09"],
-        },
-        ratings: [4.9, 4.8, 5.0, 4.9, 4.8],
-        average_rating: 4.9,
-        reviews: [
-            {
-                reviewer_id: "user1010",
-                reviewer_name: "James L.",
-                reviewer_email: "james@example.com",
-                review_text:
-                    "Incredible drone! The image quality is outstanding and the flight time is impressive. Was able to capture amazing footage for my project.",
-            },
-        ],
-        totalRentalCount: 25,
-    },
-
-    // Projectors
-    {
-        id: "projector1",
-        name: "Samsung The Premiere",
-        category: "Projectors",
-        brand: "Samsung",
-        model: "LSP9T",
-        description:
-            "Ultra-short throw 4K laser projector with 130-inch display, built-in speakers, and smart TV capabilities. Enjoy a cinema-quality experience in your home with HDR10+, 2,800 ANSI lumens brightness, and 40W 4.2 channel audio.",
-        specifications: {
-            resolution: "4K UHD (3840 x 2160)",
-            brightness: "2,800 ANSI lumens",
-            contrast_ratio: "2,000,000:1",
-            projection_size: "Up to 130 inches",
-            speakers: "40W 4.2 channel",
-            smart_platform: "Tizen Smart TV",
-        },
-        included: [
-            "Samsung The Premiere projector",
-            "Samsung Smart Remote",
-            "Power cable",
-            "Quick setup guide",
-            "HDMI cable",
-        ],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 69.99,
-            deposit: 800.0,
-            basicInsuranceFee: 7.99,
-            premiumInsuranceFee: 15.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-22", "2023-12-23", "2023-12-24"],
-        },
-        ratings: [4.8, 4.9, 4.7, 4.8, 4.9],
-        average_rating: 4.8,
-        reviews: [
-            {
-                reviewer_id: "user1111",
-                reviewer_name: "Robert C.",
-                reviewer_email: "robert@example.com",
-                review_text:
-                    "Incredible home theater experience! The picture quality is stunning, and the ultra-short throw design means no shadows when people walk by. Perfect for our movie night.",
-            },
-        ],
-        totalRentalCount: 18,
-    },
-
-    // Wearables
-    {
-        id: "wearable1",
-        name: "Oura Ring Gen 3",
-        category: "Wearables",
-        brand: "Oura",
-        model: "Gen 3",
-        description:
-            "Smart ring that tracks sleep, activity, and readiness with 7-day battery life. This lightweight, water-resistant wearable provides detailed health insights without the bulk of a traditional smartwatch.",
-        specifications: {
-            sensors: "Heart rate, temperature, accelerometer",
-            battery: "Up to 7 days",
-            connectivity: "Bluetooth 5.0",
-            water_resistance: "Up to 100m",
-            material: "Titanium with PVD coating",
-            weight: "4-6g (depending on size)",
-        },
-        included: ["Oura Ring Gen 3", "Charging dock", "USB-C cable", "Sizing kit", "Quick start guide"],
-        images: ["https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg", "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"],
-        pricing: {
-            perDay: 14.99,
-            deposit: 150.0,
-            basicInsuranceFee: 1.99,
-            premiumInsuranceFee: 3.99,
-        },
-        availability: {
-            status: true,
-            blockedDates: ["2023-12-03", "2023-12-04"],
-        },
-        ratings: [4.7, 4.6, 4.8, 4.7, 4.6],
-        average_rating: 4.7,
-        reviews: [
-            {
-                reviewer_id: "user1212",
-                reviewer_name: "Sophia W.",
-                reviewer_email: "sophia@example.com",
-                review_text:
-                    "Love this ring! It's so comfortable I forget I'm wearing it, and the sleep tracking data is incredibly detailed and accurate.",
-            },
-        ],
-        totalRentalCount: 29,
-    },
-]*/
 
 export default GadgetDetailsComponent;

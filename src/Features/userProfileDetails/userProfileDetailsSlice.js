@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { BASE_URL } from "../../SharedUtilities/SharedUtilities.jsx";
 
 
 const initialState = {
@@ -12,14 +11,13 @@ const initialState = {
 
 export const getUserProfileDetails = createAsyncThunk(
     "userProfileDetails/getUserProfileDetails",
-    async (userEmail, { rejectWithValue }) => {
+    async ({userEmail, axiosSecure}, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${BASE_URL}/users/get_full_user_profile_details`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userEmail }),
-            });
-            const data = await response.json();
+            const response = await axiosSecure.post(
+                `/users/get_full_user_profile_details`,
+                { userEmail }
+            );
+            const data = await response.data;
             if (data.status !== 200) throw new Error(data.message || "Failed to get full user profile details!");
             return data.data;
         } catch (error) {

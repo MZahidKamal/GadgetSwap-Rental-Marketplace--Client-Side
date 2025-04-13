@@ -5,6 +5,7 @@ import {FaCamera, FaGamepad, FaHeadphones, FaLaptop, FaMobileAlt, FaTabletAlt, F
 import AuthContext from "../../../Providers/AuthContext.jsx";
 import {addOrRemoveWishlistGadget, getWishlistGadgetsDetails} from "../../../Features/gadgetWishlist/gadgetWishlistSlice.js";
 import {useNavigate} from "react-router-dom";
+import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx";
 
 
 const UserWishlistComponent = () => {
@@ -15,7 +16,7 @@ const UserWishlistComponent = () => {
     const dispatch = useDispatch();
     const {wishlistGadgetDetails} = useSelector((state) => state.gadgetWishlist);
 
-    //const [wishlistItems, setWishlistItems] = useState([]);
+    const axiosSecure = useAxiosSecure();
     const navigateTo = useNavigate();
 
 
@@ -64,7 +65,7 @@ const UserWishlistComponent = () => {
 
     // Handle remove from wishlist
     const handleRemoveFromWishlist = async (id) => {
-        await dispatch(addOrRemoveWishlistGadget({userEmail: registeredUser?.email, gadgetId: id}));
+        await dispatch(addOrRemoveWishlistGadget({userEmail: registeredUser?.email, gadgetId: id, axiosSecure}));
         await dispatch(getWishlistGadgetsDetails(registeredUser?.email));
     }
 

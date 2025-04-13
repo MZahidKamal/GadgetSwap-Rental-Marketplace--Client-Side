@@ -1294,16 +1294,16 @@ const AllGadgetsComponent = () => {
         const fetchGadgets = async () => {
             setIsLoading(true)
             setTimeout(() => {
-                if (allGadgets?.data?.length > 0) {
+                if (allGadgets?.length > 0) {
                     // console.log(allGadgets?.data);
-                    setGadgetsData(allGadgets?.data);
-                    setFilteredGadgets(allGadgets?.data);
+                    setGadgetsData(allGadgets);
+                    setFilteredGadgets(allGadgets);
                     setIsLoading(false)
                 }
             }, 1000)
         }
         fetchGadgets().then()
-    }, [allGadgets?.data])
+    }, [allGadgets])
 
 
     // Filter and sort gadgets when dependencies change

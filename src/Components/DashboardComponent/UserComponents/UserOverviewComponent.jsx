@@ -6,6 +6,7 @@ import AuthContext from "../../../Providers/AuthContext.jsx";
 import {useNavigate} from "react-router-dom";
 import {getUserProfileDetails} from "../../../Features/userProfileDetails/userProfileDetailsSlice.js";
 import {getWishlistGadgetsDetails} from "../../../Features/gadgetWishlist/gadgetWishlistSlice.js";
+import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx";
 
 
 const UserOverviewComponent = () => {
@@ -17,6 +18,7 @@ const UserOverviewComponent = () => {
     const {userProfileDetails} = useSelector(state => state.userProfileDetails);
     const {wishlistGadgetDetails} = useSelector(state => state.gadgetWishlist);
 
+    const axiosSecure = useAxiosSecure();
     const [userData, setUserData] = useState({})
     const [notificationsOpen, setNotificationsOpen] = useState(false)
     const navigate = useNavigate();
@@ -25,10 +27,10 @@ const UserOverviewComponent = () => {
     // Fetch user profile detail on mount
     useEffect(() => {
         if (registeredUser?.email){
-            dispatch(getUserProfileDetails(registeredUser?.email));
-            dispatch(getWishlistGadgetsDetails(registeredUser?.email));
+            dispatch(getUserProfileDetails({userEmail: registeredUser?.email, axiosSecure}));
+            dispatch(getWishlistGadgetsDetails({userEmail: registeredUser?.email, axiosSecure}));
         }
-    }, [dispatch, registeredUser?.email]);
+    }, [axiosSecure, dispatch, registeredUser?.email]);
 
 
     // After fetching get user profile details data
