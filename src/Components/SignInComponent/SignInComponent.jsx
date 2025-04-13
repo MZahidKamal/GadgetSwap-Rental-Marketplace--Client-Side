@@ -359,7 +359,20 @@ const SignInComponent = () => {
                     </div>
 
                     {/* Sign Up Link */}
-                    <div className="text-center">
+                    <div className="text-center space-y-2">
+                        <p className={`text-sm ${
+                            darkMode ? 'text-gray-300' : 'text-gray-600'
+                        } transition-colors duration-300`}>
+                            Forgot password?{' '}
+                            <Link
+                                to="/password-reset"
+                                className={`font-medium ${
+                                    darkMode ? 'text-purple-400 hover:text-purple-300' : 'text-indigo-600 hover:text-indigo-500'
+                                } transition-colors duration-300`}
+                            >
+                                Reset Password
+                            </Link>
+                        </p>
                         <p className={`text-sm ${
                             darkMode ? 'text-gray-300' : 'text-gray-600'
                         } transition-colors duration-300`}>

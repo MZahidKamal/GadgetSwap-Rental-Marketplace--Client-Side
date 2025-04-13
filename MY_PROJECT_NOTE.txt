@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "User messaging feature is implemented using Redux successfully."
+git commit -m "PasswordResetComponent design prototype and functional feature is implemented successfully."
 git push
 
 // Necessary Git commands.----------------------------------------------------------------------------------------------
