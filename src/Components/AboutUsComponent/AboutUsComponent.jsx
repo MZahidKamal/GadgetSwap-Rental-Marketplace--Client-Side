@@ -1,22 +1,5 @@
-"use client"
-
 import {useEffect, useState} from "react"
-import {
-    FiX,
-    FiUsers,
-    FiTrendingUp,
-    FiShield,
-    FiGlobe,
-    FiStar,
-    FiLinkedin,
-    FiTwitter,
-    FiArrowRight,
-    FiClock,
-    FiHeart,
-    FiSmile,
-    FiThumbsUp,
-    FiAward, FiMessageCircle,
-} from "react-icons/fi"
+import { FiX, FiUsers, FiTrendingUp, FiShield, FiGlobe, FiStar, FiLinkedin, FiTwitter, FiArrowRight, FiClock, FiHeart, FiSmile, FiThumbsUp, FiAward, FiMessageCircle } from "react-icons/fi"
 import {FaLaptop} from "react-icons/fa"
 import {useSelector} from "react-redux";
 import {Link} from "react-router-dom";
@@ -60,7 +43,7 @@ const AboutUsComponent = () => {
         {
             name: "Sarah Johnson",
             role: "Founder & CEO",
-            image: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742734989/employee_2_hzvyoy.jpg",
+            image: "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742734989/employee_2_hzvyoy.jpg",
             bio: "Former tech executive with a passion for sustainable consumption and the sharing economy.",
             social: {
                 linkedin: "#",
@@ -70,7 +53,7 @@ const AboutUsComponent = () => {
         {
             name: "Michael Chen",
             role: "CTO",
-            image: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742734990/employee_5_xw4hwn.jpg",
+            image: "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742734990/employee_5_xw4hwn.jpg",
             bio: "Full-stack developer with 10+ years experience building marketplace platforms.",
             social: {
                 linkedin: "#",
@@ -80,7 +63,7 @@ const AboutUsComponent = () => {
         {
             name: "Priya Patel",
             role: "Head of Operations",
-            image: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742734987/employee_4_ojjq8l.jpg",
+            image: "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742734987/employee_4_ojjq8l.jpg",
             bio: "Supply chain expert focused on creating seamless rental experiences.",
             social: {
                 linkedin: "#",
@@ -90,7 +73,7 @@ const AboutUsComponent = () => {
         {
             name: "David Wilson",
             role: "Marketing Director",
-            image: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742734989/employee_3_npuhxo.jpg",
+            image: "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742734989/employee_3_npuhxo.jpg",
             bio: "Digital marketing specialist with experience in growing tech startups.",
             social: {
                 linkedin: "#",
@@ -429,7 +412,7 @@ const AboutUsComponent = () => {
                             <div
                                 className={`rounded-xl overflow-hidden mb-8 ${darkMode ? "bg-gray-800" : "bg-white shadow-sm"}`}>
                                 <div className="relative h-64 md:h-80">
-                                    <img src="https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742345962/about-us-2_efnfat.jpg" alt="GadgetSwap Team"
+                                    <img src="https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742345962/about-us-2_efnfat.jpg" alt="GadgetSwap Team"
                                          className="w-full h-full object-cover"/>
                                     <div
                                         className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">

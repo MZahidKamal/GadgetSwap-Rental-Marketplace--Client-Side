@@ -1,0 +1,530 @@
+{
+  "category": "Gaming",
+  "items": [
+    {
+      "id": "gaming1",
+      "name": "PlayStation 5",
+      "category": "Gaming",
+      "brand": "Sony",
+      "model": "CFI-1215A01X",
+      "description": "Experience lightning-fast loading, ultra-high speed SSD, and stunning visuals with the PS5. Includes DualSense controller and support for 4K gaming.",
+      "specifications": {
+        "processor": "AMD Ryzen Zen 2 8-core",
+        "graphics": "AMD RDNA 2",
+        "storage": "825GB SSD",
+        "ram": "16GB GDDR6",
+        "resolution": "Up to 4K",
+        "fps": "Up to 120 FPS"
+      },
+      "included": [
+        "PlayStation 5 Console",
+        "DualSense Controller",
+        "HDMI Cable",
+        "Power Cable",
+        "Documentation"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207597/ps5_1_wdr5ik.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207597/ps5_2_a4ld9j.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207597/ps5_3_eqcx99.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207625/ps5_4_nccatd.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207625/ps5_5_spegdy.webp"
+      ],
+      "pricing": {
+        "perDay": 18.99,
+        "deposit": 150.0,
+        "basicInsuranceFee": 2.5,
+        "premiumInsuranceFee": 5.0
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        5,
+        4.8,
+        4.9
+      ],
+      "average_rating": 4.9,
+      "reviews": [
+        {
+          "reviewer_id": "gamer001",
+          "reviewer_name": "Liam R.",
+          "reviewer_email": "liamr@example.com",
+          "review_text": "The PS5 was in pristine condition! Setup was a breeze and I enjoyed God of War at 4K 60FPS with no issues. Highly recommended."
+        }
+      ],
+      "totalRentalCount": 35
+    },
+    {
+      "id": "gaming2",
+      "name": "Xbox Series X",
+      "category": "Gaming",
+      "brand": "Microsoft",
+      "model": "RRT-00001",
+      "description": "Power your dreams with the Xbox Series X. Play thousands of titles across four generations of consoles.",
+      "specifications": {
+        "processor": "AMD Zen 2 8-core",
+        "graphics": "AMD RDNA 2",
+        "storage": "1TB SSD",
+        "ram": "16GB GDDR6",
+        "resolution": "Up to 8K",
+        "fps": "Up to 120 FPS"
+      },
+      "included": [
+        "Xbox Series X Console",
+        "Xbox Wireless Controller",
+        "HDMI Cable",
+        "Power Cable"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207929/xbox1_bej4hr.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207929/xbox2_nkmezs.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207929/xbox3_q4om7a.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207929/xbox4_svifpl.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207931/xbox5_q5jigb.webp"
+      ],
+      "pricing": {
+        "perDay": 17.49,
+        "deposit": 140.0,
+        "basicInsuranceFee": 2.3,
+        "premiumInsuranceFee": 4.7
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        4.7,
+        4.9,
+        5
+      ],
+      "average_rating": 4.87,
+      "reviews": [
+        {
+          "reviewer_id": "gamer002",
+          "reviewer_name": "Ava T.",
+          "reviewer_email": "ava.taylor@example.com",
+          "review_text": "Had a blast playing on the Xbox Series X. Smooth frame rates, silent performance, and the Game Pass access was a cherry on top!"
+        }
+      ],
+      "totalRentalCount": 30
+    },
+    {
+      "id": "gaming3",
+      "name": "Nintendo Switch OLED",
+      "category": "Gaming",
+      "brand": "Nintendo",
+      "model": "HEG-001",
+      "description": "Enjoy vivid visuals on the OLED screen with the portable Nintendo Switch. Perfect for family and solo gaming on the go.",
+      "specifications": {
+        "display": "7-inch OLED",
+        "storage": "64GB",
+        "battery": "4.5-9 hours",
+        "connectivity": "Wi-Fi, Bluetooth",
+        "controllers": "Joy-Con included"
+      },
+      "included": [
+        "Nintendo Switch Console",
+        "Joy-Con L/R",
+        "Dock",
+        "HDMI Cable",
+        "AC Adapter"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207924/switch1_w52oe6.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207925/switch2_sbfeha.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207925/switch3_ow9mbz.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207928/switch4_jzngd7.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207928/switch5_yuysma.jpg"
+      ],
+      "pricing": {
+        "perDay": 12.99,
+        "deposit": 100.0,
+        "basicInsuranceFee": 2.0,
+        "premiumInsuranceFee": 3.5
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        4.9,
+        4.8,
+        5
+      ],
+      "average_rating": 4.9,
+      "reviews": [
+        {
+          "reviewer_id": "gamer003",
+          "reviewer_name": "Noah P.",
+          "reviewer_email": "noahplayz@example.com",
+          "review_text": "Rented the Switch OLED for a weekend trip. Super fun with Mario Kart and Zelda. The screen is vibrant and battery life solid."
+        }
+      ],
+      "totalRentalCount": 45
+    },
+    {
+      "id": "gaming4",
+      "name": "Alienware x16 R1 Gaming Laptop",
+      "category": "Gaming",
+      "brand": "Dell",
+      "model": "x16 R1",
+      "description": "High-end gaming laptop with Intel i9 processor and RTX 4090 GPU. Suitable for competitive gamers and developers.",
+      "specifications": {
+        "display": "16-inch QHD+ 240Hz",
+        "processor": "Intel Core i9-13900HK",
+        "graphics": "NVIDIA GeForce RTX 4090",
+        "storage": "2TB SSD",
+        "ram": "32GB DDR5"
+      },
+      "included": [
+        "Alienware x16 R1 Laptop",
+        "Charger",
+        "Carrying Case"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207591/alienware1_gj1jgt.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207590/alienware2_gat5by.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207591/alienware3_jgmx9o.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207591/alienware4_hk16yj.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207591/alienware5_bysnnd.webp"
+      ],
+      "pricing": {
+        "perDay": 27.5,
+        "deposit": 250.0,
+        "basicInsuranceFee": 4.0,
+        "premiumInsuranceFee": 6.5
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        5,
+        4.9,
+        5
+      ],
+      "average_rating": 4.97,
+      "reviews": [
+        {
+          "reviewer_id": "gamer004",
+          "reviewer_name": "Isabella K.",
+          "reviewer_email": "isabellak@example.com",
+          "review_text": "Alienware x16 R1 is a beast. Handled all my games on ultra with zero lag. Also used it for some editing—flawless."
+        }
+      ],
+      "totalRentalCount": 18
+    },
+    {
+      "id": "gaming5",
+      "name": "Logitech G29 Racing Wheel",
+      "category": "Gaming",
+      "brand": "Logitech",
+      "model": "G29",
+      "description": "Enhance your racing experience with force feedback, responsive pedals, and realistic steering from the G29.",
+      "specifications": {
+        "compatibility": "PlayStation, PC",
+        "features": "Force Feedback, Dual-Motor",
+        "pedals": "Gas, brake, and clutch",
+        "mounting": "Adjustable clamp"
+      },
+      "included": [
+        "G29 Racing Wheel",
+        "Pedal Set",
+        "Power Adapter",
+        "User Manual"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207592/g29_1_ecnxvl.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207592/g29_2_bc60jx.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207592/g29_3_krz6ev.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207592/g29_4_jh2qkz.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207593/g29_5_nqvcxl.jpg"
+      ],
+      "pricing": {
+        "perDay": 9.99,
+        "deposit": 80.0,
+        "basicInsuranceFee": 1.5,
+        "premiumInsuranceFee": 2.5
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        4.8,
+        5,
+        4.9
+      ],
+      "average_rating": 4.9,
+      "reviews": [
+        {
+          "reviewer_id": "gamer005",
+          "reviewer_name": "Ethan J.",
+          "reviewer_email": "ethan.j@example.com",
+          "review_text": "The Logitech G29 added so much realism to my racing sim nights. Loved the force feedback and pedal responsiveness."
+        }
+      ],
+      "totalRentalCount": 22
+    },
+    {
+      "id": "gaming6",
+      "name": "Oculus Quest 2",
+      "category": "Gaming",
+      "brand": "Meta",
+      "model": "Quest 2",
+      "description": "A wireless VR headset with powerful graphics, immersive gameplay, and access to hundreds of VR titles.",
+      "specifications": {
+        "resolution": "1832 x 1920 per eye",
+        "storage": "128GB",
+        "battery": "2-3 hours",
+        "controllers": "Touch Controllers included"
+      },
+      "included": [
+        "Oculus Quest 2 Headset",
+        "Controllers",
+        "Charger",
+        "Spacer for Glasses"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207626/quest21_ovfebs.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207667/quest22_vgvkae.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207917/quest23_re69hy.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207918/quest24_qcz17b.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207918/quest25_mna7xv.webp"
+      ],
+      "pricing": {
+        "perDay": 13.5,
+        "deposit": 120.0,
+        "basicInsuranceFee": 2.2,
+        "premiumInsuranceFee": 4.0
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        5,
+        4.9,
+        4.7
+      ],
+      "average_rating": 4.87,
+      "reviews": [
+        {
+          "reviewer_id": "gamer006",
+          "reviewer_name": "Mia C.",
+          "reviewer_email": "mia.chang@example.com",
+          "review_text": "First time using a VR headset and I’m hooked! The Quest 2 was clean, fully charged, and incredibly immersive."
+        }
+      ],
+      "totalRentalCount": 29
+    },
+    {
+      "id": "gaming7",
+      "name": "Steam Deck 512GB",
+      "category": "Gaming",
+      "brand": "Valve",
+      "model": "SteamDeck512",
+      "description": "Handheld gaming PC that runs your Steam library. Great for AAA games on the go.",
+      "specifications": {
+        "display": "7-inch LCD touchscreen",
+        "storage": "512GB NVMe SSD",
+        "processor": "AMD APU Zen 2 + RDNA 2",
+        "ram": "16GB LPDDR5"
+      },
+      "included": [
+        "Steam Deck",
+        "Carrying Case",
+        "Charger"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207920/steamdeck1_rdomof.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207923/steamdeck2_svsty4.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207923/steamdeck3_mdm2si.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207924/steamdeck4_kut3go.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207924/steamdeck5_synpns.jpg"
+      ],
+      "pricing": {
+        "perDay": 14.99,
+        "deposit": 130.0,
+        "basicInsuranceFee": 2.5,
+        "premiumInsuranceFee": 4.5
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        5,
+        4.9,
+        5
+      ],
+      "average_rating": 4.97,
+      "reviews": [
+        {
+          "reviewer_id": "gamer007",
+          "reviewer_name": "Oliver D.",
+          "reviewer_email": "oliverd@example.com",
+          "review_text": "Steam Deck was awesome! Played Elden Ring on the go and performance exceeded expectations. Will rent again!"
+        }
+      ],
+      "totalRentalCount": 20
+    },
+    {
+      "id": "gaming8",
+      "name": "Asus ROG Strix G16",
+      "category": "Gaming",
+      "brand": "Asus",
+      "model": "G614JI-XS96",
+      "description": "Powerful gaming laptop with RTX 4070 and 165Hz refresh rate, ideal for eSports and high-end games.",
+      "specifications": {
+        "display": "16-inch FHD 165Hz",
+        "processor": "Intel Core i9-13980HX",
+        "graphics": "NVIDIA GeForce RTX 4070",
+        "storage": "1TB SSD",
+        "ram": "32GB DDR5"
+      },
+      "included": [
+        "ROG Strix G16 Laptop",
+        "Charger",
+        "User Guide"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207918/rogstrix1_ozcfuc.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207919/rogstrix2_lobshu.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207919/rogstrix3_c2yzk5.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207919/rogstrix4_reud6q.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207919/rogstrix5_hycpbl.webp"
+      ],
+      "pricing": {
+        "perDay": 25.99,
+        "deposit": 240.0,
+        "basicInsuranceFee": 3.8,
+        "premiumInsuranceFee": 6.2
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        4.9,
+        4.8,
+        5
+      ],
+      "average_rating": 4.9,
+      "reviews": [
+        {
+          "reviewer_id": "gamer008",
+          "reviewer_name": "Sophia L.",
+          "reviewer_email": "sophia.lane@example.com",
+          "review_text": "Rented the ROG Strix for a Valorant tournament—super smooth gameplay and minimal heating. Great condition too."
+        }
+      ],
+      "totalRentalCount": 14
+    },
+    {
+      "id": "gaming9",
+      "name": "Elgato HD60 X Capture Card",
+      "category": "Gaming",
+      "brand": "Elgato",
+      "model": "HD60X",
+      "description": "Record and stream in 1080p60 HDR10 with ultra-low latency. Ideal for console streamers and creators.",
+      "specifications": {
+        "input": "HDMI 2.0",
+        "output": "HDMI passthrough",
+        "resolution": "1080p60 HDR10",
+        "compatibility": "PC, PS5, Xbox"
+      },
+      "included": [
+        "HD60 X Device",
+        "USB Cable",
+        "HDMI Cable"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207592/elgato1_jst0z2.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207591/elgato2_t8yu4b.png",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207591/elgato3_jwxm2c.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207591/elgato4_rcz2mj.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207591/elgato5_kl98pw.jpg"
+      ],
+      "pricing": {
+        "perDay": 7.99,
+        "deposit": 70.0,
+        "basicInsuranceFee": 1.2,
+        "premiumInsuranceFee": 2.0
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        4.7,
+        4.8,
+        4.9
+      ],
+      "average_rating": 4.8,
+      "reviews": [
+        {
+          "reviewer_id": "gamer009",
+          "reviewer_name": "James W.",
+          "reviewer_email": "james.wright@example.com",
+          "review_text": "The Elgato capture card worked flawlessly. Helped me record streams in 1080p HDR with no delay. Super helpful support too!"
+        }
+      ],
+      "totalRentalCount": 12
+    },
+    {
+      "id": "gaming10",
+      "name": "HyperX Cloud II Gaming Headset",
+      "category": "Gaming",
+      "brand": "HyperX",
+      "model": "KHX-HSCP-RD",
+      "description": "Comfortable and immersive headset with virtual 7.1 surround sound and memory foam ear cushions.",
+      "specifications": {
+        "connectivity": "USB and 3.5mm",
+        "sound": "Virtual 7.1 Surround",
+        "mic": "Detachable Noise Cancelling",
+        "drivers": "53mm Neodymium"
+      },
+      "included": [
+        "Headset",
+        "USB Control Box",
+        "Detachable Mic",
+        "Carrying Pouch"
+      ],
+      "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207596/hyperx1_vwvczt.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207596/hyperx2_h1ayux.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207596/hyperx3_cdlw4h.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207596/hyperx4_vypfwe.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1744207597/hyperx5_gy88nb.webp"
+      ],
+      "pricing": {
+        "perDay": 6.99,
+        "deposit": 60.0,
+        "basicInsuranceFee": 1.0,
+        "premiumInsuranceFee": 1.8
+      },
+      "availability": {
+        "status": true,
+        "blockedDates": []
+      },
+      "ratings": [
+        4.8,
+        5,
+        4.9
+      ],
+      "average_rating": 4.9,
+      "reviews": [
+        {
+          "reviewer_id": "gamer010",
+          "reviewer_name": "Emily Z.",
+          "reviewer_email": "emilyz@example.com",
+          "review_text": "HyperX Cloud II is incredibly comfy! Played 6-hour gaming sessions with no fatigue. Sound and mic quality were top notch."
+        }
+      ],
+      "totalRentalCount": 19
+    }
+  ]
+}

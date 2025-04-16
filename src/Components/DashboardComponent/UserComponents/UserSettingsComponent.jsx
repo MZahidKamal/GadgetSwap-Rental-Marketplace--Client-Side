@@ -1,59 +1,87 @@
-import { useState, useRef, useEffect } from "react"
-import {
-    FiUser,
-    FiMail,
-    FiPhone,
-    FiMapPin,
-    FiBriefcase,
-    FiSave,
-    FiUpload,
-    FiX,
-    FiZoomIn,
-    FiZoomOut,
-    FiRotateCw,
-    FiLock,
-    FiHome,
-} from "react-icons/fi"
-import {useSelector} from "react-redux";
+import {useContext, useEffect, useRef, useState} from "react"
+import { FiBriefcase, FiHome, FiLock, FiMail, FiMapPin, FiPhone, FiRotateCw, FiSave, FiUpload, FiUser, FiX, FiZoomIn, FiZoomOut } from "react-icons/fi"
+import {useDispatch, useSelector} from "react-redux"
+import AuthContext from "../../../Providers/AuthContext.jsx"
+import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx"
+import { getUserProfileDetails, updateUserProfileInfo } from "../../../Features/userProfileDetails/userProfileDetailsSlice.js"
+import useCloudinary from "../../../CustomHooks/useCloudinary.jsx";
+import {toast} from "react-toastify";
 
 
 const UserSettingsComponent = () => {
 
     // State management
-    const darkMode = useSelector((state) => state.darkMode.isDark);
+    const darkMode = useSelector((state) => state.darkMode.isDark)
+    const { user: registeredUser, updateExistingUsersPassword } = useContext(AuthContext)
+
+    const dispatch = useDispatch()
+    const { userProfileDetails } = useSelector((state) => state.userProfileDetails)
+    const {uploadImageToCloudinaryAndGetURL} = useCloudinary();
 
 
     // Initial fake user data
     const initialUserData = {
-        id: "usr_123456",
-        name: "Alex Johnson",
-        email: "alex.johnson@example.com",
-        phone: "+1 (555) 123-4567",
-        profession: "Software Engineer",
-        bio: "Passionate about technology and gadgets. Love to try out new devices before buying them.",
-        profileImage: "/placeholder.svg",
-        joinedDate: "January 2023",
-        billingAddress: {
-            street: "123 Tech Street",
-            city: "San Francisco",
-            state: "CA",
-            zipCode: "94105",
-            country: "United States",
+        displayName: userProfileDetails?.displayName,
+        email: userProfileDetails?.email,
+        phone: userProfileDetails?.personalDetails?.phone,
+        personalDetails: {
+            bio: userProfileDetails?.personalDetails?.bio,
+            profession: userProfileDetails?.personalDetails?.profession,
+            photoURL: userProfileDetails?.personalDetails?.photoURL || "/placeholder.svg",
+            phone: userProfileDetails?.personalDetails?.phone,
+            billingAddress: {
+                street: userProfileDetails?.personalDetails?.billingAddress?.street,
+                city: userProfileDetails?.personalDetails?.billingAddress?.city,
+                zipCode: userProfileDetails?.personalDetails?.billingAddress?.zipCode,
+                state: userProfileDetails?.personalDetails?.billingAddress?.state,
+                country: userProfileDetails?.personalDetails?.billingAddress?.country,
+            },
         },
     }
 
 
-    // States
-    // const [darkMode, setDarkMode] = useState(false)
-    const [userData, setUserData] = useState(initialUserData)
+    const axiosSecure = useAxiosSecure()
     const [formData, setFormData] = useState(initialUserData)
     const [imagePreview, setImagePreview] = useState(null)
-    const [imageFile, setImageFile] = useState(null)
     const [imageSize, setImageSize] = useState({ width: 0, height: 0, size: 0 })
     const [zoom, setZoom] = useState(1)
     const [isDragging, setIsDragging] = useState(false)
     const [position, setPosition] = useState({ x: 0, y: 0 })
     const [startPosition, setStartPosition] = useState({ x: 0, y: 0 })
+    const [originalFile, setOriginalFile] = useState(null) // Store the original file
+
+
+    // Fetch user profile detail on mount
+    useEffect(() => {
+        if (registeredUser?.email) {
+            dispatch(getUserProfileDetails({ userEmail: registeredUser?.email, axiosSecure }))
+        }
+    }, [axiosSecure, dispatch, registeredUser?.email])
+
+
+    // Update formData when userProfileDetails changes
+    useEffect(() => {
+        if (userProfileDetails) {
+            setFormData({
+                displayName: userProfileDetails?.displayName,
+                email: userProfileDetails?.email,
+                phone: userProfileDetails?.personalDetails?.phone,
+                personalDetails: {
+                    bio: userProfileDetails?.personalDetails?.bio,
+                    profession: userProfileDetails?.personalDetails?.profession,
+                    photoURL: userProfileDetails?.personalDetails?.photoURL || "/placeholder.svg",
+                    phone: userProfileDetails?.personalDetails?.phone,
+                    billingAddress: {
+                        street: userProfileDetails?.personalDetails?.billingAddress?.street,
+                        city: userProfileDetails?.personalDetails?.billingAddress?.city,
+                        zipCode: userProfileDetails?.personalDetails?.billingAddress?.zipCode,
+                        state: userProfileDetails?.personalDetails?.billingAddress?.state,
+                        country: userProfileDetails?.personalDetails?.billingAddress?.country,
+                    },
+                },
+            })
+        }
+    }, [userProfileDetails])
 
 
     // Password states
@@ -71,14 +99,25 @@ const UserSettingsComponent = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target
 
-        // Handle nested billing address fields
+        // Handle nested fields
         if (name.startsWith("billing.")) {
             const billingField = name.split(".")[1]
             setFormData({
                 ...formData,
-                billingAddress: {
-                    ...formData.billingAddress,
-                    [billingField]: value,
+                personalDetails: {
+                    ...formData.personalDetails,
+                    billingAddress: {
+                        ...formData.personalDetails?.billingAddress,
+                        [billingField]: value,
+                    },
+                },
+            })
+        } else if (name === "profession" || name === "bio") {
+            setFormData({
+                ...formData,
+                personalDetails: {
+                    ...formData.personalDetails,
+                    [name]: value,
                 },
             })
         } else {
@@ -105,12 +144,32 @@ const UserSettingsComponent = () => {
     }
 
 
+    // Convert base64 to file
+    const base64ToFile = (dataUrl, filename) => {
+        if (!dataUrl || !originalFile) return null
+
+        const arr = dataUrl.split(",")
+        const mime = arr[0].match(/:(.*?);/)[1]
+        const bstr = atob(arr[1])
+        let n = bstr.length
+        const u8arr = new Uint8Array(n)
+
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n)
+        }
+
+        return new File([u8arr], filename, { type: mime })
+    }
+
+
     // Handle image upload
-    const handleImageUpload = (e) => {
+    const handleImageUpload = async (e) => {
         const file = e.target.files[0]
         if (!file) return
 
-        setImageFile(file)
+        // console.log(file)
+        // const cloudinaryImageUrl = await uploadImageToCloudinaryAndGetURL(file);
+        setOriginalFile(file) // Store the original file
 
         const reader = new FileReader()
         reader.onload = (event) => {
@@ -134,43 +193,66 @@ const UserSettingsComponent = () => {
 
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
-        // Create updated user object
-        const updatedUser = {
-            ...formData,
-            profileImage: imagePreview || formData.profileImage,
+        // Create updated user object in the required format
+        const userInfoObj = {
+            displayName: formData.displayName || "",
+            email: formData.email || "",
+            personalDetails: {
+                bio: formData.personalDetails?.bio || "",
+                profession: formData.personalDetails?.profession || "",
+                photoURL: formData.personalDetails?.photoURL || "",
+                phone: formData.phone || "",
+                billingAddress: {
+                    street: formData.personalDetails?.billingAddress?.street || "",
+                    city: formData.personalDetails?.billingAddress?.city || "",
+                    zipCode: formData.personalDetails?.billingAddress?.zipCode || "",
+                    state: formData.personalDetails?.billingAddress?.state || "",
+                    country: formData.personalDetails?.billingAddress?.country || "",
+                },
+            },
         }
 
-        // Update user data
-        setUserData(updatedUser)
+        // If image has been modified, convert and log the modified image
+        if (imagePreview && originalFile) {
+            const modifiedFile = await base64ToFile(imagePreview, originalFile.name)
+            const cloudinaryImageUrl = await uploadImageToCloudinaryAndGetURL(modifiedFile);
 
-        // Log the updated user object to console
-        console.log("Updated User Data:", updatedUser)
+            if (cloudinaryImageUrl) userInfoObj.personalDetails.photoURL = cloudinaryImageUrl;
+            else toast.error("Error uploading image!")
+        }
+
+        // Save the updated user object to database
+        await dispatch(updateUserProfileInfo({userEmail: registeredUser?.email, userInfoObj, axiosSecure}))
+        // console.log("Updated User Data:", userInfoObj)
     }
 
 
     // Handle password update
-    const handlePasswordUpdate = (e) => {
+    const handlePasswordUpdate = async (e) => {
         e.preventDefault()
 
         // Simple validation
+        if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+            setPasswordError("Invalid password data.")
+            return
+        }
+        if (passwordData.newPassword.length < 8) {
+            setPasswordError("Password must be at least 8 characters long")
+            return
+        }
+        if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(passwordData.newPassword)) {
+            setPasswordError("Password must contain uppercase, lowercase, and number")
+            return
+        }
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             setPasswordError("New passwords do not match")
             return
         }
 
-        if (passwordData.newPassword.length < 8) {
-            setPasswordError("Password must be at least 8 characters long")
-            return
-        }
-
-        // In a real app, you would send this to an API
-        console.log("Password Update Data:", {
-            currentPassword: passwordData.currentPassword,
-            newPassword: passwordData.newPassword,
-        })
+        await updateExistingUsersPassword(passwordData.currentPassword, passwordData.newPassword)
 
         // Reset form
         setPasswordData({
@@ -178,8 +260,6 @@ const UserSettingsComponent = () => {
             newPassword: "",
             confirmPassword: "",
         })
-
-        // Show success message (in a real app)
     }
 
 
@@ -272,10 +352,10 @@ const UserSettingsComponent = () => {
     // Remove image preview
     const removeImage = () => {
         setImagePreview(null)
-        setImageFile(null)
         setImageSize({ width: 0, height: 0, size: 0 })
         setZoom(1)
         setPosition({ x: 0, y: 0 })
+        setOriginalFile(null)
         if (fileInputRef.current) {
             fileInputRef.current.value = ""
         }
@@ -312,18 +392,19 @@ const UserSettingsComponent = () => {
         window.scrollTo({
             top: 0,
             // behavior: 'smooth'
-        });
-    }, []);
+        })
+    }, [])
+
+
+    // Check if we have a profile image to display
+    const hasProfileImage =
+        imagePreview || (formData.personalDetails?.photoURL && formData.personalDetails.photoURL !== "/placeholder.svg")
 
 
     return (
-        <div
-            className={`w-full mx-auto rounded-xl ${darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-800"}`}
-        >
-
+        <div className={`w-full mx-auto rounded-xl ${darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-800"}`}>
             {/* Main content */}
             <div className="space-y-5">
-
                 {/* Profile Image Section */}
                 <div
                     className={`rounded-xl overflow-hidden shadow-sm ${darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"}`}
@@ -331,23 +412,27 @@ const UserSettingsComponent = () => {
                     <div className="p-6">
                         <h2 className="text-xl font-semibold mb-4">Profile Image</h2>
 
-                        <div className="flex flex-col md:flex-row gap-4">
+                        <div className="px-10 flex flex-col md:flex-row gap-4">
                             {/* Image preview container */}
                             <div
                                 ref={imageContainerRef}
                                 className={`relative w-40 h-40 rounded-full overflow-hidden mx-auto md:mx-0 border-2 ${darkMode ? "border-gray-700" : "border-gray-200"}`}
                                 style={{ cursor: imagePreview ? "move" : "default" }}
                             >
-                                {imagePreview ? (
+                                {hasProfileImage ? (
                                     <div className="w-full h-full flex items-center justify-center overflow-hidden">
                                         <img
-                                            src={imagePreview || "/placeholder.svg"}
+                                            src={imagePreview || formData.personalDetails?.photoURL}
                                             alt="Profile preview"
-                                            className="object-cover"
-                                            style={{
-                                                transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-                                                transition: isDragging ? "none" : "transform 0.2s ease-out",
-                                            }}
+                                            className="object-cover w-full h-full"
+                                            style={
+                                                imagePreview
+                                                    ? {
+                                                        transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                                                        transition: isDragging ? "none" : "transform 0.2s ease-out",
+                                                    }
+                                                    : {}
+                                            }
                                         />
                                     </div>
                                 ) : (
@@ -364,7 +449,7 @@ const UserSettingsComponent = () => {
                                 <div className="flex flex-wrap gap-2 mb-4">
                                     <button
                                         type="button"
-                                        className={`px-4 py-2 rounded-lg flex items-center gap-2 ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
+                                        className={`px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
                                         onClick={() => fileInputRef.current.click()}
                                     >
                                         <FiUpload size={16} className="text-blue-500" />
@@ -375,7 +460,7 @@ const UserSettingsComponent = () => {
                                         <>
                                             <button
                                                 type="button"
-                                                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
+                                                className={`px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
                                                 onClick={handleZoomIn}
                                             >
                                                 <FiZoomIn size={16} className="text-green-500" />
@@ -384,7 +469,7 @@ const UserSettingsComponent = () => {
 
                                             <button
                                                 type="button"
-                                                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
+                                                className={`px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
                                                 onClick={handleZoomOut}
                                             >
                                                 <FiZoomOut size={16} className="text-yellow-500" />
@@ -393,7 +478,7 @@ const UserSettingsComponent = () => {
 
                                             <button
                                                 type="button"
-                                                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
+                                                className={`px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
                                                 onClick={handleRotate}
                                             >
                                                 <FiRotateCw size={16} className="text-purple-500" />
@@ -402,7 +487,7 @@ const UserSettingsComponent = () => {
 
                                             <button
                                                 type="button"
-                                                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
+                                                className={`px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
                                                 onClick={removeImage}
                                             >
                                                 <FiX size={16} className="text-red-500" />
@@ -451,12 +536,12 @@ const UserSettingsComponent = () => {
                                     className={`flex items-center rounded-lg border ${darkMode ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}`}
                                 >
                                     <span className="px-3 py-2 text-gray-500">
-                                        <FiUser size={18} />
+                                        <FiUser size={18}/>
                                     </span>
                                     <input
                                         type="text"
-                                        name="name"
-                                        value={formData.name}
+                                        name="displayName"
+                                        value={formData.displayName || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                         required
@@ -472,12 +557,12 @@ const UserSettingsComponent = () => {
                                     className={`flex items-center rounded-lg border ${darkMode ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}`}
                                 >
                                     <span className="px-3 py-2 text-gray-500">
-                                        <FiMail size={18} />
+                                        <FiMail size={18}/>
                                     </span>
                                     <input
                                         type="email"
                                         name="email"
-                                        value={formData.email}
+                                        value={formData.email || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                         required
@@ -498,7 +583,7 @@ const UserSettingsComponent = () => {
                                     <input
                                         type="tel"
                                         name="phone"
-                                        value={formData.phone}
+                                        value={formData.phone || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                     />
@@ -628,7 +713,7 @@ const UserSettingsComponent = () => {
                                     <input
                                         type="text"
                                         name="profession"
-                                        value={formData.profession}
+                                        value={formData.personalDetails?.profession || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                     />
@@ -641,7 +726,7 @@ const UserSettingsComponent = () => {
                                 </label>
                                 <textarea
                                     name="bio"
-                                    value={formData.bio}
+                                    value={formData.personalDetails?.bio || ""}
                                     onChange={handleInputChange}
                                     rows="4"
                                     className={`block w-full px-4 py-3 rounded-lg border focus:outline-none ${darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}
@@ -686,7 +771,7 @@ const UserSettingsComponent = () => {
                                     <input
                                         type="text"
                                         name="billing.street"
-                                        value={formData.billingAddress.street}
+                                        value={formData.personalDetails?.billingAddress?.street || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                     />
@@ -706,7 +791,7 @@ const UserSettingsComponent = () => {
                                     <input
                                         type="text"
                                         name="billing.city"
-                                        value={formData.billingAddress.city}
+                                        value={formData.personalDetails?.billingAddress?.city || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                     />
@@ -726,7 +811,7 @@ const UserSettingsComponent = () => {
                                     <input
                                         type="text"
                                         name="billing.state"
-                                        value={formData.billingAddress.state}
+                                        value={formData.personalDetails?.billingAddress?.state || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                     />
@@ -746,7 +831,7 @@ const UserSettingsComponent = () => {
                                     <input
                                         type="text"
                                         name="billing.zipCode"
-                                        value={formData.billingAddress.zipCode}
+                                        value={formData.personalDetails?.billingAddress?.zipCode || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                     />
@@ -766,7 +851,7 @@ const UserSettingsComponent = () => {
                                     <input
                                         type="text"
                                         name="billing.country"
-                                        value={formData.billingAddress.country}
+                                        value={formData.personalDetails?.billingAddress?.country || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                     />
@@ -785,7 +870,6 @@ const UserSettingsComponent = () => {
                         </div>
                     </div>
                 </form>
-
             </div>
         </div>
     )

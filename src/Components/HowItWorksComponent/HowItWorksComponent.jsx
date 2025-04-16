@@ -96,7 +96,7 @@ const HowItWorksComponent = () => {
             color: 'from-blue-500 to-cyan-500',
             benefit: 'Access to the latest tech without commitment',
             highlightEmoji: <IoSparkles className="text-blue-400" size={18}/>,
-            image: 'https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167244/browse_dxfgtc.jpg',
+            image: 'https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742167244/browse_dxfgtc.jpg',
             bgColor: 'bg-blue-500/10'
         },
         {
@@ -118,7 +118,7 @@ const HowItWorksComponent = () => {
             color: 'from-violet-500 to-indigo-500',
             benefit: 'Transparent pricing with no hidden fees',
             highlightEmoji: <IoShieldCheckmark className="text-violet-400" size={18}/>,
-            image: 'https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167444/confirm_rent_hyb7mg.jpg',
+            image: 'https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742167444/confirm_rent_hyb7mg.jpg',
             bgColor: 'bg-violet-500/10'
         },
         {
@@ -129,7 +129,7 @@ const HowItWorksComponent = () => {
             color: 'from-purple-500 to-violet-500',
             benefit: 'Fast shipping with real-time tracking',
             highlightEmoji: <IoRocket className="text-purple-400" size={18}/>,
-            image: 'https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167654/receive_hgh1yn.jpg',
+            image: 'https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742167654/receive_hgh1yn.jpg',
             bgColor: 'bg-purple-500/10'
         },
         {
@@ -140,7 +140,7 @@ const HowItWorksComponent = () => {
             color: 'from-pink-500 to-purple-500',
             benefit: '24/7 tech support included with every rental',
             highlightEmoji: <IoSparkles className="text-pink-400" size={18}/>,
-            image: 'https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg',
+            image: 'https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742167881/use_rryd6c.jpg',
             bgColor: 'bg-pink-500/10'
         },
         {
@@ -151,7 +151,7 @@ const HowItWorksComponent = () => {
             color: 'from-rose-500 to-pink-500',
             benefit: 'Hassle-free returns with scheduled pickup',
             highlightEmoji: <IoFlash className="text-rose-400" size={18}/>,
-            image: 'https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742168286/return_hnyvhi.jpg',
+            image: 'https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742168286/return_hnyvhi.jpg',
             bgColor: 'bg-rose-500/10'
         },
         {
@@ -162,7 +162,7 @@ const HowItWorksComponent = () => {
             color: 'from-amber-500 to-rose-500',
             benefit: 'Loyalty program with exclusive member benefits',
             highlightEmoji: <IoRocket className="text-amber-400" size={18}/>,
-            image: 'https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742166942/reward_ansntv.jpg',
+            image: 'https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742166942/reward_ansntv.jpg',
             bgColor: 'bg-amber-500/10'
         }
     ];

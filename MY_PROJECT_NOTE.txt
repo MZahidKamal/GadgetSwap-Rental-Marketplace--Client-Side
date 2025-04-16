@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "PasswordResetComponent design prototype and functional feature is implemented successfully."
+git commit -m "UserSettingsComponent feature and functionalities are implemented successfully."
 git push
 
 // Necessary Git commands.----------------------------------------------------------------------------------------------
@@ -95,6 +95,23 @@ Admin Dashboard
 ------------------------------------------------------------------------------------------------------------------------
 
 
+{
+  "displayName": "",
+  "email": "",
+  "personalDetails": {
+    "bio": "",
+    "profession": "",
+    "photoURL": "",
+    "phone": "",
+    "billingAddress": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "state": "",
+      "country": ""
+    }
+  }
+}
 
 
 
