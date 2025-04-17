@@ -1,11 +1,11 @@
-import {useContext, useEffect, useRef, useState} from "react"
-import { FiBriefcase, FiHome, FiLock, FiMail, FiMapPin, FiPhone, FiRotateCw, FiSave, FiUpload, FiUser, FiX, FiZoomIn, FiZoomOut } from "react-icons/fi"
-import {useDispatch, useSelector} from "react-redux"
+import { useContext, useEffect, useRef, useState } from "react"
+import { FiBriefcase, FiHome, FiLock, FiMail, FiMapPin, FiPhone, FiRotateCw, FiSave, FiUpload, FiUser, FiX, FiZoomIn, FiZoomOut, FiEye, FiEyeOff } from "react-icons/fi"
+import { useDispatch, useSelector } from "react-redux"
 import AuthContext from "../../../Providers/AuthContext.jsx"
 import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx"
-import { getUserProfileDetails, updateUserProfileInfo } from "../../../Features/userProfileDetails/userProfileDetailsSlice.js"
-import useCloudinary from "../../../CustomHooks/useCloudinary.jsx";
-import {toast} from "react-toastify";
+import {getUserProfileDetails, updateUserProfileInfo} from "../../../Features/userProfileDetails/userProfileDetailsSlice.js"
+import useCloudinary from "../../../CustomHooks/useCloudinary.jsx"
+import { toast } from "react-toastify"
 
 
 const UserSettingsComponent = () => {
@@ -13,17 +13,15 @@ const UserSettingsComponent = () => {
     // State management
     const darkMode = useSelector((state) => state.darkMode.isDark)
     const { user: registeredUser, updateExistingUsersPassword } = useContext(AuthContext)
-
     const dispatch = useDispatch()
     const { userProfileDetails } = useSelector((state) => state.userProfileDetails)
-    const {uploadImageToCloudinaryAndGetURL} = useCloudinary();
+    const { uploadImageToCloudinaryAndGetURL } = useCloudinary()
 
 
     // Initial fake user data
     const initialUserData = {
         displayName: userProfileDetails?.displayName,
         email: userProfileDetails?.email,
-        phone: userProfileDetails?.personalDetails?.phone,
         personalDetails: {
             bio: userProfileDetails?.personalDetails?.bio,
             profession: userProfileDetails?.personalDetails?.profession,
@@ -51,6 +49,11 @@ const UserSettingsComponent = () => {
     const [originalFile, setOriginalFile] = useState(null) // Store the original file
 
 
+    // Password visibility states
+    const [showNewPassword, setShowNewPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+
     // Fetch user profile detail on mount
     useEffect(() => {
         if (registeredUser?.email) {
@@ -65,7 +68,6 @@ const UserSettingsComponent = () => {
             setFormData({
                 displayName: userProfileDetails?.displayName,
                 email: userProfileDetails?.email,
-                phone: userProfileDetails?.personalDetails?.phone,
                 personalDetails: {
                     bio: userProfileDetails?.personalDetails?.bio,
                     profession: userProfileDetails?.personalDetails?.profession,
@@ -118,6 +120,14 @@ const UserSettingsComponent = () => {
                 personalDetails: {
                     ...formData.personalDetails,
                     [name]: value,
+                },
+            })
+        } else if (name === "phone") {
+            setFormData({
+                ...formData,
+                personalDetails: {
+                    ...formData.personalDetails,
+                    phone: value,
                 },
             })
         } else {
@@ -204,7 +214,7 @@ const UserSettingsComponent = () => {
                 bio: formData.personalDetails?.bio || "",
                 profession: formData.personalDetails?.profession || "",
                 photoURL: formData.personalDetails?.photoURL || "",
-                phone: formData.phone || "",
+                phone: formData.personalDetails?.phone || "",
                 billingAddress: {
                     street: formData.personalDetails?.billingAddress?.street || "",
                     city: formData.personalDetails?.billingAddress?.city || "",
@@ -218,17 +228,16 @@ const UserSettingsComponent = () => {
         // If image has been modified, convert and log the modified image
         if (imagePreview && originalFile) {
             const modifiedFile = await base64ToFile(imagePreview, originalFile.name)
-            const cloudinaryImageUrl = await uploadImageToCloudinaryAndGetURL(modifiedFile);
+            const cloudinaryImageUrl = await uploadImageToCloudinaryAndGetURL(modifiedFile)
 
-            if (cloudinaryImageUrl) userInfoObj.personalDetails.photoURL = cloudinaryImageUrl;
+            if (cloudinaryImageUrl) userInfoObj.personalDetails.photoURL = cloudinaryImageUrl
             else toast.error("Error uploading image!")
         }
 
         // Save the updated user object to database
-        await dispatch(updateUserProfileInfo({userEmail: registeredUser?.email, userInfoObj, axiosSecure}))
+        await dispatch(updateUserProfileInfo({ userEmail: registeredUser?.email, userInfoObj, axiosSecure }))
         // console.log("Updated User Data:", userInfoObj)
     }
-
 
     // Handle password update
     const handlePasswordUpdate = async (e) => {
@@ -400,7 +409,6 @@ const UserSettingsComponent = () => {
     const hasProfileImage =
         imagePreview || (formData.personalDetails?.photoURL && formData.personalDetails.photoURL !== "/placeholder.svg")
 
-
     return (
         <div className={`w-full mx-auto rounded-xl ${darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-800"}`}>
             {/* Main content */}
@@ -536,7 +544,7 @@ const UserSettingsComponent = () => {
                                     className={`flex items-center rounded-lg border ${darkMode ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}`}
                                 >
                                     <span className="px-3 py-2 text-gray-500">
-                                        <FiUser size={18}/>
+                                        <FiUser size={18} />
                                     </span>
                                     <input
                                         type="text"
@@ -557,7 +565,7 @@ const UserSettingsComponent = () => {
                                     className={`flex items-center rounded-lg border ${darkMode ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}`}
                                 >
                                     <span className="px-3 py-2 text-gray-500">
-                                        <FiMail size={18}/>
+                                        <FiMail size={18} />
                                     </span>
                                     <input
                                         type="email"
@@ -583,7 +591,7 @@ const UserSettingsComponent = () => {
                                     <input
                                         type="tel"
                                         name="phone"
-                                        value={formData.phone || ""}
+                                        value={formData.personalDetails?.phone || ""}
                                         onChange={handleInputChange}
                                         className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                     />
@@ -644,14 +652,21 @@ const UserSettingsComponent = () => {
                                         <FiLock size={18} />
                                     </span>
                                     <input
-                                        type="password"
+                                        type={showNewPassword ? "text" : "password"}
                                         name="newPassword"
                                         value={passwordData.newPassword}
                                         onChange={handlePasswordChange}
-                                        className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                                        className={`block w-full px-3 py-2 focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                         required
                                         minLength={8}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                        className="px-3 py-2 text-gray-500 cursor-pointer"
+                                    >
+                                        {showNewPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                                    </button>
                                 </div>
                             </div>
 
@@ -666,13 +681,20 @@ const UserSettingsComponent = () => {
                                         <FiLock size={18} />
                                     </span>
                                     <input
-                                        type="password"
+                                        type={showConfirmPassword ? "text" : "password"}
                                         name="confirmPassword"
                                         value={passwordData.confirmPassword}
                                         onChange={handlePasswordChange}
-                                        className={`block w-full px-3 py-2 rounded-r-lg focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                                        className={`block w-full px-3 py-2 focus:outline-none ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
                                         required
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="px-3 py-2 text-gray-500 cursor-pointer"
+                                    >
+                                        {showConfirmPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                                    </button>
                                 </div>
                             </div>
 
