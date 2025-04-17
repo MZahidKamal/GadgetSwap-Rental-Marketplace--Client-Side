@@ -1,9 +1,12 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {FiMenu, FiX, FiMoon, FiSun, FiUser} from 'react-icons/fi';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
 import {toggleDarkTheme} from "../../Features/darkLightTheme/darkLightThemeSlice.js";
 import AuthContext from "../../Providers/AuthContext.jsx";
+import { getUserProfileDetails } from "../../Features/userProfileDetails/userProfileDetailsSlice.js"
+import useAxiosSecure from "../../CustomHooks/useAxiosSecure.jsx";
+
 
 
 const NavbarComponent = () => {
@@ -11,6 +14,7 @@ const NavbarComponent = () => {
     const {user: registeredUser, signOutCurrentUser} = useContext(AuthContext);
     const darkMode = useSelector((state) => state.darkMode.isDark);
     const dispatch = useDispatch();
+    const { userProfileDetails } = useSelector((state) => state.userProfileDetails)
 
 
     const toggleDarkMode = () => {
@@ -18,19 +22,27 @@ const NavbarComponent = () => {
     }
 
 
-
+    const axiosSecure = useAxiosSecure()
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
 
 
+    // Fetch user profile detail on mount
+    useEffect(() => {
+        if (registeredUser?.email) {
+            dispatch(getUserProfileDetails({ userEmail: registeredUser?.email, axiosSecure }))
+        }
+    }, [axiosSecure, dispatch, registeredUser?.email])
+
+
     // Sample user data - in a real app, this would come from auth context or props
     const user = {
         isLoggedIn: registeredUser !== null,
-        name: registeredUser?.displayName,
-        email: registeredUser?.email,
-        profilePicture: registeredUser?.personalDetails?.photoURL,
-        role: registeredUser?.role,
+        name: userProfileDetails?.displayName,
+        email: userProfileDetails?.email,
+        profilePicture: userProfileDetails?.personalDetails?.photoURL,
+        role: userProfileDetails?.role,
     };
 
 
@@ -52,7 +64,7 @@ const NavbarComponent = () => {
     };
 
 
-    // Function to handle scrolling to top of the page
+    // Function to handle scrolling to the top of the page
     const scrollToTop = (e) => {
         e.preventDefault();
 
@@ -63,14 +75,14 @@ const NavbarComponent = () => {
                 behavior: 'smooth'
             });
 
-            // Close mobile menu if open
+            // Close the mobile menu if open
             if (isMenuOpen) {
                 setIsMenuOpen(false);
             }
         } else {
-            // If we're on a different page, navigate to homepage first
+            // If we're on a different page, navigate to the homepage first
             navigate('/');
-            // Scroll to top after navigation
+            // Scroll to the top after navigation
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
@@ -79,7 +91,7 @@ const NavbarComponent = () => {
     };
 
 
-    // Function to handle smooth scrolling to "how-it-works" section
+    // Function to handle smooth scrolling to the "how-it-works" section
     const scrollToHowItWorks = (e) => {
         e.preventDefault();
 
@@ -92,12 +104,12 @@ const NavbarComponent = () => {
                     block: 'start'
                 });
             }
-            // Close mobile menu if open
+            // Close the mobile menu if open
             if (isMenuOpen) {
                 setIsMenuOpen(false);
             }
         } else {
-            // If we're on a different page, navigate to homepage first, then scroll
+            // If we're on a different page, navigate to the homepage first, then scroll
             navigate('/');
             // We need to wait for the navigation to complete before scrolling
             setTimeout(() => {

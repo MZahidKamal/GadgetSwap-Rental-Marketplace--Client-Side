@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react"
-import {Link, useLocation, useNavigate} from "react-router-dom"
-import {useDispatch, useSelector} from "react-redux"
-import {FiHome, FiUsers, FiPackage, FiShoppingCart, FiHeart, FiMessageSquare, FiSettings, FiLogOut, FiX, FiHelpCircle, FiCreditCard, FiMenu, FiUser, FiAward} from "react-icons/fi"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+import { FiHome, FiUsers, FiPackage, FiShoppingCart, FiHeart, FiMessageSquare, FiSettings, FiLogOut, FiX, FiHelpCircle, FiCreditCard, FiMenu, FiUser, FiAward } from "react-icons/fi"
 import AuthContext from "../../Providers/AuthContext.jsx"
 import { Outlet } from "react-router"
-import LoadingSkeleton from "./LoadingSkeleton.jsx";
-import {getUserProfileDetails} from "../../Features/userProfileDetails/userProfileDetailsSlice.js";
-import useAxiosSecure from "../../CustomHooks/useAxiosSecure.jsx";
+import LoadingSkeleton from "./LoadingSkeleton.jsx"
+import { getUserProfileDetails } from "../../Features/userProfileDetails/userProfileDetailsSlice.js"
+import useAxiosSecure from "../../CustomHooks/useAxiosSecure.jsx"
 
 
 const DashboardPage = () => {
@@ -15,25 +15,30 @@ const DashboardPage = () => {
     const darkMode = useSelector((state) => state.darkMode.isDark)
     const { user: registeredUser, signOutCurrentUser } = useContext(AuthContext)
     const dispatch = useDispatch()
-    const {userProfileDetails} = useSelector(state => state.userProfileDetails);
-    const {userMessagesChain} = useSelector((state) => state.userMessages);
+    const { userProfileDetails } = useSelector((state) => state.userProfileDetails)
+    const { userMessagesChain } = useSelector((state) => state.userMessages)
 
-    const axiosSecure = useAxiosSecure();
+    const axiosSecure = useAxiosSecure()
     const [user, setUser] = useState({})
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isMobileView, setIsMobileView] = useState(false)
     const [activeTab, setActiveTab] = useState("overview")
     const [isLoading, setIsLoading] = useState(true)
+    const [imageError, setImageError] = useState(false)
     const navigateTo = useNavigate()
     const currentUrl = useLocation()
-    
-    
+
+
+    // Default avatar image
+    const defaultAvatar = "/placeholder.svg"
+
+
     // Fetch user profile detail on mount
     useEffect(() => {
-        if (registeredUser?.email){
-            dispatch(getUserProfileDetails({userEmail: registeredUser?.email, axiosSecure}));
+        if (registeredUser?.email) {
+            dispatch(getUserProfileDetails({ userEmail: registeredUser?.email, axiosSecure }))
         }
-    }, [axiosSecure, dispatch, registeredUser?.email]);
+    }, [axiosSecure, dispatch, registeredUser?.email])
 
 
     // After fetching get user profile details data
@@ -43,38 +48,22 @@ const DashboardPage = () => {
                 setUser({
                     name: userProfileDetails?.displayName,
                     email: userProfileDetails?.email,
-                    avatar: userProfileDetails?.personalDetails?.photoURL,
+                    avatar: userProfileDetails?.personalDetails?.photoURL || defaultAvatar,
                     role: userProfileDetails?.role,
                     joinDate: userProfileDetails?.joinDate,
                 })
+                // Reset image error state when user data changes
+                setImageError(false)
             }
         }
-        getUserProfileDetailsData().then();
-    }, [userProfileDetails]);
+        getUserProfileDetailsData().then()
+    }, [userProfileDetails])
 
 
-    // Mock data for dashboard
-    const [dashboardData, setDashboardData] = useState({
-        recentMessages: [
-            {
-                id: "msg001",
-                sender: "Support Team",
-                avatar: "/placeholder.svg",
-                message: "Your inquiry about the rental extension has been processed.",
-                time: "2 hours ago",
-                read: false,
-            },
-            {
-                id: "msg002",
-                sender: "Alice Johnson",
-                avatar: "/placeholder.svg",
-                message: "I'd like to know if the MacBook is available next week?",
-                time: "Yesterday",
-                read: false,
-            },
-        ]
-    })
-    // TODO: Replace with the real data from backend.
+    // Handle image loading error
+    const handleImageError = () => {
+        setImageError(true)
+    }
 
 
     // Simulate loading data
@@ -86,6 +75,7 @@ const DashboardPage = () => {
         return () => clearTimeout(timer)
     }, [])
 
+
     // Toggle mobile menu
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -94,16 +84,16 @@ const DashboardPage = () => {
 
     // Handle tab change
     const handleTabChange = (tab) => {
-        navigateTo(`/dashboard/${user.role}/${tab}`);
+        navigateTo(`/dashboard/${user?.role}/${tab}`)
         if (isMobileMenuOpen) {
-            setIsMobileMenuOpen(false);
+            setIsMobileMenuOpen(false)
         }
     }
 
 
     useEffect(() => {
         setActiveTab(currentUrl.pathname.split("/")[3])
-    }, [currentUrl]);
+    }, [currentUrl])
 
 
     const handleSignOutClick = async () => {
@@ -155,6 +145,15 @@ const DashboardPage = () => {
     ]
 
 
+    // Get the appropriate avatar image
+    const getAvatarImage = () => {
+        if (imageError || !user?.avatar) {
+            return defaultAvatar
+        }
+        return user.avatar
+    }
+
+
     return (
         <div
             className={`min-h-[calc(100vh-421px)] transition-colors duration-300 ${darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"}`}
@@ -174,27 +173,36 @@ const DashboardPage = () => {
 
             {/* Mobile Navigation Menu - Exact replica from UserOverviewComponent */}
             {isMobileView && isMobileMenuOpen && (
-                <div className={`mb-6 w-11/12 mx-auto rounded-xl overflow-hidden ${darkMode ? "bg-gray-800" : "bg-white shadow-md"}`}>
+                <div
+                    className={`mb-6 w-11/12 mx-auto rounded-xl overflow-hidden ${darkMode ? "bg-gray-800" : "bg-white shadow-md"}`}
+                >
                     <div className="p-4 border-b border-gray-700 dark:border-gray-700">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full overflow-hidden">
-                                <img src={user.avatar || "/placeholder.svg"} alt={user.name} className="w-full h-full object-cover" />
+                            <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                <img
+                                    src={getAvatarImage() || "/placeholder.svg"}
+                                    alt={user?.name || "User"}
+                                    className="w-full h-full object-cover"
+                                    onError={handleImageError}
+                                />
                             </div>
                             <div>
-                                <div className="font-medium">{user.name}</div>
-                                <div className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{user.email}</div>
+                                <div className="font-medium">{user?.name || "User"}</div>
+                                <div className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                                    {user?.email || "user@example.com"}
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className="p-2">
-                        {user.role === "admin" ? (
+                        {user?.role === "admin" ? (
                             // Admin Navigation
                             <>
                                 {AdminLeftSidebarTabs.map((tab) => (
                                     <button
                                         key={tab.id}
                                         onClick={() => handleTabChange(tab.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
                                             activeTab === tab.id
                                                 ? darkMode
                                                     ? "bg-blue-900/30 text-blue-400"
@@ -217,7 +225,7 @@ const DashboardPage = () => {
                             <>
                                 <button
                                     onClick={() => handleTabChange("overview")}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
                                         darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                                     }`}
                                 >
@@ -226,7 +234,7 @@ const DashboardPage = () => {
                                 </button>
                                 <button
                                     onClick={() => handleTabChange("my_rentals")}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
                                         darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                                     }`}
                                 >
@@ -235,7 +243,7 @@ const DashboardPage = () => {
                                 </button>
                                 <button
                                     onClick={() => handleTabChange("wishlist")}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
                                         darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                                     }`}
                                 >
@@ -244,7 +252,7 @@ const DashboardPage = () => {
                                 </button>
                                 <button
                                     onClick={() => handleTabChange("loyalty_and_rewards")}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
                                         darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                                     }`}
                                 >
@@ -253,7 +261,7 @@ const DashboardPage = () => {
                                 </button>
                                 <button
                                     onClick={() => handleTabChange("messages")}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
                                         darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                                     }`}
                                 >
@@ -262,7 +270,7 @@ const DashboardPage = () => {
                                 </button>
                                 <button
                                     onClick={() => handleTabChange("settings")}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
                                         darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                                     }`}
                                 >
@@ -275,7 +283,7 @@ const DashboardPage = () => {
                     <div className="p-4 border-t border-gray-700 dark:border-gray-700">
                         <button
                             onClick={handleSignOutClick}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
                                 darkMode ? "hover:bg-gray-700 text-red-400" : "hover:bg-gray-100 text-red-500"
                             }`}
                         >
@@ -294,21 +302,24 @@ const DashboardPage = () => {
                         <div className={`sticky top-32 rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-white shadow-sm"}`}>
                             <div className="mb-6">
                                 <div className="flex items-center mb-4">
-                                    <img
-                                        src={user.avatar || "/placeholder.svg"}
-                                        alt={user.name}
-                                        className="w-10 h-10 rounded-full mr-3 object-cover"
-                                    />
-                                    <div>
-                                        <h3 className="text-lg font-bold">{user.name}</h3>
-                                        <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{user.role}</p>
+                                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                        <img
+                                            src={getAvatarImage() || "/placeholder.svg"}
+                                            alt={user?.name || "User"}
+                                            className="w-full h-full object-cover"
+                                            onError={handleImageError}
+                                        />
+                                    </div>
+                                    <div className="ml-3">
+                                        <h3 className="text-lg font-bold">{user?.name || "User"}</h3>
+                                        <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{user?.role || "user"}</p>
                                     </div>
                                 </div>
                             </div>
 
                             <nav>
                                 <ul className="space-y-1">
-                                    {user.role === "admin" ? (
+                                    {user?.role === "admin" ? (
                                         // Admin Navigation
                                         <>
                                             {AdminLeftSidebarTabs.map((tab) => (
@@ -358,7 +369,7 @@ const DashboardPage = () => {
                                                             >
                                                                 {userMessagesChain?.unreadByUser_count}
                                                             </span>
-                                                            )}
+                                                        )}
                                                         {tab.id === "wishlist" && userProfileDetails?.wishlist?.length > 0 && (
                                                             <span
                                                                 className={`ml-auto px-2 py-0.5 text-xs rounded-full ${
@@ -395,7 +406,10 @@ const DashboardPage = () => {
                                         <p className={`text-xs mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
                                             Contact our support team for assistance
                                         </p>
-                                        <Link to={"/contact-us"} className={`mt-2 text-xs ${darkMode ? "text-blue-400" : "text-blue-600"}`}>
+                                        <Link
+                                            to={"/contact-us"}
+                                            className={`mt-2 text-xs ${darkMode ? "text-blue-400" : "text-blue-600"} cursor-pointer`}
+                                        >
                                             Get Support
                                         </Link>
                                     </div>
