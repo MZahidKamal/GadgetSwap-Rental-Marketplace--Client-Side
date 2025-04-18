@@ -9,8 +9,9 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "UserLoyaltyAndRewardComponent feature and functionalities are implemented successfully."
+git commit -m "Rent Now feature in GadgetDetailsComponent is implemented successfully."
 git push
+
 git add .
 git commit -m "Some bugs have been fixed to ensure a better user experience."
 git push
@@ -192,6 +193,129 @@ orders, create an array, and then will send it to client side.------------------
             rating: 0,
         },
     ])
+
+
+{
+    order_id: "ORD-2023-001",
+    gadget_id: "67fda0bd27ade1176d739849"
+    gadgetName: "iPhone 15 Pro Max",
+    gadgetImage: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
+    category: "Smartphones",
+    rental_streak: [
+        {
+            startDate: "2023-11-10",
+            endDate: ["2023-11-17"],
+            blockedDates: ["2023-11-10", "2023-11-11", "2023-11-12", "2023-11-13", "2023-11-14", "2023-11-15", "2023-11-16", "2023-11-17"],
+            initial_amount: 175.5,
+            discount_applied: 10,
+            shipping_amount: 5,
+            payable_amount: 175.5,
+            paymentMethod: "Credit Card",
+            pointsEarned: 150,
+            pointsRedeemed: 0,
+        }
+    ],
+    rental_status: "active",                 // canceled, completed
+    shipment_status: "processing_order",     // shipment_started, delivered, in_uSe, return_started, return_received
+    membershipTier: "Silver",
+    hasInvoice: true,
+    isReviewed: false,
+    rating: 0,
+}
+
+
+{
+    order_id: "ORD-2023-001",
+    gadget_id: "67fda0bd27ade1176d739849"
+    gadgetName: "iPhone 15 Pro Max",
+    gadgetImage: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
+    category: "Smartphones",
+    rentalStreak: [
+        {
+            startDate: "2023-11-10",
+            endDate: ["2023-11-17"],
+            rentalDuration: 8,
+            blockedDates: ["2023-11-10", "2023-11-11", "2023-11-12", "2023-11-13", "2023-11-14", "2023-11-15", "2023-11-16", "2023-11-17"],
+            insuranceOption: "basic",
+            insuranceAmount: 3.99,
+            initialAmount: 175.5,
+            discountApplied: 0,
+            shippingAmount: 5,
+            pointsEarned: 150,
+            pointsRedeemed: 0,
+            payableFinalAmount: 175.5,
+            paymentMethod: "Credit Card",
+        }
+    ],
+    rentalStatus: "active",
+    shipmentStatus: "processing_order",
+    membershipTier: "Silver",
+    hasInvoice: true,
+    isReviewed: false,
+    rating: 0,
+}
+
+
+{
+    "order_id": "GSRO_20250418_170856_5443",
+    "gadget_id": "67fda0bd27ade1176d739849",
+    "gadgetName": "Shure SM7B",
+    "gadgetImage": "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742705184/shuresm7b1_o4rp7w.webp",
+    "category": "Audio",
+    "rentalStreak": [
+        {
+            "startDate": "2025-04-19",
+            "endDate": [
+                "2025-05-19"
+            ],
+            "rentalDuration": 30,
+            "blockedDates": [
+                "2025-04-19",
+                "2025-05-19"
+            ],
+            "insuranceOption": "premium",
+            "insuranceAmount": 149.7,
+            "initialAmount": 599.7,
+            "discountApplied": 0,
+            "shippingAmount": 5,
+            "pointsEarned": 599,
+            "pointsRedeemed": 0,
+            "payableFinalAmount": 604.7,
+            "paymentMethod": "Credit Card"
+        }
+    ],
+    "rentalStatus": "active",
+    "shipmentStatus": "processing_order",
+    "membershipTier": "Gold",
+    "hasInvoice": false,
+    "isReviewed": false,
+    "rating": 0
+}
+
+
+activityHistoriesCollection
+gadgetsCollection
+messagesCollection
+notificationsCollection
+rentalOrdersCollection
+userCollection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

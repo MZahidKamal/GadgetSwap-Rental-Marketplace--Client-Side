@@ -6,6 +6,7 @@ import getGadgetDetailsByIdReducer from "../Features/getGadgetDetailsById/getGad
 import userProfileDetailsReducer from "../Features/userProfileDetails/userProfileDetailsSlice.js";
 import gadgetWishlistReducer from "../Features/gadgetWishlist/gadgetWishlistSlice.js";
 import userMessagesReducer from "../Features/userMessages/userMessagesSlice.js";
+import userRentalOrdersReducer from "../Features/userRentalOrders/userRentalOrdersSlice.js";
 
 
 const reduxStore = configureStore({
@@ -17,6 +18,7 @@ const reduxStore = configureStore({
         userProfileDetails: userProfileDetailsReducer,
         gadgetWishlist: gadgetWishlistReducer,
         userMessages: userMessagesReducer,
+        userRentalOrders: userRentalOrdersReducer,
     },
 });
 

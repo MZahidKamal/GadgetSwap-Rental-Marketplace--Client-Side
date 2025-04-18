@@ -29,8 +29,8 @@ const UseCloudinary = () => {
 
             if (response.status !== 200) throw new Error("Failed to upload image");
 
-            console.log(response);
-            return response.data.secure_url;
+            // console.log(response);
+            return response?.data?.secure_url;
         }
         catch (error) {
             console.error("Error uploading image:", error.message);
