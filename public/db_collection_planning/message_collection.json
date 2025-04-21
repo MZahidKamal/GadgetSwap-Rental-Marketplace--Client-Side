@@ -1,19 +1,20 @@
 {
-  "_id": "12345678987654321",
-  "user_email": "example_user@domain.com",
+  "_id": "68037a367e06a2eb6d8dcaa4",
+  "user_email": "alice.johnson.testemail@gmail.com",
   "total_count": 2,
-  "unread_count": 0,
+  "unreadByUser_count": 0,
+  "unreadByAdmin_count": 1,
   "message_chain": [
     {
       "sender": "user",
-      "text": "Hello, I'm interested in renting the MacBook Pro. Is it available next week?",
-      "timestamp": 1698821400000,
-      "readByAdmin": true
+      "text": "hi",
+      "timestamp": 1745126788196,
+      "readByAdmin": false
     },
     {
       "sender": "admin",
-      "text": "Hi Alex! Yes, the MacBook Pro is available for rent next week. When exactly do you need it?",
-      "timestamp": 1698821700000,
+      "text": "Thanks for your message! Our team will get back to you shortly.",
+      "timestamp": 1745126789705,
       "readByUser": true
     }
   ]

@@ -463,7 +463,7 @@ const AuthProvider = ({children}) => {
                     if (tokenResponse?.data) console.log("JSON Web Token created and saved. User is logged in.");
                 }
                 catch (error) {
-                    console.error("Error during authentication flow:", error);
+                    // console.error("Error during authentication flow:", error);
                     setUser(null); // Reset user on error
                 }
                 finally {

@@ -1,139 +1,79 @@
-import {useContext, useEffect, useState} from "react"
-import {useDispatch, useSelector} from "react-redux"
-import {FiShoppingCart, FiHeart, FiAward, FiCalendar, FiPackage, FiBell, FiChevronRight, FiSearch, FiTag, FiAlertCircle, FiCheckCircle, FiInfo} from "react-icons/fi"
-import {FaCamera, FaGamepad, FaHeadphones, FaLaptop, FaMobileAlt, FaTabletAlt, FaWifi, FaVrCardboard} from "react-icons/fa"
-import AuthContext from "../../../Providers/AuthContext.jsx";
-import {useNavigate} from "react-router-dom";
-import {getUserProfileDetails} from "../../../Features/userProfileDetails/userProfileDetailsSlice.js";
-import {getWishlistGadgetsDetails} from "../../../Features/gadgetWishlist/gadgetWishlistSlice.js";
-import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx";
+import { useContext, useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { FiShoppingCart, FiHeart, FiAward, FiCalendar, FiPackage, FiBell, FiChevronRight, FiSearch, FiTag, FiAlertCircle, FiCheckCircle, FiInfo } from "react-icons/fi"
+import { FaCamera, FaGamepad, FaHeadphones, FaLaptop, FaMobileAlt, FaTabletAlt, FaWifi, FaVrCardboard } from "react-icons/fa"
+import AuthContext from "../../../Providers/AuthContext.jsx"
+import { useNavigate } from "react-router-dom"
+import { getUserProfileDetails } from "../../../Features/userProfileDetails/userProfileDetailsSlice.js"
+import { getWishlistGadgetsDetails } from "../../../Features/gadgetWishlist/gadgetWishlistSlice.js"
+import { getUserRentalOrders } from "../../../Features/userRentalOrders/userRentalOrdersSlice.js"
+import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx"
 
 
 const UserOverviewComponent = () => {
 
     // State management
     const darkMode = useSelector((state) => state.darkMode.isDark)
-    const {user: registeredUser} = useContext(AuthContext);
-    const dispatch = useDispatch();
-    const {userProfileDetails} = useSelector(state => state.userProfileDetails);
-    const {wishlistGadgetDetails} = useSelector(state => state.gadgetWishlist);
+    const { user: registeredUser } = useContext(AuthContext)
+    const dispatch = useDispatch()
+    const { userProfileDetails } = useSelector((state) => state.userProfileDetails)
+    const { wishlistGadgetDetails } = useSelector((state) => state.gadgetWishlist)
+    const { userRentalOrders } = useSelector((state) => state.userRentalOrders)
 
-    const axiosSecure = useAxiosSecure();
+    const axiosSecure = useAxiosSecure()
     const [userData, setUserData] = useState({})
     const [notificationsOpen, setNotificationsOpen] = useState(false)
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
 
     // Fetch user profile detail on mount
     useEffect(() => {
-        if (registeredUser?.email){
-            dispatch(getUserProfileDetails({userEmail: registeredUser?.email, axiosSecure}));
-            dispatch(getWishlistGadgetsDetails({userEmail: registeredUser?.email, axiosSecure}));
+        if (registeredUser?.email) {
+            dispatch(getUserProfileDetails({ userEmail: registeredUser?.email, axiosSecure }))
+            dispatch(getWishlistGadgetsDetails({ userEmail: registeredUser?.email, axiosSecure }))
+            dispatch(getUserRentalOrders({ userEmail: registeredUser?.email, axiosSecure }))
         }
-    }, [axiosSecure, dispatch, registeredUser?.email]);
+    }, [axiosSecure, dispatch, registeredUser?.email])
 
 
     // After fetching get user profile details data
     useEffect(() => {
-        const getUserProfileDetailsData = async () => {
-            if (userProfileDetails !== null) {
-                setUserData({
-                    name: userProfileDetails?.displayName,
-                    email: userProfileDetails?.email,
-                    profileImage: userProfileDetails?.personalDetails?.photoURL,
-                    membershipTier: userProfileDetails?.membershipDetails?.membershipTier,
-                    points: userProfileDetails?.membershipDetails?.points,
-                    stats: {
-                        activeRentals: userProfileDetails?.stats?.activeRentals,
-                        pastRentals: userProfileDetails?.stats?.pastRentals,
-                        wishlistedItems: userProfileDetails?.stats?.wishlistedItems,
-                        totalSpent: userProfileDetails?.stats?.totalSpent,
-                        pointsEarned: userProfileDetails?.stats?.pointsEarned,
-                        reviewsGiven: userProfileDetails?.stats?.reviewsGiven,
+        if (userProfileDetails !== null) {
+            setUserData({
+                // Keep notifications as fake data
+                notifications: [
+                    {
+                        id: "notif001",
+                        type: "rental",
+                        message: "Your rental for iPhone 15 Pro Max has been confirmed",
+                        time: "10 minutes ago",
+                        isRead: false,
                     },
-                    recentRentals: [
-                        {
-                            id: "ORD-2023-001",
-                            gadgetName: "iPhone 15 Pro Max",
-                            gadgetImage: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                            category: "Smartphones",
-                            startDate: "2023-11-10",
-                            endDate: "2023-11-17",
-                            status: "active",
-                            amount: 175.5,
-                        },
-                        {
-                            id: "ORD-2023-002",
-                            gadgetName: 'MacBook Pro 16"',
-                            gadgetImage: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                            category: "Laptops",
-                            startDate: "2023-11-08",
-                            endDate: "2023-11-22",
-                            status: "active",
-                            amount: 349.99,
-                        },
-                    ],
-                    loyaltyProgress: userProfileDetails?.membershipDetails?.loyaltyProgressPercentage, // Percentage to next tier
-                    nextTier: userProfileDetails?.membershipDetails?.nextTier,
-                    pointsToNextTier: userProfileDetails?.membershipDetails?.pointsToNextTier,
-                    notifications: [
-                        {
-                            id: "notif001",
-                            type: "rental",
-                            message: "Your rental for iPhone 15 Pro Max has been confirmed",
-                            time: "10 minutes ago",
-                            isRead: false,
-                        },
-                        {
-                            id: "notif002",
-                            type: "return",
-                            message: "Return reminder: Your MacBook Pro is due in 3 days",
-                            time: "2 hours ago",
-                            isRead: false,
-                        },
-                        {
-                            id: "notif003",
-                            type: "loyalty",
-                            message: "Congratulations! You've earned 150 points from your recent rental",
-                            time: "Yesterday",
-                            isRead: true,
-                        },
-                        {
-                            id: "notif004",
-                            type: "promo",
-                            message: "Special weekend offer: 15% off on all camera rentals",
-                            time: "2 days ago",
-                            isRead: true,
-                        },
-                    ],
-                    recentActivity: [
-                        {
-                            id: "act001",
-                            type: "rental",
-                            description: "Rented iPhone 15 Pro Max",
-                            date: "2023-11-10",
-                            pointsEarned: 150,
-                        },
-                        {
-                            id: "act002",
-                            type: "review",
-                            description: "Reviewed Sony A7 IV Camera",
-                            date: "2023-11-05",
-                            pointsEarned: 50,
-                        },
-                        {
-                            id: "act003",
-                            type: "referral",
-                            description: "Referred Sarah Williams",
-                            date: "2023-10-28",
-                            pointsEarned: 200,
-                        },
-                    ],
-                })
-            }
+                    {
+                        id: "notif002",
+                        type: "return",
+                        message: "Return reminder: Your MacBook Pro is due in 3 days",
+                        time: "2 hours ago",
+                        isRead: false,
+                    },
+                    {
+                        id: "notif003",
+                        type: "loyalty",
+                        message: "Congratulations! You've earned 150 points from your recent rental",
+                        time: "Yesterday",
+                        isRead: true,
+                    },
+                    {
+                        id: "notif004",
+                        type: "promo",
+                        message: "Special weekend offer: 15% off on all camera rentals",
+                        time: "2 days ago",
+                        isRead: true,
+                    },
+                ],
+            })
         }
-        getUserProfileDetailsData().then();
-    }, [userProfileDetails]);
+    }, [userProfileDetails])
     // TODO: Replace rest of the values with the real data from backend.
 
 
@@ -219,7 +159,7 @@ const UserOverviewComponent = () => {
 
     // Navigate to different sections
     const navigateTo = (path) => {
-        navigate(path);
+        navigate(path)
         console.log(`Navigating to: ${path}`)
         // In a real app, this would use router navigation
         // window.location.href = path
@@ -245,7 +185,7 @@ const UserOverviewComponent = () => {
     }
 
 
-    // Mark notification as read
+    // Mark the notification as read
     const markNotificationAsRead = (id) => {
         setUserData((prevData) => ({
             ...prevData,
@@ -289,7 +229,7 @@ const UserOverviewComponent = () => {
                 <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="text-white">
                         <h2 className="text-2xl font-bold mb-2">
-                            {getGreeting()}, {userData.name}!
+                            {getGreeting()}, {userProfileDetails?.displayName}!
                         </h2>
                         <p className="opacity-90">Here's what's happening with your account today.</p>
                     </div>
@@ -314,11 +254,11 @@ const UserOverviewComponent = () => {
                                         darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
                                     }`}
                                 >
-                                    <div className={`p-4 border-b ${darkMode? "border-gray-700" : "border-gray-300"}`}>
+                                    <div className={`p-4 border-b ${darkMode ? "border-gray-700" : "border-gray-300"}`}>
                                         <h3 className="font-bold">Notifications</h3>
                                     </div>
                                     <div className="max-h-96 overflow-y-auto">
-                                        {userData.notifications.length > 0 ? (
+                                        {userData?.notifications?.length > 0 ? (
                                             userData.notifications.map((notification) => (
                                                 <div
                                                     key={notification.id}
@@ -362,7 +302,7 @@ const UserOverviewComponent = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <div className={`p-2 border-t ${darkMode? "border-gray-700" : "border-gray-300"}`}>
+                                    <div className={`p-2 border-t ${darkMode ? "border-gray-700" : "border-gray-300"}`}>
                                         <button
                                             onClick={markAllNotificationsAsRead}
                                             className={`w-full p-2 text-center text-sm rounded-lg transition-colors cursor-pointer ${
@@ -406,7 +346,7 @@ const UserOverviewComponent = () => {
                                 </div>
                                 <span className={`text-xs font-medium ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Active</span>
                             </div>
-                            <div className="text-2xl font-bold">{userData?.stats?.activeRentals}</div>
+                            <div className="text-2xl font-bold">{userProfileDetails?.stats?.activeRentals || 0}</div>
                             <div className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Rentals</div>
                         </div>
 
@@ -421,7 +361,7 @@ const UserOverviewComponent = () => {
                                 </div>
                                 <span className={`text-xs font-medium ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Saved</span>
                             </div>
-                            <div className="text-2xl font-bold">{wishlistGadgetDetails?.length}</div>
+                            <div className="text-2xl font-bold">{wishlistGadgetDetails?.length || 0}</div>
                             <div className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Wishlist</div>
                         </div>
 
@@ -436,7 +376,9 @@ const UserOverviewComponent = () => {
                                 </div>
                                 <span className={`text-xs font-medium ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Rewards</span>
                             </div>
-                            <div className="text-2xl font-bold">{userData?.points?.toLocaleString()}</div>
+                            <div className="text-2xl font-bold">
+                                {userProfileDetails?.membershipDetails?.points?.toLocaleString() || 0}
+                            </div>
                             <div className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Points</div>
                         </div>
                     </div>
@@ -447,7 +389,9 @@ const UserOverviewComponent = () => {
                             darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200 shadow-sm"
                         }`}
                     >
-                        <div className={`p-4 flex justify-between items-center border-b ${darkMode ? "border-gray-600" : "border-gray-300"}`}>
+                        <div
+                            className={`p-4 flex justify-between items-center border-b ${darkMode ? "border-gray-600" : "border-gray-300"}`}
+                        >
                             <h2 className="text-lg font-semibold">Recent Rentals</h2>
                             <button
                                 onClick={() => navigateTo("/dashboard/user/my_rentals")}
@@ -460,31 +404,31 @@ const UserOverviewComponent = () => {
                         </div>
 
                         <div className={`divide-y ${darkMode ? "divide-gray-600" : "divide-gray-300"}`}>
-                            {userData?.recentRentals?.length > 0 ? (
-                                userData?.recentRentals.map((rental) => (
-                                    <div key={rental.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            {userRentalOrders?.length > 0 ? (
+                                userRentalOrders.slice(0, 2).map((rentalOrder, index) => (
+                                    <div key={index} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                         <div className="flex items-start gap-3">
                                             <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
                                                 <img
-                                                    src={rental.gadgetImage || "/placeholder.svg"}
-                                                    alt={rental.gadgetName}
+                                                    src={rentalOrder?.gadgetImage || "/placeholder.svg"}
+                                                    alt={rentalOrder?.gadgetName}
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2">
-                                                    <h3 className="font-medium truncate">{rental.gadgetName}</h3>
-                                                    <span>{getCategoryIcon(rental.category)}</span>
+                                                    <h3 className="font-medium truncate">{rentalOrder?.gadgetName}</h3>
+                                                    <span>{getCategoryIcon(rentalOrder?.category)}</span>
                                                 </div>
                                                 <div className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                    {formatDate(rental.startDate)} - {formatDate(rental.endDate)}
+                                                    {formatDate(rentalOrder?.rentalStreak[0]?.startDate)} - {formatDate(rentalOrder?.rentalStreak[0]?.endDate)}
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <div className="font-bold">{formatCurrency(rental.amount)}</div>
+                                                <div className="font-bold">{formatCurrency(rentalOrder?.rentalStreak[0]?.payableFinalAmount)}</div>
                                                 <span
                                                     className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${
-                                                        rental.status === "active"
+                                                        rentalOrder?.rentalStatus === "active"
                                                             ? darkMode
                                                                 ? "bg-green-900/30 text-green-400"
                                                                 : "bg-green-100 text-green-800"
@@ -493,7 +437,7 @@ const UserOverviewComponent = () => {
                                                                 : "bg-gray-100 text-gray-800"
                                                     }`}
                                                 >
-                                                    {rental.status === "active" ? "Active" : "Past"}
+                                                    {rentalOrder?.rentalStatus}
                                                 </span>
                                             </div>
                                         </div>
@@ -510,7 +454,9 @@ const UserOverviewComponent = () => {
                             )}
                         </div>
 
-                        <div className={`p-4 border-t ${darkMode ? "bg-gray-700/30 border-gray-600" : "bg-gray-50 border-gray-300"}`}>
+                        <div
+                            className={`p-4 border-t ${darkMode ? "bg-gray-700/30 border-gray-600" : "bg-gray-50 border-gray-300"}`}
+                        >
                             <button
                                 onClick={handleBrowseGadgetsClick}
                                 className={`w-full py-2 rounded-lg transition-colors cursor-pointer ${
@@ -528,7 +474,9 @@ const UserOverviewComponent = () => {
                             darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200 shadow-sm"
                         }`}
                     >
-                        <div className={`p-4 flex justify-between items-center border-b  ${darkMode ? "border-gray-700" : "border-gray-200"}`}>
+                        <div
+                            className={`p-4 flex justify-between items-center border-b  ${darkMode ? "border-gray-700" : "border-gray-200"}`}
+                        >
                             <h2 className="text-lg font-semibold">Wishlist</h2>
                             <button
                                 onClick={() => navigateTo("/dashboard/user/wishlist")}
@@ -542,13 +490,13 @@ const UserOverviewComponent = () => {
 
                         <div className="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {wishlistGadgetDetails?.length > 0 ? (
-                                wishlistGadgetDetails?.slice(0, 3)?.map((item) => (
+                                wishlistGadgetDetails?.slice(0, 3)?.map((item, index) => (
                                     <div
-                                        key={item._id}
+                                        key={index}
                                         className={`rounded-lg overflow-hidden border cursor-pointer ${
                                             darkMode ? "border-gray-700 hover:border-gray-600" : "border-gray-200 hover:border-gray-300"
                                         } transition-colors`}
-                                        onClick={() => navigateTo(`/all-gadgets/gadget-details/${item._id}`)}
+                                        onClick={() => navigateTo(`/all-gadgets/gadget-details/${item?._id}`)}
                                     >
                                         <div className="h-32 overflow-hidden">
                                             <img
@@ -560,8 +508,9 @@ const UserOverviewComponent = () => {
                                         <div className="p-3">
                                             <div className="flex items-center justify-between mb-1">
                                                 <span className="text-xs flex items-center gap-1">
-                                                    {getCategoryIcon(item?.category)}
-                                                    <span className={darkMode ? "text-gray-400" : "text-gray-500"}>{item?.category}</span>
+                                                {getCategoryIcon(item?.category)}
+                                                    <span
+                                                        className={darkMode ? "text-gray-400" : "text-gray-500"}>{item?.category}</span>
                                                 </span>
                                                 <span
                                                     className={`text-xs ${
@@ -608,40 +557,44 @@ const UserOverviewComponent = () => {
                         <div className="p-4 text-center">
                             <div className="w-20 h-20 mx-auto rounded-full overflow-hidden mb-4 border-2 border-blue-500">
                                 <img
-                                    src={userData.profileImage || "/placeholder.svg"}
-                                    alt={userData.name}
+                                    src={userProfileDetails?.personalDetails?.photoURL || "/placeholder.svg"}
+                                    alt={userProfileDetails?.displayName}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            <h2 className="text-xl font-bold">{userData.name}</h2>
-                            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{userData.email}</p>
+                            <h2 className="text-xl font-bold">{userProfileDetails?.displayName}</h2>
+                            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{userProfileDetails?.email}</p>
 
                             <div className="mt-4 flex items-center justify-center gap-2">
-                                <FiAward className={`${getMembershipColor(userData.membershipTier)}`} size={18} />
-                                <span className="font-medium">{userData.membershipTier} Member</span>
+                                <FiAward
+                                    className={`${getMembershipColor(userProfileDetails?.membershipDetails?.membershipTier)}`}
+                                    size={18}
+                                />
+                                <span className="font-medium">{userProfileDetails?.membershipDetails?.membershipTier} Member</span>
                             </div>
 
                             <div className="mt-4">
                                 <div className="flex justify-between text-sm mb-1">
                                     <span className={darkMode ? "text-gray-400" : "text-gray-500"}>
-                                        {userData?.points?.toLocaleString()} points
+                                        {userProfileDetails?.membershipDetails?.points?.toLocaleString() || 0} points
                                     </span>
-                                    <span className={darkMode ? "text-gray-400" : "text-gray-500"}>
-                                        {userData?.pointsToNextTier?.toLocaleString()} to {userData?.nextTier}
-                                    </span>
+                                    {/*<span className={darkMode ? "text-gray-400" : "text-gray-500"}>
+                                        {userProfileDetails?.membershipDetails?.pointsToNextTier?.toLocaleString() || 0} to{" "}
+                                        {userProfileDetails?.membershipDetails?.nextTier || "Next Tier"}
+                                    </span>*/}
                                 </div>
                                 <div className={`h-2 rounded-full overflow-hidden ${darkMode ? "bg-gray-700" : "bg-gray-200"}`}>
                                     <div
                                         className={`h-full rounded-full ${
-                                            userData.membershipTier === "Bronze"
+                                            userProfileDetails?.membershipDetails?.membershipTier === "Bronze"
                                                 ? "bg-amber-700"
-                                                : userData.membershipTier === "Silver"
+                                                : userProfileDetails?.membershipDetails?.membershipTier === "Silver"
                                                     ? "bg-gray-400"
-                                                    : userData.membershipTier === "Gold"
+                                                    : userProfileDetails?.membershipDetails?.membershipTier === "Gold"
                                                         ? "bg-yellow-500"
                                                         : "bg-indigo-500"
                                         }`}
-                                        style={{ width: `${userData.loyaltyProgress}%` }}
+                                        style={{ width: `${userProfileDetails?.membershipDetails?.loyaltyProgressPercentage || 0}%` }}
                                     ></div>
                                 </div>
                             </div>
@@ -675,7 +628,9 @@ const UserOverviewComponent = () => {
                             darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200 shadow-sm"
                         }`}
                     >
-                        <div className={`p-4 flex justify-between items-center border-b ${ darkMode ? "border-gray-600" : "border-gray-300"}`}>
+                        <div
+                            className={`p-4 flex justify-between items-center border-b ${darkMode ? "border-gray-600" : "border-gray-300"}`}
+                        >
                             <h2 className="text-lg font-semibold flex items-center gap-2">
                                 Notifications
                                 {unreadNotificationsCount > 0 && (
@@ -702,7 +657,6 @@ const UserOverviewComponent = () => {
                                                     : "bg-blue-50/50"
                                                 : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
                                         } transition-colors`}
-                                        onClick={() => markNotificationAsRead(notification.id)}
                                     >
                                         <div className="flex gap-3">
                                             <div className="flex-shrink-0 mt-1">{getNotificationIcon(notification.type)}</div>

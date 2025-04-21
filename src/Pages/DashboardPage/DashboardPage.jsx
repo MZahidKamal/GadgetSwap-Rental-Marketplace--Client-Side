@@ -7,6 +7,7 @@ import { Outlet } from "react-router"
 import LoadingSkeleton from "./LoadingSkeleton.jsx"
 import { getUserProfileDetails } from "../../Features/userProfileDetails/userProfileDetailsSlice.js"
 import useAxiosSecure from "../../CustomHooks/useAxiosSecure.jsx"
+import {getUserMessagesChain} from "../../Features/userMessages/userMessagesSlice.js";
 
 
 const DashboardPage = () => {
@@ -37,6 +38,7 @@ const DashboardPage = () => {
     useEffect(() => {
         if (registeredUser?.email) {
             dispatch(getUserProfileDetails({ userEmail: registeredUser?.email, axiosSecure }))
+            dispatch(getUserMessagesChain({ userEmail: registeredUser?.email, axiosSecure }))
         }
     }, [axiosSecure, dispatch, registeredUser?.email])
 
@@ -51,6 +53,8 @@ const DashboardPage = () => {
                     avatar: userProfileDetails?.personalDetails?.photoURL || defaultAvatar,
                     role: userProfileDetails?.role,
                     joinDate: userProfileDetails?.joinDate,
+                    activeRentals: userProfileDetails?.stats?.activeRentals,
+                    wishlistCount: userProfileDetails?.wishlist?.length,
                 })
                 // Reset image error state when user data changes
                 setImageError(false)
@@ -240,6 +244,15 @@ const DashboardPage = () => {
                                 >
                                     <FiShoppingCart size={18} className="text-green-500" />
                                     <span>My Rentals</span>
+                                    {userProfileDetails?.stats?.activeRentals > 0 && (
+                                        <span
+                                            className={`ml-auto px-2 py-0.5 text-xs rounded-full ${
+                                                darkMode ? "bg-blue-900/50 text-blue-400" : "bg-blue-100 text-blue-600"
+                                            }`}
+                                        >
+                                            {userProfileDetails?.stats?.activeRentals}
+                                        </span>
+                                    )}
                                 </button>
                                 <button
                                     onClick={() => handleTabChange("wishlist")}
@@ -249,6 +262,15 @@ const DashboardPage = () => {
                                 >
                                     <FiHeart size={18} className="text-red-500" />
                                     <span>Wishlist</span>
+                                    {userProfileDetails?.wishlist?.length > 0 && (
+                                        <span
+                                            className={`ml-auto px-2 py-0.5 text-xs rounded-full ${
+                                                darkMode ? "bg-blue-900/50 text-blue-400" : "bg-blue-100 text-blue-600"
+                                            }`}
+                                        >
+                                            {userProfileDetails?.wishlist?.length}
+                                        </span>
+                                    )}
                                 </button>
                                 <button
                                     onClick={() => handleTabChange("loyalty_and_rewards")}
@@ -267,6 +289,15 @@ const DashboardPage = () => {
                                 >
                                     <FiMessageSquare size={18} className="text-cyan-500" />
                                     <span>Messages</span>
+                                    {userMessagesChain?.unreadByUser_count > 0 && (
+                                        <span
+                                            className={`ml-auto px-2 py-0.5 text-xs rounded-full ${
+                                                darkMode ? "bg-blue-900/50 text-blue-400" : "bg-blue-100 text-blue-600"
+                                            }`}
+                                        >
+                                            {userMessagesChain?.unreadByUser_count}
+                                        </span>
+                                    )}
                                 </button>
                                 <button
                                     onClick={() => handleTabChange("settings")}
@@ -361,13 +392,13 @@ const DashboardPage = () => {
                                                     >
                                                         {tab.icon}
                                                         <span>{tab.name}</span>
-                                                        {tab.id === "messages" && userMessagesChain?.unreadByUser_count > 0 && (
+                                                        {tab.id === "my_rentals" && userProfileDetails?.stats?.activeRentals > 0 && (
                                                             <span
                                                                 className={`ml-auto px-2 py-0.5 text-xs rounded-full ${
                                                                     darkMode ? "bg-blue-900/50 text-blue-400" : "bg-blue-100 text-blue-600"
                                                                 }`}
                                                             >
-                                                                {userMessagesChain?.unreadByUser_count}
+                                                                {userProfileDetails?.stats?.activeRentals}
                                                             </span>
                                                         )}
                                                         {tab.id === "wishlist" && userProfileDetails?.wishlist?.length > 0 && (
@@ -377,6 +408,15 @@ const DashboardPage = () => {
                                                                 }`}
                                                             >
                                                                 {userProfileDetails?.wishlist?.length}
+                                                            </span>
+                                                        )}
+                                                        {tab.id === "messages" && userMessagesChain?.unreadByUser_count > 0 && (
+                                                            <span
+                                                                className={`ml-auto px-2 py-0.5 text-xs rounded-full ${
+                                                                    darkMode ? "bg-blue-900/50 text-blue-400" : "bg-blue-100 text-blue-600"
+                                                                }`}
+                                                            >
+                                                                {userMessagesChain?.unreadByUser_count}
                                                             </span>
                                                         )}
                                                     </button>

@@ -14,7 +14,10 @@
     "@tailwindcss/vite": "^4.0.14",
     "@tanstack/react-query": "^5.67.3",
     "axios": "^1.8.3",
+    "date-fns": "^4.1.0",
     "firebase": "^11.4.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
     "react-datepicker": "^8.3.0",
@@ -23,6 +26,7 @@
     "react-redux": "^9.2.0",
     "react-router": "^7.3.0",
     "react-router-dom": "^7.3.0",
+    "react-to-pdf": "^2.0.0",
     "react-toastify": "^11.0.5",
     "react-transition-group": "^4.4.5",
     "tailwindcss": "^4.0.14"

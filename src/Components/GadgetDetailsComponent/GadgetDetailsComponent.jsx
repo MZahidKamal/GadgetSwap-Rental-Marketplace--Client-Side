@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from "react-redux"
 import { getUserProfileDetails } from "../../Features/userProfileDetails/userProfileDetailsSlice.js"
 import { fetchGadgetDetails } from "../../Features/getGadgetDetailsById/getGadgetDetailsByIdSlice.js"
 import { addOrRemoveWishlistGadget } from "../../Features/gadgetWishlist/gadgetWishlistSlice.js"
-import {addANewRentalOrderForThisUser} from "../../Features/userRentalOrders/userRentalOrdersSlice.js"
 import AuthContext from "../../Providers/AuthContext.jsx"
 import useAxiosSecure from "../../CustomHooks/useAxiosSecure.jsx"
+import {toast} from "react-toastify";
 
 
 const GadgetDetailsComponent = () => {
@@ -18,7 +18,6 @@ const GadgetDetailsComponent = () => {
     const dispatch = useDispatch()
     const { userProfileDetails } = useSelector((state) => state.userProfileDetails)
     const { gadgetDetails } = useSelector((state) => state.getGadgetDetailsById)
-    // const {userRentalOrders} useState = useSelector((state) => state.userRentalOrders)
 
     const axiosSecure = useAxiosSecure()
     const { id } = useParams()
@@ -89,6 +88,21 @@ const GadgetDetailsComponent = () => {
     }
 
 
+    // Function to get fully booked dates
+    const getBlockedDates = (blockedDates, totalCopy) => {
+        if (!blockedDates || !totalCopy) return [];
+
+        // Count occurrences of each date in blockedDates
+        const dateCounts = blockedDates.reduce((acc, date) => {
+            acc[date] = (acc[date] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Filter dates where count >= total_copy
+        return Object.keys(dateCounts).filter((date) => dateCounts[date] >= totalCopy);
+    };
+
+
     // Handle rental duration change
     const handleDurationChange = (e) => {
         setRentalDuration(Number.parseInt(e.target.value))
@@ -155,6 +169,7 @@ const GadgetDetailsComponent = () => {
     const calculateTotalPrice = () => {
         if (!gadget) return { basePrice: 0, insuranceFee: 0, total: 0 }
 
+        const perDayPrice = gadget?.pricing?.perDay
         const basePrice = gadget?.pricing?.perDay * rentalDuration
         const insuranceFee =
             insuranceOption === "premium"
@@ -162,6 +177,7 @@ const GadgetDetailsComponent = () => {
                 : gadget?.pricing?.basicInsuranceFee * rentalDuration
 
         return {
+            perDayPrice: perDayPrice.toFixed(2),
             basePrice: basePrice.toFixed(2),
             insuranceFee: insuranceFee.toFixed(2),
             total: (basePrice + insuranceFee).toFixed(2),
@@ -202,11 +218,21 @@ const GadgetDetailsComponent = () => {
     const handleRentNowClick = async () => {
         if (!startDate || !endDate || !gadget) return
 
+        if(userProfileDetails?.personalDetails?.verified === false){
+            toast.error("Please complete your profile, get verified to rent this gadget!")
+            navigate("/dashboard/user/settings")
+            return
+        }
+
         const blockedDates = generateDateRange(startDate, endDate)
         const priceDetails = calculateTotalPrice()
 
-        const insuranceAmount = Number.parseFloat(priceDetails.insuranceFee)
-        const initialAmount = Number.parseFloat(priceDetails.total)
+        const perDayAmount = Number.parseFloat(priceDetails.perDayPrice)
+        const onlyRentAmount = Number.parseFloat(priceDetails.basePrice)
+        const onlyInsuranceAmount = Number.parseFloat(priceDetails.insuranceFee)
+        const rentAndInsuranceAmount = Number.parseFloat(priceDetails.total)
+
+        const onlyShippingAmount = 5;
 
         const newRentalOrderObj = {
             order_id: generateOrderId(),
@@ -216,31 +242,52 @@ const GadgetDetailsComponent = () => {
             category: gadget?.category,
             rentalStreak: [
                 {
+                    perDayPrice: perDayAmount,
+
                     startDate: startDate,
-                    endDate: [endDate],
+                    endDate: endDate,
                     rentalDuration: rentalDuration,
-                    blockedDates: blockedDates,
+
+                    onlyRentAmount: onlyRentAmount,
+
                     insuranceOption: insuranceOption,
-                    insuranceAmount: insuranceAmount,
-                    initialAmount: initialAmount,
+                    onlyInsuranceAmount: onlyInsuranceAmount,
+                    rentAndInsuranceAmount: rentAndInsuranceAmount,
+
                     discountApplied: 0,
-                    shippingAmount: 5,
-                    pointsEarned: Math.floor(initialAmount),
+                    onlyShippingAmount: onlyShippingAmount,
+
+                    payableFinalAmount: rentAndInsuranceAmount + onlyShippingAmount,
+                    paymentMethod: "",
+
+                    pointsEarned: Math.floor(onlyRentAmount),
                     pointsRedeemed: 0,
-                    payableFinalAmount: initialAmount + 5, // Adding shipping
-                    paymentMethod: "Credit Card",
                 },
             ],
+            blockedDates: blockedDates,
             rentalStatus: "active",
             shipmentStatus: "processing_order",
-            membershipTier: userProfileDetails?.membershipDetails?.membershipTier,
-            hasInvoice: false,
+            customerDetails: {
+                name: userProfileDetails?.displayName,
+                email: userProfileDetails?.email,
+                phone: userProfileDetails?.personalDetails?.phone,
+                billingAddress: {
+                    street: userProfileDetails?.personalDetails?.billingAddress?.street,
+                    city: userProfileDetails?.personalDetails?.billingAddress?.city,
+                    zipCode: userProfileDetails?.personalDetails?.billingAddress?.zipCode,
+                    state: userProfileDetails?.personalDetails?.billingAddress?.state,
+                    country: userProfileDetails?.personalDetails?.billingAddress?.country,
+                },
+                membershipTier: userProfileDetails?.membershipDetails?.membershipTier,
+                currentPoint: userProfileDetails?.membershipDetails?.points,
+            },
+            hasInvoice: true,
             isReviewed: false,
             rating: 0,
         }
 
-        await dispatch(addANewRentalOrderForThisUser({ userEmail: registeredUser?.email, gadgetId: id, newRentalOrderObj, axiosSecure }));
-        navigate("/dashboard/user/my_rentals");
+        // console.log(newRentalOrderObj);
+        await navigate(`/selected-gadget/rental_order/${newRentalOrderObj?.order_id}/payment`, { state: { newRentalOrderObj } });
     }
 
 
@@ -548,7 +595,7 @@ const GadgetDetailsComponent = () => {
                                         darkMode ? "bg-blue-900 text-blue-200" : "bg-blue-100 text-blue-800"
                                     }`}
                                 >
-                                    {categoryIcons[gadget?.category]}
+                                  {categoryIcons[gadget?.category]}
                                     <span className="ml-1">{gadget?.category}</span>
                                 </span>
 
@@ -556,8 +603,8 @@ const GadgetDetailsComponent = () => {
                                     <FiStar className="text-yellow-500" />
                                     <span className="ml-1 text-sm font-medium">{averageRating}</span>
                                     <span className={`ml-1 text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                        ({gadget?.ratings?.length} reviews)
-                                    </span>
+                                    ({gadget?.ratings?.length} reviews)
+                                </span>
                                 </div>
                             </div>
 
@@ -703,7 +750,7 @@ const GadgetDetailsComponent = () => {
                                                     <span
                                                       className={`w-1/3 font-medium capitalize ${darkMode ? "text-gray-300" : "text-gray-700"}`}
                                                     >
-                                                    {key}
+                                                        {key}
                                                     </span>
                                                     <span className={`w-2/3 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>{value}</span>
                                                 </div>
@@ -962,31 +1009,38 @@ const GadgetDetailsComponent = () => {
                                     </div>
 
                                     <div className={`p-4 rounded-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
-                                        <h3 className="font-medium mb-4">Blocked Dates</h3>
-                                        {gadget?.availability?.blockedDates?.length > 0 ? (
-                                            <div className="flex flex-wrap gap-2">
-                                                {gadget.availability.blockedDates.map((date, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className={`px-3 py-1 rounded-md text-sm ${
-                                                            darkMode ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-700"
-                                                        }`}
-                                                    >
+                                        <h3 className="font-medium mb-4">Unavailable Dates</h3>
+                                        {(() => {
+                                            const fullyBookedDates = getBlockedDates(
+                                                gadget?.availability?.blockedDates,
+                                                gadget?.availability?.total_copy
+                                            );
+
+                                            return fullyBookedDates.length > 0 ? (
+                                                <div className="flex flex-wrap gap-2">
+                                                    {fullyBookedDates.map((date, index) => (
+                                                        <span
+                                                            key={index}
+                                                            className={`px-3 py-1 rounded-md text-sm ${
+                                                                darkMode ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-700"
+                                                            }`}
+                                                        >
                                                         {formatDate(date)}
                                                     </span>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                                No blocked dates. This gadget is available for all dates.
-                                            </p>
-                                        )}
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                                    No unavailable dates. This gadget has available copies.
+                                                </p>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* 'Rent Now' Button */}
+                        {/* Rent Button now */}
                         {registeredUser && (
                             <button
                                 className={`w-full py-3 px-4 rounded-lg font-medium transition-colors cursor-pointer ${

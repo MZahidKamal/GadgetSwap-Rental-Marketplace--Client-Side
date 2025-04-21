@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "Rent Now feature in GadgetDetailsComponent is implemented successfully."
+git commit -m "Payment, Invoice, My Rentals, all these features have already been implemented successfully."
 git push
 
 git add .
@@ -99,206 +99,61 @@ Admin Dashboard
 ------------------------------------------------------------------------------------------------------------------------
 
 
-{
-  "displayName": "",
-  "email": "",
-  "personalDetails": {
-    "bio": "",
-    "profession": "",
-    "photoURL": "",
-    "phone": "",
-    "billingAddress": {
-      "street": "",
-      "city": "",
-      "zipCode": "",
-      "state": "",
-      "country": ""
-    }
-  }
-}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Initial fake user data
-    const initialUserData = {
-        phone: "+1 (555) 123-4567",
-        profession: "Software Engineer",
-        bio: "Passionate about technology and gadgets. Love to try out new devices before buying them.",
-        profileImage: "/placeholder.svg",
-        joinedDate: "January 2023",
-        billingAddress: {
-            street: "123 Tech Street",
-            city: "San Francisco",
-            state: "CA",
-            zipCode: "94105",
-            country: "United States",
-        },
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Fake rentals data ## Rental order will create an object into a rentalOrderCollection and then rental order id will be
-saved serially in an array under the user object, and through an api endpoint the mongodb will get the use email, get the
-user object, will get the rentalOrders array of ids, then from the rentalOrderCollection it will collect all the rental
-orders, create an array, and then will send it to client side.----------------------------------------------------------------------------------------------------
-    const [rentals, setRentals] = useState([
-        {
-            id: "ORD-2023-001",
-            gadgetName: "iPhone 15 Pro Max",
-            gadgetImage: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-            category: "Smartphones",
-            startDate: "2023-11-10",
-            endDate: "2023-11-17",
-            status: "active",
-            amount: 175.5,
-            discount: 10,
-            membershipTier: "Silver",
-            pointsEarned: 150,
-            paymentMethod: "Credit Card (**** 4582)",
-            hasInvoice: true,
-            isReviewed: false,
-            rating: 0,
-        },
-    ])
 
 
 {
-    order_id: "ORD-2023-001",
-    gadget_id: "67fda0bd27ade1176d739849"
-    gadgetName: "iPhone 15 Pro Max",
-    gadgetImage: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-    category: "Smartphones",
-    rental_streak: [
-        {
-            startDate: "2023-11-10",
-            endDate: ["2023-11-17"],
-            blockedDates: ["2023-11-10", "2023-11-11", "2023-11-12", "2023-11-13", "2023-11-14", "2023-11-15", "2023-11-16", "2023-11-17"],
-            initial_amount: 175.5,
-            discount_applied: 10,
-            shipping_amount: 5,
-            payable_amount: 175.5,
-            paymentMethod: "Credit Card",
-            pointsEarned: 150,
-            pointsRedeemed: 0,
-        }
-    ],
-    rental_status: "active",                 // canceled, completed
-    shipment_status: "processing_order",     // shipment_started, delivered, in_uSe, return_started, return_received
-    membershipTier: "Silver",
-    hasInvoice: true,
-    isReviewed: false,
-    rating: 0,
-}
-
-
-{
-    order_id: "ORD-2023-001",
-    gadget_id: "67fda0bd27ade1176d739849"
-    gadgetName: "iPhone 15 Pro Max",
-    gadgetImage: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-    category: "Smartphones",
-    rentalStreak: [
-        {
-            startDate: "2023-11-10",
-            endDate: ["2023-11-17"],
-            rentalDuration: 8,
-            blockedDates: ["2023-11-10", "2023-11-11", "2023-11-12", "2023-11-13", "2023-11-14", "2023-11-15", "2023-11-16", "2023-11-17"],
-            insuranceOption: "basic",
-            insuranceAmount: 3.99,
-            initialAmount: 175.5,
-            discountApplied: 0,
-            shippingAmount: 5,
-            pointsEarned: 150,
-            pointsRedeemed: 0,
-            payableFinalAmount: 175.5,
-            paymentMethod: "Credit Card",
-        }
-    ],
-    rentalStatus: "active",
-    shipmentStatus: "processing_order",
-    membershipTier: "Silver",
-    hasInvoice: true,
-    isReviewed: false,
-    rating: 0,
-}
-
-
-{
-    "order_id": "GSRO_20250418_170856_5443",
-    "gadget_id": "67fda0bd27ade1176d739849",
+    "_id": "68050c121dff0e050b656719",
+    "order_id": "GSRO_20250420_165733_1484",
+    "gadget_id": "680297dcb46d6f1870ef5722",
     "gadgetName": "Shure SM7B",
     "gadgetImage": "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742705184/shuresm7b1_o4rp7w.webp",
     "category": "Audio",
     "rentalStreak": [
         {
-            "startDate": "2025-04-19",
-            "endDate": [
-                "2025-05-19"
-            ],
-            "rentalDuration": 30,
-            "blockedDates": [
-                "2025-04-19",
-                "2025-05-19"
-            ],
+            "startDate": "2025-04-21",
+            "endDate": "2025-04-24",
+            "rentalDuration": 3,
             "insuranceOption": "premium",
-            "insuranceAmount": 149.7,
-            "initialAmount": 599.7,
+            "insuranceAmount": 14.97,
+            "initialAmount": 59.97,
             "discountApplied": 0,
             "shippingAmount": 5,
-            "pointsEarned": 599,
+            "pointsEarned": 59,
             "pointsRedeemed": 0,
-            "payableFinalAmount": 604.7,
-            "paymentMethod": "Credit Card"
+            "payableFinalAmount": 64.97,
+            "paymentMethod": "Amex Card"
         }
+    ],
+    "blockedDates": [
+        "2025-04-21",
+        "2025-04-22",
+        "2025-04-23",
+        "2025-04-24"
     ],
     "rentalStatus": "active",
     "shipmentStatus": "processing_order",
-    "membershipTier": "Gold",
-    "hasInvoice": false,
+    "customerDetails": {
+        "name": "Alice Johnson",
+        "email": "alice.johnson.testemail@gmail.com",
+        "phone": "+4917673251642",
+        "billingAddress": {
+            "street": "Heddernheimer Landstraße 41",
+            "city": "Frankfurt am Main",
+            "zipCode": "60439",
+            "state": "Hessen",
+            "country": "Germany"
+        },
+        "membershipTier": "Bronze",
+        "currentPoint": 200
+    },
+    "hasInvoice": true,
     "isReviewed": false,
     "rating": 0
 }
 
 
-activityHistoriesCollection
-gadgetsCollection
-messagesCollection
-notificationsCollection
-rentalOrdersCollection
-userCollection
 
 
 
@@ -306,67 +161,111 @@ userCollection
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Initial fake wishlist data ## Gadget ids will be saved serially in an array under the user object, and through an api
-endpoint the below object will be constructed inside MBD and will be sent to client side.------------------------------------------------------------------------
-    const [wishlistItems, setWishlistItems] = useState([
+{
+    "order_id": "GSRO_20250420_192134_6442",
+    "gadget_id": "680297dcb46d6f1870ef5723",
+    "gadgetName": "Universal Audio Apollo Twin X",
+    "gadgetImage": "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742705272/uaapollotwinx1_c2ibhc.jpg",
+    "category": "Audio",
+    "rentalStreak": [
         {
-            gadget_id: "12345678987654321",
-            name: "iPhone 15 Pro Max",
-            image: "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-            category: "Smartphones",
-            dailyRate: 24.99,
-            availability: "available",
-            rating: 4.9,
-            description: "Latest iPhone with A17 Pro chip, 48MP camera system, and titanium design.",
+            "perDayPrice": 25,
+            "startDate": "2025-04-21",
+            "endDate": "2025-04-24",
+            "rentalDuration": 3,
+            "onlyRentAmount": 75,
+            "insuranceOption": "basic",
+            "onlyInsuranceAmount": 11.97,
+            "rentAndInsuranceAmount": 86.97,
+            "discountApplied": 0,
+            "onlyShippingAmount": 5,
+            "payableFinalAmount": 91.97,
+            "paymentMethod": "",
+            "pointsEarned": 75,
+            "pointsRedeemed": 0
         }
-    ])
+    ],
+    "blockedDates": [
+        "2025-04-21",
+        "2025-04-22",
+        "2025-04-23",
+        "2025-04-24"
+    ],
+    "rentalStatus": "active",
+    "shipmentStatus": "processing_order",
+    "customerDetails": {
+        "name": "Alice Johnson",
+        "email": "alice.johnson.testemail@gmail.com",
+        "phone": "+4917673251642",
+        "billingAddress": {
+            "street": "Heddernheimer Landstraße 41",
+            "city": "Frankfurt am Main",
+            "zipCode": "60439",
+            "state": "Hessen",
+            "country": "Germany"
+        },
+        "membershipTier": "Bronze",
+        "currentPoint": 200
+    },
+    "hasInvoice": true,
+    "isReviewed": false,
+    "rating": 0
+}
 
 
 
-// Initial fake messages data ## Alternatively see message_collection.json---------------------------------------------------------------------------------------
-    const initialMessages = [
+
+{
+    "_id": "680546c90f9d01ba8f9cfb3d",
+    "order_id": "GSRO_20250420_211050_3827",
+    "gadget_id": "680297dcb46d6f1870ef5727",
+    "gadgetName": "PreSonus AudioBox USB 96",
+    "gadgetImage": "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742705029/presonusaudiobox1_huzn8n.jpg",
+    "category": "Audio",
+    "rentalStreak": [
         {
-            id: 1,
-            sender: "user",
-            text: "Hello, I'm interested in renting the MacBook Pro. Is it available next week?",
-            timestamp: new Date("2023-11-01T09:30:00").getTime(),
-            read: true,
-        },
-        {
-            id: 2,
-            sender: "admin",
-            text: "Hi Alex! Yes, the MacBook Pro is available for rent next week. When exactly do you need it?",
-            timestamp: new Date("2023-11-01T09:35:00").getTime(),
-            read: true,
-        },
-        {
-            id: 3,
-            sender: "user",
-            text: "Great! I need it from Monday to Friday. What's the total cost for 5 days?",
-            timestamp: new Date("2023-11-01T09:40:00").getTime(),
-            read: true,
-        },
-        {
-            id: 4,
-            sender: "admin",
-            text: "For 5 days, the total would be $175. That includes insurance and a charger. Would you like to proceed with the booking?",
-            timestamp: new Date("2023-11-01T09:45:00").getTime(),
-            read: true,
+            "perDayPrice": 7,
+            "startDate": "2025-04-21",
+            "endDate": "2025-04-24",
+            "rentalDuration": 3,
+            "onlyRentAmount": 21,
+            "insuranceOption": "basic",
+            "onlyInsuranceAmount": 2.97,
+            "rentAndInsuranceAmount": 23.97,
+            "discountApplied": 0,
+            "onlyShippingAmount": 5,
+            "payableFinalAmount": 28.97,
+            "paymentMethod": "Amex Card",
+            "pointsEarned": 21,
+            "pointsRedeemed": 0
         }
-    ]
+    ],
+    "blockedDates": [
+        "2025-04-21",
+        "2025-04-22",
+        "2025-04-23",
+        "2025-04-24"
+    ],
+    "rentalStatus": "active",
+    "shipmentStatus": "processing_order",
+    "customerDetails": {
+        "name": "Alice Johnson",
+        "email": "alice.johnson.testemail@gmail.com",
+        "phone": "+4917673251642",
+        "billingAddress": {
+            "street": "Heddernheimer Landstraße 41",
+            "city": "Frankfurt am Main",
+            "zipCode": "60439",
+            "state": "Hessen",
+            "country": "Germany"
+        },
+        "membershipTier": "Bronze",
+        "currentPoint": 200
+    },
+    "hasInvoice": true,
+    "isReviewed": false,
+    "rating": 0
+}
 
 
 
@@ -392,15 +291,55 @@ endpoint the below object will be constructed inside MBD and will be sent to cli
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+{
+    "displayName": "Alice Johnson",
+    "email": "alice.johnson.testemail@gmail.com",
+    "personalDetails": {
+        "bio": "⌬ Full-Stack Developer (JavaScript, Python, Django, Next.js, React, Node.js, MongoDB) ⌬ Backend-Focused ⌬ Building Scalable & Efficient Web Applications ⌬ Passionate About High-Performance & User-Centric Solutions ⌬",
+        "profession": "Software Engineer",
+        "photoURL": "//ssl.gstatic.com/accounts/ui/avatar_2x.png",
+        "phone": "+4917673251642",
+        "billingAddress": {
+            "street": "Heddernheimer Landstraße 41",
+            "city": "Frankfurt am Main",
+            "zipCode": "60439",
+            "state": "Hessen",
+            "country": "Germany"
+        },
+        "verified": true
+    },
+    "role": "user",
+    "joinDate": "2025-04-19T10:25:58.608Z",
+    "membershipDetails": {
+        "membershipTier": "Bronze",
+        "points": 245,
+        "loyaltyProgressPercentage": null,
+        "rentalStreak": 3,
+        "referrals": 1,
+        "nextTier": null,
+        "pointsToNextTier": null
+    },
+    "wishlist": [
+        "680297dcb46d6f1870ef5722",
+        "680297dcb46d6f1870ef572a"
+    ],
+    "rentalOrders": [
+        "6805642fdda2addadb774b5f"
+    ],
+    "messageChain_id": "68037a367e06a2eb6d8dcaa4",
+    "notificationChain_id": "68037a367e06a2eb6d8dcaa5",
+    "activityHistoryChain_id": "68037a367e06a2eb6d8dcaa6",
+    "stats": {
+        "activeRentals": 1,
+        "pastRentals": 0,
+        "wishlistedItems": 0,
+        "totalSpent": 57.47,
+        "pointsEarned": 45,
+        "reviewsGiven": 0
+    },
+    "loginWith": "Personal Email",
+    "failedLoginAttempts": 0,
+    "lastFailedLoginAttempt": 0,
+    "loginRestricted": false,
+    "loginRestrictedUntil": null
+}

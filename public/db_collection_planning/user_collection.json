@@ -46,12 +46,3 @@
   "loginRestricted": false,
   "loginRestrictedUntil": null
 }
-{
-  "joinDate": "",
-  "membershipDetails": {
-    "membershipTier": "",
-    "points": 0,
-    "rentalStreak": 0,
-    "referrals": 0,
-  }
-}

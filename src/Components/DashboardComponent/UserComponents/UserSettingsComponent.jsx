@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { FiBriefcase, FiHome, FiLock, FiMail, FiMapPin, FiPhone, FiRotateCw, FiSave, FiUpload, FiUser, FiX, FiZoomIn, FiZoomOut, FiEye, FiEyeOff } from "react-icons/fi"
+import { FiBriefcase, FiHome, FiLock, FiMail, FiMapPin, FiPhone, FiRotateCw, FiSave, FiUpload, FiUser, FiX, FiZoomIn, FiZoomOut, FiEye, FiEyeOff, FiCheck } from "react-icons/fi"
 import { useDispatch, useSelector } from "react-redux"
 import AuthContext from "../../../Providers/AuthContext.jsx"
 import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx"
@@ -18,7 +18,7 @@ const UserSettingsComponent = () => {
     const { uploadImageToCloudinaryAndGetURL } = useCloudinary()
 
 
-    // Initial fake user data
+    // Initial user data
     const initialUserData = {
         displayName: userProfileDetails?.displayName,
         email: userProfileDetails?.email,
@@ -34,6 +34,7 @@ const UserSettingsComponent = () => {
                 state: userProfileDetails?.personalDetails?.billingAddress?.state,
                 country: userProfileDetails?.personalDetails?.billingAddress?.country,
             },
+            verified: userProfileDetails?.personalDetails?.verified,
         },
     }
 
@@ -80,6 +81,7 @@ const UserSettingsComponent = () => {
                         state: userProfileDetails?.personalDetails?.billingAddress?.state,
                         country: userProfileDetails?.personalDetails?.billingAddress?.country,
                     },
+                    verified: userProfileDetails?.personalDetails?.verified,
                 },
             })
         }
@@ -206,7 +208,7 @@ const UserSettingsComponent = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        // Create updated user object in the required format
+        // Create an updated user object in the required format
         const userInfoObj = {
             displayName: formData.displayName || "",
             email: formData.email || "",
@@ -215,6 +217,7 @@ const UserSettingsComponent = () => {
                 profession: formData.personalDetails?.profession || "",
                 photoURL: formData.personalDetails?.photoURL || "",
                 phone: formData.personalDetails?.phone || "",
+                verified: formData.personalDetails?.verified,
                 billingAddress: {
                     street: formData.personalDetails?.billingAddress?.street || "",
                     city: formData.personalDetails?.billingAddress?.city || "",
@@ -225,7 +228,8 @@ const UserSettingsComponent = () => {
             },
         }
 
-        // If image has been modified, convert and log the modified image
+
+        // If an image has been modified, convert and log the modified image
         if (imagePreview && originalFile) {
             const modifiedFile = await base64ToFile(imagePreview, originalFile.name)
             const cloudinaryImageUrl = await uploadImageToCloudinaryAndGetURL(modifiedFile)
@@ -234,10 +238,11 @@ const UserSettingsComponent = () => {
             else toast.error("Error uploading image!")
         }
 
-        // Save the updated user object to database
+        // Save the updated user object to the database
         await dispatch(updateUserProfileInfo({ userEmail: registeredUser?.email, userInfoObj, axiosSecure }))
         // console.log("Updated User Data:", userInfoObj)
     }
+
 
     // Handle password update
     const handlePasswordUpdate = async (e) => {
@@ -348,7 +353,7 @@ const UserSettingsComponent = () => {
         if (!isDragging) return
         setPosition({
             x: e.touches[0].clientX - startPosition.x,
-            y: e.touches[0].clientY - startPosition.y,
+            y: e.touches[0].clientY - position.y,
         })
     }
 
@@ -418,7 +423,30 @@ const UserSettingsComponent = () => {
                     className={`rounded-xl overflow-hidden shadow-sm ${darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"}`}
                 >
                     <div className="p-6">
-                        <h2 className="text-xl font-semibold mb-4">Profile Image</h2>
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-semibold">Profile Image</h2>
+                            {formData.personalDetails?.verified !== undefined && (
+                                <div
+                                    className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                                        formData.personalDetails?.verified
+                                            ? `${darkMode ? "bg-green-900/30 text-green-400" : "bg-green-100 text-green-700"}`
+                                            : `${darkMode ? "bg-red-900/30 text-red-400" : "bg-red-100 text-red-700"}`
+                                    }`}
+                                >
+                                    {formData.personalDetails?.verified ? (
+                                        <>
+                                            <FiCheck className="text-green-500" />
+                                            <span className="text-sm font-medium">Verified</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FiX className="text-red-500" />
+                                            <span className="text-sm font-medium">Unverified</span>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
 
                         <div className="px-10 flex flex-col md:flex-row gap-4">
                             {/* Image preview container */}
@@ -897,4 +925,4 @@ const UserSettingsComponent = () => {
     )
 }
 
-export default UserSettingsComponent;
+export default UserSettingsComponent

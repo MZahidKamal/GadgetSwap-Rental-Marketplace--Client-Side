@@ -34,6 +34,8 @@ import AdminAllGadgetsPage from "./Pages/DashboardPage/AdminDashboardPages/Admin
 import AdminAllRentalsPage from "./Pages/DashboardPage/AdminDashboardPages/AdminAllRentalsPage.jsx";
 import AdminSettingsPage from "./Pages/DashboardPage/AdminDashboardPages/AdminSettingsPage.jsx";
 import PasswordResetPage from "./Pages/PasswordResetPage/PasswordResetPage.jsx";
+import RentalOrderToPaymentPage from "./Pages/RentalOrderToPaymentPage/RentalOrderToPaymentPage.jsx";
+import GenerateAndDownloadInvoicePage from "./Pages/GenerateAndDownloadInvoicePage/GenerateAndDownloadInvoicePage.jsx";
 
 
 const queryClient = new QueryClient()
@@ -54,6 +56,8 @@ ReactDOM.createRoot(root).render(
 
                                 <Route path={'/all-gadgets'} element={<AllGadgetsPage></AllGadgetsPage>}></Route>
                                 <Route path={'/all-gadgets/gadget-details/:id'} element={<GadgetDetailsPage></GadgetDetailsPage>}></Route>
+                                <Route path={'/selected-gadget/rental_order/:order_id/payment'} element={<RentalOrderToPaymentPage></RentalOrderToPaymentPage>}></Route>
+
 
                                 <Route path={'/about-us'} element={<AboutPage></AboutPage>}></Route>
                                 <Route path={'/contact-us'} element={<ContactUsPage></ContactUsPage>}></Route>
@@ -66,6 +70,7 @@ ReactDOM.createRoot(root).render(
                                 <Route path={'/dashboard'} element={<DashboardLayout></DashboardLayout>}>
                                     <Route path={'/dashboard/user/overview'} element={<UserOverviewPage></UserOverviewPage>} />
                                     <Route path={'/dashboard/user/my_rentals'} element={<UserMyRentalsPage></UserMyRentalsPage>} />
+                                    <Route path={'/dashboard/user/my_rentals/:order_id/invoice'} element={<GenerateAndDownloadInvoicePage></GenerateAndDownloadInvoicePage>} />
                                     <Route path={'/dashboard/user/wishlist'} element={<UserWishlistPage></UserWishlistPage>} />
                                     <Route path={'/dashboard/user/messages'} element={<UserMessagesPage></UserMessagesPage>} />
                                     <Route path={'/dashboard/user/loyalty_and_rewards'} element={<UserLoyaltyAndRewardPage></UserLoyaltyAndRewardPage>} />
