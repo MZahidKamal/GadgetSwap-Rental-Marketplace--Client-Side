@@ -96,7 +96,7 @@ const BannerComponent = () => {
 
 
     return (
-        <div className={`pt-20 w-full overflow-hidden transition-all duration-300 ${
+        <div className={`py-20 w-full overflow-hidden transition-all duration-300 ${
             darkMode
                 ? 'bg-gray-900 text-white'
                 : 'bg-white text-gray-900'
@@ -129,8 +129,8 @@ const BannerComponent = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
 
                         {/* Left Content - 5 columns */}
-                        <div className="lg:col-span-5 space-y-8">
-                            <div className="space-y-10">
+                        <div className="lg:col-span-5 space-y-14">
+                            <div className="space-y-14">
                                 <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mb-2 ${
                                     darkMode
                                         ? 'bg-purple-900/40 text-purple-300 border border-purple-800/50'
@@ -169,7 +169,7 @@ const BannerComponent = () => {
                             </div>
 
                             {/* Search Bar with Floating Labels */}
-                            <div className={`h-24 relative max-w-md transition-all duration-300 transform hover:scale-[1.02] ${
+                            {/*<div className={`h-24 relative max-w-md transition-all duration-300 transform hover:scale-[1.02] ${
                                 darkMode
                                     ? 'bg-gray-800/70 rounded-2xl border border-purple-900/30 shadow-lg shadow-purple-900/10'
                                     : 'bg-white rounded-2xl border border-indigo-200/50 shadow-lg shadow-indigo-600/5'
@@ -199,11 +199,11 @@ const BannerComponent = () => {
                                     </button>
                                 </form>
 
-                                {/* Floating Search Suggestions */}
+                                 Floating Search Suggestions
                                 <div className={`absolute bottom-0 left-4 right-6 flex space-x-2 overflow-x-auto pb-3 no-scrollbar`}>
-                                    {['iPhone', 'Drone', 'Camera', 'MacBook', 'VR Headset'].map((term, idx) => (
+                                    {['Laptops', 'Cameras', 'Gaming', 'Projectors', 'Drones'].map((term, index) => (
                                         <button
-                                            key={idx}
+                                            key={index}
                                             onClick={() => setSearchQuery(term)}
                                             className={`px-3 py-1 text-xs rounded-full whitespace-nowrap transition-all duration-300 ${
                                                 darkMode
@@ -215,12 +215,12 @@ const BannerComponent = () => {
                                         </button>
                                     ))}
                                 </div>
-                            </div>
+                            </div>*/}
 
                             {/* CTA Buttons with Animated Accents */}
                             <div className="flex flex-wrap gap-4">
                                 <Link
-                                    to={user ? '/all-gadgets' : '/sign-in'}
+                                    to={'/all-gadgets'}
                                     className={`group w-6/12 relative px-6 py-3 rounded-xl font-medium transition-all duration-300 overflow-hidden ${
                                         darkMode
                                             ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg hover:shadow-purple-900/20'
@@ -228,26 +228,10 @@ const BannerComponent = () => {
                                     }`}
                                 >
                                     <span className="relative z-10 flex items-center">
-                                        Rent a Gadget <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                                        Explore Gadget Collections<FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                                     </span>
                                     <span className="absolute inset-0 transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 bg-gradient-to-r from-pink-600 to-purple-600"></span>
                                 </Link>
-
-                                {/*<Link
-                                    to="/lend"
-                                    className={`group relative px-6 py-3 rounded-xl font-medium transition-all duration-300 overflow-hidden ${
-                                        darkMode
-                                            ? 'bg-gray-800 text-white border border-purple-600/30'
-                                            : 'bg-white text-indigo-600 border border-indigo-200/50'
-                                    }`}
-                                >
-                                    <span className="relative z-10 flex items-center">
-                                        Lend Your Gadget <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                                    </span>
-                                    <span className={`absolute inset-0 transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ${
-                                        darkMode ? 'bg-purple-900/40' : 'bg-indigo-50/80'
-                                    }`}></span>
-                                </Link>*/}
                             </div>
 
                             {/* Trust Indicators */}
@@ -369,32 +353,6 @@ const BannerComponent = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* Category Pills */}
-                    {/*<div className="mt-12 relative z-10">
-                        <div className={`flex items-center justify-center flex-wrap gap-3 py-4 px-6 rounded-2xl mx-auto max-w-4xl ${
-                            darkMode
-                                ? 'bg-gray-800/70 border border-purple-900/30 backdrop-blur-md'
-                                : 'bg-white/70 border border-indigo-200/30 backdrop-blur-md shadow-lg'
-                        }`}>
-                            {categories.map((category, index) => (
-                                <Link
-                                    key={index}
-                                    to={`/category/${category.name.toLowerCase()}`}
-                                    className={`flex items-center px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105 ${
-                                        darkMode
-                                            ? 'bg-gray-700/70 text-white hover:bg-purple-900/40'
-                                            : 'bg-gray-100/70 text-gray-800 hover:bg-indigo-100/70'
-                                    }`}
-                                >
-                                    <span className={`mr-2 ${
-                                        darkMode ? 'text-purple-400' : 'text-indigo-600'
-                                    }`}>{category.icon}</span>
-                                    <span className="text-sm font-medium">{category.name}</span>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>*/}
                 </div>
             </div>
         </div>

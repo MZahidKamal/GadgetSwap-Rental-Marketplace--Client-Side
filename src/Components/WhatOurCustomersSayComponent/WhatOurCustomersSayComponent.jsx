@@ -1,17 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    FiChevronLeft,
-    FiChevronRight,
-    FiStar,
-    FiUser,
-    FiMessageSquare,
-    FiArrowRight
-} from 'react-icons/fi';
-import {
-    IoSparklesOutline,
-    IoTimeOutline,
-    IoThumbsUpOutline
-} from 'react-icons/io5';
+import { FiChevronLeft, FiChevronRight, FiStar, FiUser, FiMessageSquare, FiArrowRight } from 'react-icons/fi';
+import { IoSparklesOutline, IoTimeOutline, IoThumbsUpOutline } from 'react-icons/io5';
 import {useSelector} from "react-redux";
 
 
@@ -19,7 +8,6 @@ const WhatOurCustomersSayComponent = () => {
 
     // const [darkMode, setDarkMode] = useState(false);
     const darkMode = useSelector((state) => state.darkMode.isDark);
-
 
     const [activeIndex, setActiveIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -351,7 +339,7 @@ const WhatOurCustomersSayComponent = () => {
                                     <div className="flex space-x-2">
                                         <button
                                             onClick={goToPrev}
-                                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${
                                                 darkMode
                                                     ? 'bg-gray-800/70 text-white border border-gray-700/50 hover:bg-gray-700/70'
                                                     : 'bg-white/70 text-gray-700 border border-gray-200/50 hover:bg-gray-100/70'
@@ -362,7 +350,7 @@ const WhatOurCustomersSayComponent = () => {
                                         </button>
                                         <button
                                             onClick={goToNext}
-                                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${
                                                 darkMode
                                                     ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'
                                                     : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
@@ -375,21 +363,6 @@ const WhatOurCustomersSayComponent = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    {/* Call to Action */}
-                    <div className="mt-8 text-center">
-                        <a
-                            href="/testimonials"
-                            className={`inline-flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 ${
-                                darkMode
-                                    ? 'bg-gray-800/70 text-white border border-gray-700/50 hover:bg-gray-700/70'
-                                    : 'bg-white/70 text-indigo-600 border border-indigo-200/50 hover:bg-gray-50/70'
-                            }`}
-                        >
-                            <span>Read More Customer Stories</span>
-                            <FiArrowRight className="ml-2" />
-                        </a>
                     </div>
                 </div>
 

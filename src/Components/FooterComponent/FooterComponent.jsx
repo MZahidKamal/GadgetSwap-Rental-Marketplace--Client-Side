@@ -1,36 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-    FiSend,
-    FiGithub,
-    FiTwitter,
-    FiInstagram,
-    FiLinkedin,
-    FiArrowUp,
-    FiHelpCircle,
-    FiInfo,
-    FiMessageSquare,
-    FiFileText,
-    FiSettings,
-    FiShield,
-    FiBookmark,
-    FiChevronRight,
-    FiMail,
-    FiMapPin,
-    FiPhone,
-    FiGlobe
-} from "react-icons/fi";
-import { IoLogoYoutube } from "react-icons/io5";
+import { FiSend, FiArrowUp, FiHelpCircle, FiInfo, FiMessageSquare, FiFileText, FiSettings, FiShield, FiBookmark, FiChevronRight } from "react-icons/fi";
 import {useSelector} from "react-redux";
+import axios from "axios";
+import {BASE_URL} from "../../SharedUtilities/SharedUtilities.jsx";
+
 
 const FooterComponent = () => {
+
     const darkMode = useSelector((state) => state.darkMode.isDark);
     const [email, setEmail] = useState("");
     const [isSubscribed, setIsSubscribed] = useState(false);
+    const [postSubscribedMessage, setPostSubscribedMessage] = useState("");
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [activeSection, setActiveSection] = useState(null);
 
-    // Check scroll position to show/hide scroll to top button
+
+    // Check scroll position to show/hide scroll to the top button
     useEffect(() => {
         const handleScroll = () => {
             setShowScrollButton(window.scrollY > 300);
@@ -40,14 +26,22 @@ const FooterComponent = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
     };
 
-    const handleSubscribe = (e) => {
+
+    const handleSubscribe = async (e) => {
         e.preventDefault();
         if (email) {
-            console.log("Subscribed with email:", email);
+
+            const response = await axios.post(
+                `${BASE_URL}/add_this_email_for_newsletter`,
+                {visitorEmail: email}
+            )
+
+            setPostSubscribedMessage(response?.data?.message)
             setIsSubscribed(true);
             setEmail("");
 
@@ -57,6 +51,7 @@ const FooterComponent = () => {
         }
     };
 
+
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
@@ -64,9 +59,11 @@ const FooterComponent = () => {
         });
     };
 
+
     const toggleSection = (section) => {
         setActiveSection(activeSection === section ? null : section);
     };
+
 
     // Footer links
     const footerLinks = [
@@ -91,13 +88,6 @@ const FooterComponent = () => {
         }
     ];
 
-    /*const socialLinks = [
-        { icon: <FiTwitter size={20} />, path: "https://twitter.com", label: "Twitter", color: "text-blue-400" },
-        { icon: <FiInstagram size={20} />, path: "https://instagram.com", label: "Instagram", color: "text-pink-500" },
-        { icon: <FiLinkedin size={20} />, path: "https://linkedin.com", label: "LinkedIn", color: "text-blue-600" },
-        { icon: <FiGithub size={20} />, path: "https://github.com", label: "GitHub", color: "text-gray-700 dark:text-gray-300" },
-        { icon: <IoLogoYoutube size={20} />, path: "https://youtube.com", label: "YouTube", color: "text-red-600" }
-    ];*/
 
     return (
         <footer
@@ -149,32 +139,6 @@ const FooterComponent = () => {
                             affordability, and gadget sharing while providing a secure and
                             seamless experience for users.
                         </p>
-
-                        {/*<div className="pt-4">
-                            <h4 className={`text-sm font-semibold uppercase tracking-wider mb-4 ${
-                                darkMode ? "text-gray-300" : "text-gray-700"
-                            }`}>
-                                Connect With Us
-                            </h4>
-                            <div className="flex flex-wrap gap-3">
-                                {socialLinks.map((social, index) => (
-                                    <a
-                                        key={index}
-                                        href={social.path}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 ${
-                                            darkMode
-                                                ? "bg-gray-800 hover:bg-gray-700"
-                                                : "bg-white hover:bg-gray-100 shadow-sm"
-                                        }`}
-                                        aria-label={social.label}
-                                    >
-                                        <span className={social.color}>{social.icon}</span>
-                                    </a>
-                                ))}
-                            </div>
-                        </div>*/}
                     </div>
 
                     {/* Quick Links Section */}
@@ -267,7 +231,7 @@ const FooterComponent = () => {
 
                                 <button
                                     type="submit"
-                                    className={`w-full flex items-center justify-center px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                                    className={`w-full flex items-center justify-center px-4 py-3 rounded-lg font-medium transition-all duration-300 cursor-pointer ${
                                         darkMode
                                             ? "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
                                             : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
@@ -276,9 +240,9 @@ const FooterComponent = () => {
                                     Subscribe <FiSend className="ml-2" />
                                 </button>
 
-                                {isSubscribed && (
+                                {isSubscribed && postSubscribedMessage && (
                                     <p className={`text-center animate-pulse ${darkMode ? "text-green-400" : "text-green-600"}`}>
-                                        Thanks for subscribing!
+                                        {postSubscribedMessage}
                                     </p>
                                 )}
                             </form>
@@ -298,7 +262,7 @@ const FooterComponent = () => {
                     {showScrollButton && (
                         <button
                             onClick={scrollToTop}
-                            className={`mt-4 md:mt-0 p-3 rounded-full transition-all duration-300 transform hover:scale-110 ${
+                            className={`mt-4 md:mt-0 p-3 rounded-full transition-all duration-300 transform hover:scale-110 cursor-pointer ${
                                 darkMode
                                     ? "bg-gray-800 text-purple-400 hover:bg-gray-700"
                                     : "bg-white text-indigo-600 hover:bg-gray-100 shadow-sm"

@@ -29,7 +29,7 @@ const LoyaltyAndRewardsComponent = () => {
     const darkMode = useSelector((state) => state.darkMode.isDark);
 
     const [activeTab, setActiveTab] = useState('tiers');
-    const [activeTier, setActiveTier] = useState('silver');
+    const [activeTier, setActiveTier] = useState('bronze');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
@@ -230,6 +230,13 @@ const LoyaltyAndRewardsComponent = () => {
     };
 
 
+    const handleUpgradeToButton = () => {
+        if (activeTier === 'bronze') setActiveTier('silver');
+        if (activeTier === 'silver') setActiveTier('gold');
+        if (activeTier === 'gold') setActiveTier('platinum');
+    }
+
+
     // Toggle mobile menu
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -279,7 +286,7 @@ const LoyaltyAndRewardsComponent = () => {
                     }`}>
                         <button
                             onClick={() => handleTabChange('tiers')}
-                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 cursor-pointer ${
                                 activeTab === 'tiers'
                                     ? darkMode
                                         ? 'bg-gray-700 text-white'
@@ -297,7 +304,7 @@ const LoyaltyAndRewardsComponent = () => {
 
                         <button
                             onClick={() => handleTabChange('rewards')}
-                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 cursor-pointer ${
                                 activeTab === 'rewards'
                                     ? darkMode
                                         ? 'bg-gray-700 text-white'
@@ -315,7 +322,7 @@ const LoyaltyAndRewardsComponent = () => {
 
                         <button
                             onClick={() => handleTabChange('earn')}
-                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 cursor-pointer ${
                                 activeTab === 'earn'
                                     ? darkMode
                                         ? 'bg-gray-700 text-white'
@@ -359,7 +366,7 @@ const LoyaltyAndRewardsComponent = () => {
                         }`}>
                             <button
                                 onClick={() => handleTabChange('tiers')}
-                                className={`flex items-center w-full px-4 py-3 text-left ${
+                                className={`flex items-center w-full px-4 py-3 text-left cursor-pointer ${
                                     activeTab === 'tiers'
                                         ? darkMode
                                             ? 'bg-gray-700 text-white'
@@ -375,7 +382,7 @@ const LoyaltyAndRewardsComponent = () => {
 
                             <button
                                 onClick={() => handleTabChange('rewards')}
-                                className={`flex items-center w-full px-4 py-3 text-left ${
+                                className={`flex items-center w-full px-4 py-3 text-left cursor-pointer ${
                                     activeTab === 'rewards'
                                         ? darkMode
                                             ? 'bg-gray-700 text-white'
@@ -391,7 +398,7 @@ const LoyaltyAndRewardsComponent = () => {
 
                             <button
                                 onClick={() => handleTabChange('earn')}
-                                className={`flex items-center w-full px-4 py-3 text-left ${
+                                className={`flex items-center w-full px-4 py-3 text-left cursor-pointer ${
                                     activeTab === 'earn'
                                         ? darkMode
                                             ? 'bg-gray-700 text-white'
@@ -420,7 +427,7 @@ const LoyaltyAndRewardsComponent = () => {
                                     <button
                                         key={tier.id}
                                         onClick={() => handleTierSelect(tier.id)}
-                                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
                                             activeTier === tier.id
                                                 ? `bg-gradient-to-r ${tier.color} text-white`
                                                 : darkMode
@@ -539,9 +546,9 @@ const LoyaltyAndRewardsComponent = () => {
                                         {/* Upgrade CTA */}
                                         {tier.id !== 'platinum' && (
                                             <div className="mt-8 text-center">
-                                                <a
-                                                    href="/dashboard/membership"
-                                                    className={`inline-flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+                                                <button
+                                                    onClick={handleUpgradeToButton}
+                                                    className={`inline-flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 cursor-pointer ${
                                                         darkMode
                                                             ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-purple-900/20'
                                                             : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:shadow-indigo-600/20'
@@ -549,7 +556,7 @@ const LoyaltyAndRewardsComponent = () => {
                                                 >
                                                     <span>Upgrade to {tier.id === 'bronze' ? 'Silver' : tier.id === 'silver' ? 'Gold' : 'Platinum'}</span>
                                                     <FiChevronRight className="ml-2"/>
-                                                </a>
+                                                </button>
                                             </div>
                                         )}
                                     </div>
