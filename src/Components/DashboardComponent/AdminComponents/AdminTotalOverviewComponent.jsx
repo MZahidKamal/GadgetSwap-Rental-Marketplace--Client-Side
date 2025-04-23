@@ -1,31 +1,34 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { useSelector } from "react-redux"
+import {useState, useEffect, useContext} from "react"
+import {useDispatch, useSelector} from "react-redux"
 import { FiUsers, FiShoppingCart, FiPackage, FiDollarSign, FiTrendingUp, FiBell, FiCheckCircle } from "react-icons/fi"
-import {
-    FaMobileAlt,
-    FaLaptop,
-    FaTabletAlt,
-    FaHeadphones,
-    FaCamera,
-    FaGamepad,
-    FaChartPie,
-    FaChartLine,
-    FaCrown,
-} from "react-icons/fa"
+import { FaMobileAlt, FaLaptop, FaTabletAlt, FaHeadphones, FaCamera, FaGamepad, FaChartPie, FaChartLine, FaCrown } from "react-icons/fa"
+import AuthContext from "../../../Providers/AuthContext.jsx";
+import { getUserProfileDetails } from "../../../Features/userProfileDetails/userProfileDetailsSlice.js"
+import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx";
 
 
 const AdminTotalOverviewComponent = () => {
 
     // State management
     const darkMode = useSelector((state) => state.darkMode.isDark)
+    const { user: registeredUser } = useContext(AuthContext)
+    const dispatch = useDispatch()
+    const { userProfileDetails } = useSelector((state) => state.userProfileDetails)
+
+    const axiosSecure = useAxiosSecure()
     const [greeting, setGreeting] = useState("")
     const [currentTime, setCurrentTime] = useState("")
     const [dateRange, setDateRange] = useState("week")
 
 
-    // Set greeting based on time of day
+    useEffect(() => {
+        if (registeredUser?.email) {
+            dispatch(getUserProfileDetails({ userEmail: registeredUser?.email, axiosSecure }))
+        }
+    }, [axiosSecure, dispatch, registeredUser?.email])
+
+
+    // Set greeting based on the time of day
     useEffect(() => {
         const hour = new Date().getHours()
         if (hour < 12) setGreeting("Good Morning")
@@ -198,7 +201,7 @@ const AdminTotalOverviewComponent = () => {
     const generatePieChartSegments = () => {
         let cumulativePercentage = 0
 
-        return dashboardData.rentalsByCategory.map((category, index) => {
+        return dashboardData.rentalsByCategory.map((category) => {
             const startPercentage = cumulativePercentage
             cumulativePercentage += category.percentage
 
@@ -228,7 +231,7 @@ const AdminTotalOverviewComponent = () => {
     const pieChartSegments = generatePieChartSegments()
 
 
-    // Get data for current date range
+    // Get data for the current date range
     const getCurrentRangeData = () => {
         return dateRange === "week" ? dashboardData.earnings.weekly : dashboardData.earnings.monthly
     }
@@ -249,7 +252,7 @@ const AdminTotalOverviewComponent = () => {
                     <div className="flex items-center">
                         <div>
                             <h1 className="text-2xl md:text-3xl font-bold">
-                                {greeting}, {dashboardData.admin.name}!
+                                {greeting}, {userProfileDetails?.displayName || "Loading..."}!
                             </h1>
                             <p className={`mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{currentTime}</p>
                         </div>
@@ -260,8 +263,8 @@ const AdminTotalOverviewComponent = () => {
                         >
                             <FaCrown className="text-amber-500 mr-1" size={14} />
                             <span className={`text-sm font-medium ${darkMode ? "text-amber-400" : "text-amber-700"}`}>
-                Platinum Admin
-              </span>
+                                {userProfileDetails?.membershipDetails?.membershipTier} (Admin)
+                            </span>
                         </div>
                     </div>
                     <div className="mt-4 md:mt-0 flex items-center">
@@ -271,7 +274,7 @@ const AdminTotalOverviewComponent = () => {
                         </div>
                         <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-amber-500 shadow-lg shadow-amber-500/20">
                             <img
-                                src={dashboardData.admin.avatar || "/placeholder.svg"}
+                                src={userProfileDetails?.personalDetails?.photoURL || "/placeholder.svg"}
                                 alt="Admin"
                                 className="h-full w-full object-cover"
                             />

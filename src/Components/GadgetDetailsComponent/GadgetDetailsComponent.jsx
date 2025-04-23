@@ -489,7 +489,7 @@ const GadgetDetailsComponent = () => {
                     </button>
 
                     <div className="flex items-center space-x-2">
-                        {registeredUser && (
+                        {registeredUser && userProfileDetails?.role === "user" && (
                             <button
                                 onClick={toggleWishlist}
                                 className={`p-2 rounded-full cursor-pointer ${
@@ -1041,7 +1041,7 @@ const GadgetDetailsComponent = () => {
                         </div>
 
                         {/* Rent Button now */}
-                        {registeredUser && (
+                        {registeredUser && userProfileDetails?.role === "user" && (
                             <button
                                 className={`w-full py-3 px-4 rounded-lg font-medium transition-colors cursor-pointer ${
                                     startDate
@@ -1057,7 +1057,7 @@ const GadgetDetailsComponent = () => {
 
                         {/* Quick Actions */}
                         <div className="flex gap-3 mt-4">
-                            {registeredUser && (
+                            {registeredUser && userProfileDetails?.role === "user" && (
                                 <button
                                     onClick={toggleWishlist}
                                     className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center cursor-pointer ${

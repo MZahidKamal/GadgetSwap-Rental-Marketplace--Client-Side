@@ -64,6 +64,15 @@ const NavbarComponent = () => {
     };
 
 
+    const handleProfileViewerClick = async () => {
+        if (userProfileDetails && userProfileDetails?.role === "user"){
+            navigate('/dashboard/user/settings')
+        } else {
+            navigate('/dashboard/admin/settings')
+        }
+    }
+
+
     // Function to handle scrolling to the top of the page
     const scrollToTop = (e) => {
         e.preventDefault();
@@ -232,7 +241,9 @@ const NavbarComponent = () => {
 
                         {/* User Profile */}
                         {user.isLoggedIn && (
-                            <div className={`flex items-center space-x-3 px-4 py-2 rounded-md ${
+                            <button
+                                onClick={handleProfileViewerClick}
+                                className={`flex items-center space-x-3 px-4 py-2 rounded-md cursor-pointer ${
                                 darkMode
                                     ? 'bg-gray-800/50 border border-purple-800/30'
                                     : 'bg-white/70 border border-indigo-200/50'
@@ -255,7 +266,7 @@ const NavbarComponent = () => {
                                         className="h-full w-full object-cover"
                                     />
                                 </div>
-                            </div>
+                            </button>
                         )}
                     </div>
 
@@ -351,7 +362,9 @@ const NavbarComponent = () => {
                                         Sign Out
                                     </button>
 
-                                    <div className={`flex items-center space-x-3 px-3 py-2 rounded-lg ${
+                                    <button
+                                        onClick={handleProfileViewerClick}
+                                        className={`flex items-center space-x-3 px-3 py-2 rounded-lg cursor-pointer ${
                                         darkMode
                                             ? 'bg-gray-800/70 border border-purple-900/30'
                                             : 'bg-white/80 border border-indigo-200/50'
@@ -376,7 +389,7 @@ const NavbarComponent = () => {
                                                 {user.email}
                                             </span>
                                         </div>
-                                    </div>
+                                    </button>
                                 </>
                             )}
                         </div>

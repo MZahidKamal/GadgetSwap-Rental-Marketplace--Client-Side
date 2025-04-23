@@ -261,11 +261,16 @@ const UserSettingsComponent = () => {
             setPasswordError("Password must contain uppercase, lowercase, and number")
             return
         }
+        if (passwordData.newPassword === passwordData.currentPassword) {
+            setPasswordError("New password cannot be the same as the current password!")
+            return
+        }
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             setPasswordError("New passwords do not match")
             return
         }
 
+        // Update password in the Firebase
         await updateExistingUsersPassword(passwordData.currentPassword, passwordData.newPassword)
 
         // Reset form
@@ -925,4 +930,4 @@ const UserSettingsComponent = () => {
     )
 }
 
-export default UserSettingsComponent
+export default UserSettingsComponent;

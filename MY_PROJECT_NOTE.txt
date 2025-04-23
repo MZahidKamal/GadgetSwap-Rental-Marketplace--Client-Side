@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "Payment, Invoice, My Rentals, all these features have already been implemented successfully."
+git commit -m "All features in the AdminSettingsComponent have already been implemented successfully."
 git push
 
 git add .
@@ -340,6 +340,56 @@ Admin Dashboard
     "loginWith": "Personal Email",
     "failedLoginAttempts": 0,
     "lastFailedLoginAttempt": 0,
+    "loginRestricted": false,
+    "loginRestrictedUntil": null
+}
+
+
+
+{
+    "displayName": "Mohammad Zahid Kamal",
+    "email": "kamal.md.zahid@gmail.com",
+    "personalDetails": {
+        "bio": "",
+        "profession": "",
+        "photoURL": "//ssl.gstatic.com/accounts/ui/avatar_2x.png",
+        "phone": "",
+        "billingAddress": {
+            "street": "",
+            "city": "",
+            "zipCode": "",
+            "state": "",
+            "country": ""
+        },
+        "verified": false
+    },
+    "role": "admin",
+    "joinDate": "2025-04-19T10:27:19.969Z",
+    "membershipDetails": {
+        "membershipTier": "Platinum",
+        "points": 0,
+        "loyaltyProgressPercentage": 0,
+        "rentalStreak": 0,
+        "referrals": 0,
+        "nextTier": "Silver",
+        "pointsToNextTier": 500
+    },
+    "wishlist": [],
+    "rentalOrders": [],
+    "messageChain_id": "68037a877e06a2eb6d8dcaa8",
+    "notificationChain_id": "68037a887e06a2eb6d8dcaa9",
+    "activityHistoryChain_id": "68037a887e06a2eb6d8dcaaa",
+    "stats": {
+        "activeRentals": 0,
+        "pastRentals": 0,
+        "wishlistedItems": 0,
+        "totalSpent": 0,
+        "pointsEarned": 0,
+        "reviewsGiven": 0
+    },
+    "loginWith": "Personal Email",
+    "failedLoginAttempts": 1,
+    "lastFailedLoginAttempt": 1745177642423,
     "loginRestricted": false,
     "loginRestrictedUntil": null
 }
