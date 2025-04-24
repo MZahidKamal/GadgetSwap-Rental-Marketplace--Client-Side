@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef, useContext } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { FiSearch, FiFilter, FiSend, FiMessageCircle, FiUser, FiUsers, FiCheck, FiClock, FiMessageSquare, FiPaperclip, FiImage, FiFile, FiX, FiArrowLeft } from "react-icons/fi"
+import { FiSearch, FiFilter, FiSend, FiMessageCircle, FiUser, FiUsers, FiCheck, FiClock, FiMessageSquare, FiArrowLeft, FiCheckCircle } from "react-icons/fi"
 import AuthContext from "../../../Providers/AuthContext.jsx"
+import { getAllUserMessagesChain, addANewMessageFromAdminToUserMessagesChain, aUserMessagesChainMarkedAsReadByAdmin } from "../../../Features/adminMessages/adminMessagesSlice.js"
 import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx"
-import { getAllUserMessagesChain } from "../../../Features/adminMessages/adminMessagesSlice.js"
-import {addANewMessageFromAdminToUserMessagesChain} from "../../../Features/adminMessages/adminMessagesSlice.js"
 
 
 const AdminAllMessagesComponent = () => {
@@ -23,13 +22,12 @@ const AdminAllMessagesComponent = () => {
     const [messageText, setMessageText] = useState("")
     const [users, setUsers] = useState([])
     const [messages, setMessages] = useState({})
-    const [showAttachmentOptions, setShowAttachmentOptions] = useState(false)
     const [isMobileView, setIsMobileView] = useState(false)
     const [showUserList, setShowUserList] = useState(true)
+    const [adminToUserResponseRate, setAdminToUserResponseRate] = useState(0);
 
     const messageEndRef = useRef(null)
-    const fileInputRef = useRef(null)
-    const imageInputRef = useRef(null)
+    const messageContainerRef = useRef(null)
 
 
     // Fetch user's messages chain on mount
@@ -49,10 +47,6 @@ const AdminAllMessagesComponent = () => {
                 name: userChain.user_displayName,
                 email: userChain.user_email,
                 avatar: userChain.user_photoURL || "/placeholder.svg",
-                lastActive:
-                    userChain.message_chain?.length > 0
-                        ? userChain.message_chain[userChain.message_chain.length - 1].timestamp
-                        : Date.now(),
                 unreadCount: userChain.unreadByAdmin_count || 0,
             }))
 
@@ -88,11 +82,15 @@ const AdminAllMessagesComponent = () => {
     }, [allUserMessagesChain])
 
 
-    // Scroll to the bottom of messages when the selected user changes or a new message is added
+    // Scroll to the bottom of messages when a selected user changes or a new message is added
     useEffect(() => {
-        if (messageEndRef.current) {
+        if (messageEndRef.current && messageContainerRef.current) {
             messageEndRef.current.scrollIntoView({ behavior: "smooth" })
         }
+        window.scrollTo({
+            top: 0,
+            // behavior: 'smooth'
+        });
     }, [selectedUser, messages])
 
 
@@ -131,6 +129,34 @@ const AdminAllMessagesComponent = () => {
     }
 
 
+    // Calculate admin to user response rate
+    useEffect(() => {
+        if (allUserMessagesChain?.length > 0) {
+
+            // Calculate total messages where the sender is "user"
+            const totalUserMsgCount = allUserMessagesChain.reduce((sum, allUserMessagesChain) => {
+                return sum + allUserMessagesChain?.message_chain.filter(msg => msg.sender === "user").length;
+            }, 0);
+
+            // Calculate total admin unread messages (sum of all unreadByAdmin_count)
+            const totalAdminUnreadMsgCount = allUserMessagesChain.reduce((sum, allUserMessagesChain) => {
+                return sum + allUserMessagesChain?.unreadByAdmin_count;
+            }, 0);
+
+
+            // If there are no user messages, return 100% (nothing to respond to)
+            if (totalUserMsgCount === 0) {
+                return 100;
+            }
+
+            // Calculate response rate
+            const unreadPercentage = (totalAdminUnreadMsgCount / totalUserMsgCount) * 100;
+            let responseRate = (100 - Math.min(unreadPercentage, 100)).toFixed(2);
+            setAdminToUserResponseRate(responseRate)
+        }
+    }, [allUserMessagesChain]);
+
+
     // Check if the date should be displayed (first message of the day)
     const shouldDisplayDate = (message, index, messageList) => {
         if (index === 0) return true
@@ -155,12 +181,14 @@ const AdminAllMessagesComponent = () => {
         }
 
         // Sending the message to the backend
-        await dispatch(addANewMessageFromAdminToUserMessagesChain({
-            adminEmail: registeredUser.email,
-            targetUserId: selectedUser,
-            newMessageObjFromAdmin,
-            axiosSecure
-        }))
+        await dispatch(
+            addANewMessageFromAdminToUserMessagesChain({
+                adminEmail: registeredUser.email,
+                targetUserId: selectedUser,
+                newMessageObjFromAdmin,
+                axiosSecure,
+            }),
+        )
 
         setMessageText("")
     }
@@ -186,41 +214,9 @@ const AdminAllMessagesComponent = () => {
             setUsers((prev) => prev.map((user) => (user.id === userId ? { ...user, unreadCount: 0 } : user)))
         }
 
-        // On mobile, hide the user list when a user is selected
+        // On mobile, hide a user list when a user is selected
         if (isMobileView) {
             setShowUserList(false)
-        }
-    }
-
-
-    // Handle file attachment
-    const handleFileAttachment = () => {
-        fileInputRef.current?.click()
-        setShowAttachmentOptions(false)
-    }
-
-
-    // Handle image attachment
-    const handleImageAttachment = () => {
-        imageInputRef.current?.click()
-        setShowAttachmentOptions(false)
-    }
-
-
-    // Handle file selection
-    const handleFileSelected = (e) => {
-        const file = e.target.files[0]
-        if (file) {
-            setMessageText(`[File: ${file.name}] `)
-        }
-    }
-
-
-    // Handle image selection
-    const handleImageSelected = (e) => {
-        const file = e.target.files[0]
-        if (file) {
-            setMessageText(`[Image: ${file.name}] `)
         }
     }
 
@@ -234,13 +230,24 @@ const AdminAllMessagesComponent = () => {
     }
 
 
+    // Handle marks all as read
+    const handleMarkAllAsRead = async () => {
+        if (selectedUser) {
+            const adminEmail = registeredUser?.email;
+            const targetUserEmail = users.find((u) => u.id === selectedUser)?.email;
+
+            await dispatch(aUserMessagesChainMarkedAsReadByAdmin({adminEmail, targetUserEmail, axiosSecure}))
+        }
+    }
+
+
     // Get total unread messages
     const getTotalUnreadMessages = () => {
         return users.reduce((total, user) => total + (user.unreadCount || 0), 0)
     }
 
 
-    // Back to the user list (mobile only)
+    // Back to a user list (mobile only)
     const handleBackToUserList = () => {
         setShowUserList(true)
     }
@@ -248,7 +255,7 @@ const AdminAllMessagesComponent = () => {
 
     return (
         <div
-            className={`w-full mx-auto pb-8 rounded-xl ${darkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-800"}`}
+            className={`w-full mx-auto pb-8 rounded-xl ${darkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-800"} overflow-hidden`}
         >
             {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -283,17 +290,17 @@ const AdminAllMessagesComponent = () => {
                         </div>
                         <div>
                             <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Response Rate</p>
-                            <p className="text-2xl font-semibold">98%</p>
+                            <p className="text-2xl font-semibold">{adminToUserResponseRate}%</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-300px)]">
                 {/* User List */}
                 {(showUserList || !isMobileView) && (
                     <div
-                        className={`w-full lg:w-1/3 ${darkMode ? "bg-gray-800" : "bg-white"} rounded-lg shadow-sm overflow-hidden`}
+                        className={`w-full lg:w-1/3 ${darkMode ? "bg-gray-800" : "bg-white"} rounded-lg shadow-sm overflow-hidden flex flex-col`}
                     >
                         {/* Search and Filter */}
                         <div className={`p-4 border-b ${darkMode ? "border-gray-700" : "border-gray-200"}`}>
@@ -337,7 +344,7 @@ const AdminAllMessagesComponent = () => {
                         </div>
 
                         {/* User List */}
-                        <div className="overflow-y-auto min-h-[calc(100vh-421px)]">
+                        <div className="overflow-y-auto flex-1">
                             {filteredUsers.length > 0 ? (
                                 <ul className={`divide-y ${darkMode ? "divide-gray-700" : "divide-gray-200"}`}>
                                     {filteredUsers.map((user) => (
@@ -357,16 +364,13 @@ const AdminAllMessagesComponent = () => {
                                                     />
                                                     {user.unreadCount > 0 && (
                                                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full p-3 w-5 h-5 flex items-center justify-center">
-                              {user.unreadCount}
-                            </span>
+                                                            {user.unreadCount}
+                                                        </span>
                                                     )}
                                                 </div>
                                                 <div className="ml-4 flex-1 min-w-0">
                                                     <div className="flex items-center justify-between">
                                                         <p className="font-medium truncate">{user.name}</p>
-                                                        <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                            {formatTime(user.lastActive)}
-                                                        </p>
                                                     </div>
                                                     <p className={`text-sm truncate ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
                                                         {user.email}
@@ -397,33 +401,49 @@ const AdminAllMessagesComponent = () => {
                         {selectedUser ? (
                             <>
                                 {/* Message Header */}
-                                <div className={`p-4 border-b ${darkMode ? "border-gray-700" : "border-gray-200"} flex items-center`}>
-                                    {isMobileView && (
-                                        <button
-                                            onClick={handleBackToUserList}
-                                            className={`mr-2 p-2 rounded-full ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"} cursor-pointer`}
-                                        >
-                                            <FiArrowLeft size={20} />
-                                        </button>
-                                    )}
+                                <div
+                                    className={`p-4 border-b ${darkMode ? "border-gray-700" : "border-gray-200"} flex items-center justify-between`}
+                                >
+                                    <div className="flex items-center">
+                                        {isMobileView && (
+                                            <button
+                                                onClick={handleBackToUserList}
+                                                className={`mr-2 p-2 rounded-full ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"} cursor-pointer`}
+                                            >
+                                                <FiArrowLeft size={20} />
+                                            </button>
+                                        )}
 
-                                    <img
-                                        src={users.find((u) => u.id === selectedUser)?.avatar || "/placeholder.svg"}
-                                        alt={users.find((u) => u.id === selectedUser)?.name}
-                                        className="w-10 h-10 rounded-full object-cover"
-                                    />
-                                    <div className="ml-3">
-                                        <p className="font-medium">{users.find((u) => u.id === selectedUser)?.name}</p>
-                                        <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                            {users.find((u) => u.id === selectedUser)?.email}
-                                        </p>
+                                        <img
+                                            src={users.find((u) => u.id === selectedUser)?.avatar || "/placeholder.svg"}
+                                            alt={users.find((u) => u.id === selectedUser)?.name}
+                                            className="w-10 h-10 rounded-full object-cover"
+                                        />
+                                        <div className="ml-3">
+                                            <p className="font-medium">{users.find((u) => u.id === selectedUser)?.name}</p>
+                                            <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                                                {users.find((u) => u.id === selectedUser)?.email}
+                                            </p>
+                                        </div>
                                     </div>
+
+                                    <button
+                                        onClick={handleMarkAllAsRead}
+                                        className={`flex items-center px-3 py-1.5 rounded-lg text-sm ${
+                                            darkMode
+                                                ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                        } cursor-pointer`}
+                                    >
+                                        <FiCheckCircle className="mr-2 text-green-500" size={14} />
+                                        Mark all as read
+                                    </button>
                                 </div>
 
                                 {/* Message Thread */}
                                 <div
+                                    ref={messageContainerRef}
                                     className={`flex-1 p-4 overflow-y-auto ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}
-                                    style={{ height: "calc(100vh - 220px)" }}
                                 >
                                     {messages[selectedUser] && messages[selectedUser].length > 0 ? (
                                         <div className="space-y-4">
@@ -484,71 +504,19 @@ const AdminAllMessagesComponent = () => {
                                 {/* Message Input */}
                                 <div className={`p-4 border-t ${darkMode ? "border-gray-700" : "border-gray-200"}`}>
                                     <div className="flex items-end">
-                                        <div className="relative mr-2">
-                                            <button
-                                                onClick={() => setShowAttachmentOptions(!showAttachmentOptions)}
-                                                className={`p-2 rounded-full ${darkMode ? "hover:bg-gray-700 text-gray-300" : "hover:bg-gray-100 text-gray-600"} cursor-pointer`}
-                                            >
-                                                <FiPaperclip size={20} />
-                                            </button>
-
-                                            {showAttachmentOptions && (
-                                                <div
-                                                    className={`absolute bottom-12 left-0 rounded-lg shadow-lg p-2 z-10 ${darkMode ? "bg-gray-700" : "bg-white"}`}
-                                                >
-                                                    <button
-                                                        onClick={handleImageAttachment}
-                                                        className={`flex items-center p-2 rounded-md w-full text-left ${darkMode ? "hover:bg-gray-600 text-gray-200" : "hover:bg-gray-100 text-gray-700"} cursor-pointer`}
-                                                    >
-                                                        <FiImage className="mr-2 text-blue-500" />
-                                                        <span>Image</span>
-                                                    </button>
-                                                    <button
-                                                        onClick={handleFileAttachment}
-                                                        className={`flex items-center p-2 rounded-md w-full text-left ${darkMode ? "hover:bg-gray-600 text-gray-200" : "hover:bg-gray-100 text-gray-700"} cursor-pointer`}
-                                                    >
-                                                        <FiFile className="mr-2 text-green-500" />
-                                                        <span>File</span>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setShowAttachmentOptions(false)}
-                                                        className={`flex items-center p-2 rounded-md w-full text-left ${darkMode ? "hover:bg-gray-600 text-gray-200" : "hover:bg-gray-100 text-gray-700"} cursor-pointer`}
-                                                    >
-                                                        <FiX className="mr-2 text-red-500" />
-                                                        <span>Cancel</span>
-                                                    </button>
-                                                </div>
-                                            )}
-
-                                            <input
-                                                type="file"
-                                                ref={fileInputRef}
-                                                className="hidden"
-                                                onChange={handleFileSelected}
-                                                accept=".pdf,.doc,.docx,.txt"
-                                            />
-                                            <input
-                                                type="file"
-                                                ref={imageInputRef}
-                                                className="hidden"
-                                                onChange={handleImageSelected}
-                                                accept="image/*"
-                                            />
-                                        </div>
-
                                         <div className="flex-1 relative">
-                      <textarea
-                          value={messageText}
-                          onChange={(e) => setMessageText(e.target.value)}
-                          onKeyDown={handleKeyPress}
-                          placeholder="Type your message..."
-                          className={`w-full px-4 py-3 pr-12 rounded-lg resize-none ${
-                              darkMode
-                                  ? "bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400"
-                                  : "bg-white border-gray-300 text-gray-800 placeholder-gray-400"
-                          } border focus:outline-none focus:ring-1 focus:ring-blue-500`}
-                          rows="1"
-                      />
+                                            <textarea
+                                                value={messageText}
+                                                onChange={(e) => setMessageText(e.target.value)}
+                                                onKeyDown={handleKeyPress}
+                                                placeholder="Type your message..."
+                                                className={`w-full px-4 py-3 pr-12 rounded-lg resize-none ${
+                                                    darkMode
+                                                        ? "bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400"
+                                                        : "bg-white border-gray-300 text-gray-800 placeholder-gray-400"
+                                                } border focus:outline-none focus:ring-1 focus:ring-blue-500`}
+                                                rows="1"
+                                            />
                                             <button
                                                 onClick={handleSendMessage}
                                                 disabled={!messageText.trim()}

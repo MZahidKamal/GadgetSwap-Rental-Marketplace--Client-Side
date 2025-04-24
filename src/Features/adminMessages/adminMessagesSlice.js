@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+
 const initialState = {
     allUserMessagesChain: [],
     isLoading: false,
     isError: false,
     error: null,
 };
+
 
 export const getAllUserMessagesChain = createAsyncThunk(
     "adminMessages/getAllUserMessagesChain",
@@ -43,6 +45,27 @@ export const addANewMessageFromAdminToUserMessagesChain = createAsyncThunk(
         }
     }
 );
+
+
+export const aUserMessagesChainMarkedAsReadByAdmin = createAsyncThunk(
+    "adminMessages/aUserMessagesChainMarkedAsReadByAdmin",
+    async ({ adminEmail, targetUserEmail, axiosSecure }, { rejectWithValue }) => {
+        try {
+            const response = await axiosSecure.patch(
+                `/messages/a_users_message_chain_is_marked_as_read_by_admin`,
+                {adminEmail, targetUserEmail}
+            );
+            const data = response.data;
+            // console.log(data)
+            if (data.status !== 200) throw new Error(data.message || "Failed to mark a user's message chain as read by admin!");
+            return data.data;
+        }
+        catch (error) {
+            return rejectWithValue(error.message || "Network error while marking a user's message chain as read by admin");
+        }
+    }
+);
+
 
 const adminMessagesSlice = createSlice({
     name: "adminMessages",
@@ -85,6 +108,27 @@ const adminMessagesSlice = createSlice({
                 state.error = null;
             })
             .addCase(addANewMessageFromAdminToUserMessagesChain.rejected, (state, action) => {
+                state.allUserMessagesChain = [];
+                state.isLoading = false;
+                state.isError = true;
+                state.error = action.payload;
+            })
+
+
+            //To mark a user's message chain marked as read by admin.
+            .addCase(aUserMessagesChainMarkedAsReadByAdmin.pending, (state) => {
+                state.allUserMessagesChain = [];
+                state.isLoading = true;
+                state.isError = false;
+                state.error = null;
+            })
+            .addCase(aUserMessagesChainMarkedAsReadByAdmin.fulfilled, (state, action) => {
+                state.allUserMessagesChain = action.payload;
+                state.isLoading = false;
+                state.isError = false;
+                state.error = null;
+            })
+            .addCase(aUserMessagesChainMarkedAsReadByAdmin.rejected, (state, action) => {
                 state.allUserMessagesChain = [];
                 state.isLoading = false;
                 state.isError = true;

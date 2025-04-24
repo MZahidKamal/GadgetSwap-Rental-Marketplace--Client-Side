@@ -37,7 +37,7 @@ const SignUpComponent = () => {
     });
 
 
-    // Form touched state (to show errors only after field is touched)
+    // Form touched state (to show errors only after the field is touched)
     const [touched, setTouched] = useState({
         fullName: false,
         email: false,

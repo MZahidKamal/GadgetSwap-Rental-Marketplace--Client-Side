@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect, useContext } from "react"
-import { FiSend, FiCalendar, FiChevronDown, FiInfo, FiFilter, FiClock } from "react-icons/fi"
-import {useDispatch, useSelector} from "react-redux"
+import {FiSend, FiCalendar, FiChevronDown, FiInfo, FiFilter, FiClock, FiCheck, FiCheckCircle} from "react-icons/fi"
+import { useDispatch, useSelector } from "react-redux"
 import AuthContext from "../../../Providers/AuthContext.jsx"
-import {getUserMessagesChain, addANewMessageToUserMessagesChain} from "../../../Features/userMessages/userMessagesSlice.js"
-import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx";
+import {getUserMessagesChain, addANewMessageToUserMessagesChain, aUserMessagesChainMarkedAsReadByUser} from "../../../Features/userMessages/userMessagesSlice.js"
+import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx"
 
 
 const UserMessagesComponent = () => {
@@ -11,10 +11,10 @@ const UserMessagesComponent = () => {
     // State management
     const darkMode = useSelector((state) => state.darkMode.isDark)
     const { user: registeredUser } = useContext(AuthContext)
-    const dispatch = useDispatch();
-    const {userMessagesChain} = useSelector((state) => state.userMessages)
+    const dispatch = useDispatch()
+    const { userMessagesChain } = useSelector((state) => state.userMessages)
 
-    const axiosSecure = useAxiosSecure();
+    const axiosSecure = useAxiosSecure()
     const [messages, setMessages] = useState(null)
     const [newMessage, setNewMessage] = useState("")
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
@@ -31,15 +31,15 @@ const UserMessagesComponent = () => {
         if (registeredUser?.email) {
             dispatch(getUserMessagesChain({ userEmail: registeredUser?.email, axiosSecure }))
         }
-    }, [axiosSecure, dispatch, registeredUser?.email]);
+    }, [axiosSecure, dispatch, registeredUser?.email])
 
 
     // After fetching setting the message chain in state
     useEffect(() => {
-        if(userMessagesChain) {
-            setMessages(userMessagesChain?.message_chain);
+        if (userMessagesChain) {
+            setMessages(userMessagesChain?.message_chain)
         }
-    }, [userMessagesChain]);
+    }, [userMessagesChain])
 
 
     // Format timestamp to readable time
@@ -120,20 +120,26 @@ const UserMessagesComponent = () => {
             readByAdmin: false,
         }
         // console.log("User Message:", userMessageObj)
-        dispatch(addANewMessageToUserMessagesChain({ userEmail: registeredUser?.email, newMessageObj: userMessageObj, axiosSecure }))
+        dispatch(
+            addANewMessageToUserMessagesChain({
+                userEmail: registeredUser?.email,
+                newMessageObj: userMessageObj,
+                axiosSecure,
+            }),
+        )
         setNewMessage("")
 
         // Simulate admin response after 1 second
         /*setTimeout(() => {
-            const adminResponse = {
-                sender: "admin",
-                text: "Thanks for your message! Our team will get back to you shortly.",
-                timestamp: new Date().getTime(),
-                readByUser: true,
-            }
-            // console.log("Admin Response:", adminResponse)
-            dispatch(addANewMessageToUserMessagesChain({ userEmail: registeredUser?.email, newMessageObj: adminResponse, axiosSecure }))
-        }, 1500)*/
+                const adminResponse = {
+                    sender: "admin",
+                    text: "Thanks for your message! Our team will get back to you shortly.",
+                    timestamp: new Date().getTime(),
+                    readByUser: true,
+                }
+                // console.log("Admin Response:", adminResponse)
+                dispatch(addANewMessageToUserMessagesChain({ userEmail: registeredUser?.email, newMessageObj: adminResponse, axiosSecure }))
+            }, 1500)*/
         // TODO: Uncomment this snippet only if you want to simulate automatic admin response.
     }
 
@@ -141,8 +147,8 @@ const UserMessagesComponent = () => {
     // Handle key press in message input
     const handleKeyPress = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSendMessage().then();
+            e.preventDefault()
+            handleSendMessage().then()
         }
     }
 
@@ -200,6 +206,15 @@ const UserMessagesComponent = () => {
                 //messageElements[messageIndex].scrollIntoView({ behavior: "smooth" })
                 setTimeout(scrollToBottom, 100)
             }
+        }
+    }
+
+
+    // Handle marks all as read
+    const handleMarkAllAsRead = async (e) => {
+        e.preventDefault()
+        if (registeredUser?.email) {
+            await dispatch(aUserMessagesChainMarkedAsReadByUser({userEmail: registeredUser?.email, axiosSecure}))
         }
     }
 
@@ -288,11 +303,10 @@ const UserMessagesComponent = () => {
                                 }`}
                                 title="Show today's messages"
                             >
-                                <div className={'flex text-sm text-gray-300 justify-center items-center gap-2 px-2'}>
+                                <div className={"flex text-sm text-gray-300 justify-center items-center gap-2 px-2"}>
                                     Today Only
                                     <FiFilter size={16} />
                                 </div>
-
                             </button>
                             <button
                                 onClick={handleShowAllMessages}
@@ -307,7 +321,7 @@ const UserMessagesComponent = () => {
                                 }`}
                                 title="Show all messages"
                             >
-                                <div className={'flex text-sm text-gray-300 justify-center items-center gap-2 px-2'}>
+                                <div className={"flex text-sm text-gray-300 justify-center items-center gap-2 px-2"}>
                                     All Messages
                                     <FiClock size={16} />
                                 </div>
@@ -315,9 +329,21 @@ const UserMessagesComponent = () => {
                         </div>
                     </div>
 
-                    <div className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                        {showAllMessages ? messages?.length : getFilteredMessages()?.length} messages
-                        {showAllMessages ? " (all)" : ""}
+                    <div className={`text-sm  flex  justify-center items-center  space-x-5 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                        <p>
+                            {showAllMessages ? messages?.length : getFilteredMessages()?.length} messages {showAllMessages ? " (all)" : ""}
+                        </p>
+                        <button
+                            onClick={handleMarkAllAsRead}
+                            className={`flex items-center px-3 py-1.5 rounded-lg text-sm ${
+                                darkMode
+                                    ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            } cursor-pointer`}
+                        >
+                            <FiCheckCircle className="mr-2 text-green-500" size={14} />
+                            Mark all as read
+                        </button>
                     </div>
                 </div>
 
