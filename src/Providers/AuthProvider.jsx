@@ -29,7 +29,6 @@ const AuthProvider = ({children}) => {
 
 
     const checking_user_availability_in_database = async (email) => {
-        // console.log(email)
         const response = await axios.post(
             `${BASE_URL}/users/find_availability_by_email`,
             { email: email },
@@ -48,6 +47,7 @@ const AuthProvider = ({children}) => {
             setUserLoading(true);
 
             const user_availability_in_database = await checking_user_availability_in_database(email);
+
             if (user_availability_in_database?.exists) {
                 toast.warning(user_availability_in_database?.message);
                 setUserLoading(false);
@@ -107,6 +107,7 @@ const AuthProvider = ({children}) => {
                     reviewsGiven: 0
                 },
                 loginWith: "Personal Email",
+                lastLogin: new Date().toISOString(),
                 failedLoginAttempts: 0,
                 lastFailedLoginAttempt: 0,
                 loginRestricted: false,
@@ -155,7 +156,7 @@ const AuthProvider = ({children}) => {
                 return;
             }
 
-            // If registered then get the impression
+            // If registered, then get the impression
             userImpression = user_availability_in_database?.userImpression;
 
             // If the user login is restricted
@@ -165,19 +166,19 @@ const AuthProvider = ({children}) => {
                 const remainingTime = userImpression?.loginRestrictedUntil - currentTimestamp;
                 const minutes = Math.floor(remainingTime / (1000 * 60));
                 const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-                const readableremainingTime = `${minutes} minutes and ${seconds} seconds`;
+                const readableRemainingTime = `${minutes} minutes and ${seconds} seconds`;
                 // console.log(readableFormat);
 
-                toast.warning(`You are currently restricted from logging in. Please try again after ${readableremainingTime}.`);
+                toast.warning(`You are currently restricted from logging in. Please try again after ${readableRemainingTime}.`);
                 setUserLoading(false);
                 navigate('/');
                 return;
             }
 
-            // Try user login through Firebase
+            // Try user log in through Firebase
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-            // If user login is successful, get full data from database
+            // If user login is successful, get full data from the database
             if (userCredential){
                 const response = await axios.post(
                     `${BASE_URL}/users/get_user_by_email`,
@@ -192,7 +193,7 @@ const AuthProvider = ({children}) => {
                 // console.log('Response: ', response?.data?.data);
                 await setUser(response?.data?.data);
 
-                // Redirect to respective dashboard after successful signing.
+                // Redirect to the respective dashboard after successful signing.
                 await navigate(response?.data?.data?.role === 'admin' ? '/dashboard/admin/total_overview' : '/dashboard/user/overview');
 
                 toast.success(response?.data?.message);
@@ -305,6 +306,7 @@ const AuthProvider = ({children}) => {
             setUserLoading(true);
 
             const user_availability_in_database = await checking_user_availability_in_database(email);
+
             if (!user_availability_in_database?.exists) {
                 toast.warning(user_availability_in_database?.message);
                 setUserLoading(false);
@@ -374,6 +376,7 @@ const AuthProvider = ({children}) => {
                         reviewsGiven: 0
                     },
                     loginWith: "Gmail",
+                    lastLogin: new Date().toISOString(),
                     failedLoginAttempts: 0,
                     lastFailedLoginAttempt: 0,
                     loginRestricted: false,
@@ -412,7 +415,7 @@ const AuthProvider = ({children}) => {
 
             await setUser(response?.data?.data);
 
-            // Redirect to respective dashboard after successful signing.
+            // Redirect to the respective dashboard after successful signing.
             await navigate(response?.data?.data?.role === 'admin' ? '/dashboard/admin/total_overview' : '/dashboard/user/overview');
 
             toast.success('Sign In using Google completed successfully!');

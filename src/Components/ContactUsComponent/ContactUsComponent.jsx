@@ -1,30 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    FiMapPin,
-    FiPhone,
-    FiMail,
-    FiClock,
-    FiMessageSquare,
-    FiSend,
-    FiUser,
-    FiAlertCircle,
-    FiCheckCircle,
-    FiGlobe,
-    FiMessageCircle,
-    FiChevronDown,
-    FiMenu,
-    FiX,
-    FiArrowRight,
-    FiInfo,
-    FiMinimize2,
-    FiMaximize2, FiTruck, FiChevronRight
-} from 'react-icons/fi';
-import {
-    FaFacebook,
-    FaTwitter,
-    FaInstagram,
-    FaLinkedin
-} from 'react-icons/fa';
+import { FiMapPin, FiPhone, FiMail, FiClock, FiMessageSquare, FiSend, FiAlertCircle, FiCheckCircle, FiGlobe, FiMessageCircle, FiMenu, FiX, FiArrowRight, FiInfo, FiMinimize2, FiMaximize2, FiTruck, FiChevronRight } from 'react-icons/fi';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import {useSelector} from "react-redux";
 
 
@@ -32,8 +8,6 @@ const ContactUsComponent = () => {
 
     // const [darkMode, setDarkMode] = useState(false);
     const darkMode = useSelector((state) => state.darkMode.isDark);
-
-
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -73,15 +47,15 @@ const ContactUsComponent = () => {
     // Contact information data
     const contactInfo = {
         address: {
-            street: '123 Tech Avenue',
-            city: 'San Francisco',
-            state: 'CA',
-            zip: '94107',
-            country: 'United States'
+            street: 'Heddernheimer Landstraße 41',
+            city: 'Frankfurt am Main',
+            state: 'Hessen',
+            zip: '60439',
+            country: 'Germany'
         },
         phone: {
-            main: '+1 (800) 123-4567',
-            support: '+1 (800) 987-6543'
+            main: '+4917673251642',
+            support: '+4917673251642'
         },
         email: {
             info: 'info@gadgetswap.com',
@@ -142,7 +116,7 @@ const ContactUsComponent = () => {
             [name]: value
         });
 
-        // Clear error when user starts typing
+        // Clear error when the user starts typing
         if (errors[name]) {
             setErrors({
                 ...errors,
@@ -254,13 +228,13 @@ const ContactUsComponent = () => {
     };
 
 
-    // Send chat message
+    // Send a chat message
     const sendChatMessage = (e) => {
         e.preventDefault();
 
         if (currentMessage.trim() === '') return;
 
-        // Add user message
+        // Add a user message
         const userMessage = {
             id: chatMessages.length + 1,
             sender: 'user',

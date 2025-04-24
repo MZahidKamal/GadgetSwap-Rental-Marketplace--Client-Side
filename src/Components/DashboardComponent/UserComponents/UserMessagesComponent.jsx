@@ -14,7 +14,6 @@ const UserMessagesComponent = () => {
     const dispatch = useDispatch();
     const {userMessagesChain} = useSelector((state) => state.userMessages)
 
-    // States
     const axiosSecure = useAxiosSecure();
     const [messages, setMessages] = useState(null)
     const [newMessage, setNewMessage] = useState("")
@@ -57,7 +56,7 @@ const UserMessagesComponent = () => {
     }
 
 
-    // Check if message is from today
+    // Check if a message is from today
     const isToday = (timestamp) => {
         const today = new Date()
         const messageDate = new Date(timestamp)
@@ -69,7 +68,7 @@ const UserMessagesComponent = () => {
     }
 
 
-    // Check if message is from yesterday
+    // Check if a message is from yesterday
     const isYesterday = (timestamp) => {
         const yesterday = new Date()
         yesterday.setDate(yesterday.getDate() - 1)
@@ -82,7 +81,7 @@ const UserMessagesComponent = () => {
     }
 
 
-    // Get formatted date label
+    // Get a formatted date label
     const getDateLabel = (timestamp) => {
         if (isToday(timestamp)) return "Today"
         if (isYesterday(timestamp)) return "Yesterday"
@@ -90,7 +89,7 @@ const UserMessagesComponent = () => {
     }
 
 
-    // Check if date should be displayed (first message of the day)
+    // Check if the date should be displayed (first message of the day)
     const shouldDisplayDate = (message, index) => {
         if (index === 0) return true
 
@@ -102,7 +101,7 @@ const UserMessagesComponent = () => {
     }
 
 
-    // Scroll to bottom of messages container
+    // Scroll to bottom of message container
     const scrollToBottom = () => {
         if (messagesContainerRef.current) {
             messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
@@ -125,7 +124,7 @@ const UserMessagesComponent = () => {
         setNewMessage("")
 
         // Simulate admin response after 1 second
-        setTimeout(() => {
+        /*setTimeout(() => {
             const adminResponse = {
                 sender: "admin",
                 text: "Thanks for your message! Our team will get back to you shortly.",
@@ -134,7 +133,8 @@ const UserMessagesComponent = () => {
             }
             // console.log("Admin Response:", adminResponse)
             dispatch(addANewMessageToUserMessagesChain({ userEmail: registeredUser?.email, newMessageObj: adminResponse, axiosSecure }))
-        }, 1500)
+        }, 1500)*/
+        // TODO: Uncomment this snippet only if you want to simulate automatic admin response.
     }
 
 
@@ -152,7 +152,7 @@ const UserMessagesComponent = () => {
         setSelectedDate(e.target.value)
         setShowAllMessages(false)
 
-        // Find first message of selected date
+        // Find the first message of the selected date
         const selectedTimestamp = new Date(e.target.value).getTime()
         const nextDay = new Date(e.target.value)
         nextDay.setDate(nextDay.getDate() + 1)
@@ -184,7 +184,7 @@ const UserMessagesComponent = () => {
         setSelectedDate(today)
         setShowAllMessages(false)
 
-        // Find first message of today
+        // Find the first message of today
         const todayTimestamp = new Date(today).getTime()
         const nextDay = new Date(today)
         nextDay.setDate(nextDay.getDate() + 1)
@@ -214,7 +214,7 @@ const UserMessagesComponent = () => {
     }
 
 
-    // Filter messages by selected date
+    // Filter messages by a selected date
     const getFilteredMessages = () => {
         if (showAllMessages) return messages
 
@@ -231,19 +231,19 @@ const UserMessagesComponent = () => {
     }
 
 
-    // Scroll to bottom on initial load
+    // Scroll to the bottom on an initial load
     useEffect(() => {
         scrollToBottom()
     }, [])
 
 
-    // Scroll to bottom when messages change
+    // Scroll to the bottom when messages change
     useEffect(() => {
         scrollToBottom()
     }, [messages])
 
 
-    // Add scroll event listener
+    // Add a scroll event listener
     useEffect(() => {
         const container = messagesContainerRef.current
         if (container) {
@@ -424,7 +424,7 @@ const UserMessagesComponent = () => {
                 </div>
             </div>
 
-            {/* Scroll to bottom button */}
+            {/* Scroll to the bottom button */}
             {showScrollButton && (
                 <button
                     onClick={scrollToBottom}

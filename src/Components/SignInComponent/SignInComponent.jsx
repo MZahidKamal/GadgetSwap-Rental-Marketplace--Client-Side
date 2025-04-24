@@ -33,7 +33,7 @@ const SignInComponent = () => {
     });
 
 
-    // Form touched state (to show errors only after field is touched)
+    // Form touched state (to show errors only after the field is touched)
     const [touched, setTouched] = useState({
         email: false,
         password: false
@@ -247,13 +247,6 @@ const SignInComponent = () => {
                                 } transition-colors duration-300`}>
                                     Password
                                 </label>
-                                <div className="text-sm">
-                                    <a href="#" className={`font-medium ${
-                                        darkMode ? 'text-purple-400 hover:text-purple-300' : 'text-indigo-600 hover:text-indigo-500'
-                                    } transition-colors duration-300`}>
-                                        Forgot your password?
-                                    </a>
-                                </div>
                             </div>
                             <div className="mt-1 relative">
                                 <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${

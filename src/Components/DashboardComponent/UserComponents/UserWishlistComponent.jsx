@@ -63,7 +63,7 @@ const UserWishlistComponent = () => {
     }
 
 
-    // Handle remove from wishlist
+    // Handle remove from the wishlist
     const handleRemoveFromWishlist = async (id) => {
         await dispatch(addOrRemoveWishlistGadget({userEmail: registeredUser?.email, gadgetId: id, axiosSecure}));
         await dispatch(getWishlistGadgetsDetails(registeredUser?.email));
@@ -72,8 +72,7 @@ const UserWishlistComponent = () => {
 
     // Handle rent now
     const handleRentNow = (id) => {
-        console.log(`Renting gadget with ID: ${id}`)
-        // TODO: Make this rent now feature functional.
+        navigateTo(`/all-gadgets/gadget-details/${id}`);
     }
 
 

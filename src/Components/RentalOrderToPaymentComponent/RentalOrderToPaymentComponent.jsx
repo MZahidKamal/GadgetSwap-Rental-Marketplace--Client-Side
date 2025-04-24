@@ -46,10 +46,10 @@ const RentalOrderToPaymentComponent = () => {
 
     // Form state
     const [cardDetails, setCardDetails] = useState({
+        cardholderName: "",
         cardNumber: "",
         expiryDate: "",
         cvc: "",
-        cardholderName: "",
     })
 
 
@@ -180,15 +180,19 @@ const RentalOrderToPaymentComponent = () => {
         switch (selectedPaymentMethod) {
             case "mastercard":
                 paymentMethodText = "MasterCard"
+                console.log("Master Card Details: ", cardDetails);
                 break
             case "visa":
                 paymentMethodText = "Visa Card"
+                console.log("Visa Card Details: ", cardDetails);
                 break
             case "amex":
                 paymentMethodText = "Amex Card"
+                console.log("Amex Card Details: ", cardDetails);
                 break
             case "paypal":
                 paymentMethodText = "PayPal"
+                console.log("PayPal Details: ", paypalDetails);
                 break
             default:
                 paymentMethodText = "Credit Card"

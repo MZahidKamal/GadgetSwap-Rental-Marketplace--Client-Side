@@ -319,7 +319,7 @@ const AboutUsComponent = () => {
                                     <li>
                                         <button
                                             onClick={() => handleSectionChange("story")}
-                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors cursor-pointer ${
                                                 activeSection === "story"
                                                     ? "bg-blue-600 text-white"
                                                     : darkMode
@@ -333,7 +333,7 @@ const AboutUsComponent = () => {
                                     <li>
                                         <button
                                             onClick={() => handleSectionChange("values")}
-                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors cursor-pointer ${
                                                 activeSection === "values"
                                                     ? "bg-blue-600 text-white"
                                                     : darkMode
@@ -347,7 +347,7 @@ const AboutUsComponent = () => {
                                     <li>
                                         <button
                                             onClick={() => handleSectionChange("team")}
-                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors cursor-pointer ${
                                                 activeSection === "team"
                                                     ? "bg-blue-600 text-white"
                                                     : darkMode
@@ -361,7 +361,7 @@ const AboutUsComponent = () => {
                                     <li>
                                         <button
                                             onClick={() => handleSectionChange("journey")}
-                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors cursor-pointer ${
                                                 activeSection === "journey"
                                                     ? "bg-blue-600 text-white"
                                                     : darkMode
@@ -375,7 +375,7 @@ const AboutUsComponent = () => {
                                     <li>
                                         <button
                                             onClick={() => handleSectionChange("testimonials")}
-                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors cursor-pointer ${
                                                 activeSection === "testimonials"
                                                     ? "bg-blue-600 text-white"
                                                     : darkMode
@@ -680,16 +680,6 @@ const AboutUsComponent = () => {
                                             >
                                                 Rent a Gadget
                                             </Link>
-                                            {/*<a
-                                                href="#list"
-                                                className={`px-4 py-2 rounded-lg font-medium ${
-                                                    darkMode
-                                                        ? "bg-gray-600 hover:bg-gray-700 text-white"
-                                                        : "bg-gray-200 hover:bg-gray-300 text-gray-800"
-                                                }`}
-                                            >
-                                                List Your Gadget
-                                            </a>*/}
                                         </div>
                                     </div>
                                 </div>
@@ -716,12 +706,6 @@ const AboutUsComponent = () => {
                                         >
                                             Sign Up Now
                                         </Link>
-                                        <a
-                                            href="#learn-more"
-                                            className="px-6 py-3 rounded-lg font-medium bg-transparent border border-white hover:bg-white/10 transition-colors"
-                                        >
-                                            Learn More
-                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -761,100 +745,6 @@ const AboutUsComponent = () => {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Contact Section */}
-                        {/*<div className={`rounded-xl p-6 mt-8 ${darkMode ? "bg-gray-800" : "bg-white shadow-sm"}`}>
-                            <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
-
-                            <div className="flex flex-col md:flex-row gap-8">
-                                <div className="md:w-1/2">
-                                    <p className="mb-4">
-                                        Have questions about GadgetSwap? We'd love to hear from you! Our team is
-                                        available to assist with
-                                        any inquiries.
-                                    </p>
-
-                                    <div className="space-y-4">
-                                        <div className="flex items-start">
-                                            <FiMail
-                                                className={`mt-1 mr-3 ${darkMode ? "text-blue-400" : "text-blue-600"}`}/>
-                                            <div>
-                                                <h3 className="font-medium">Email Us</h3>
-                                                <p className={darkMode ? "text-gray-300" : "text-gray-600"}>support@gadgetswap.com</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-start">
-                                            <FiInstagram
-                                                className={`mt-1 mr-3 ${darkMode ? "text-pink-400" : "text-pink-600"}`}/>
-                                            <div>
-                                                <h3 className="font-medium">Follow Us</h3>
-                                                <p className={darkMode ? "text-gray-300" : "text-gray-600"}>
-                                                    @gadgetswap on Instagram, Twitter, and Facebook
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="md:w-1/2">
-                                    <form className="space-y-4">
-                                        <div>
-                                            <label
-                                                className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}
-                                            >
-                                                Your Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className={`w-full p-2 rounded-lg border ${
-                                                    darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"
-                                                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label
-                                                className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}
-                                            >
-                                                Email Address
-                                            </label>
-                                            <input
-                                                type="email"
-                                                className={`w-full p-2 rounded-lg border ${
-                                                    darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"
-                                                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label
-                                                className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}
-                                            >
-                                                Message
-                                            </label>
-                                            <textarea
-                                                rows="4"
-                                                className={`w-full p-2 rounded-lg border ${
-                                                    darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"
-                                                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                            ></textarea>
-                                        </div>
-
-                                        <button
-                                            type="submit"
-                                            className={`px-4 py-2 rounded-lg font-medium ${
-                                                darkMode
-                                                    ? "bg-blue-600 hover:bg-blue-700 text-white"
-                                                    : "bg-blue-600 hover:bg-blue-700 text-white"
-                                            }`}
-                                        >
-                                            Send Message
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>*/}
                     </div>
                 </div>
             </div>
