@@ -30,7 +30,7 @@ const AdminAllMessagesComponent = () => {
     const messageContainerRef = useRef(null)
 
 
-    // Fetch user's messages chain on mount
+    // Fetch all user's messages chain on mount
     useEffect(() => {
         if (registeredUser?.email) {
             dispatch(getAllUserMessagesChain({ adminEmail: registeredUser?.email, axiosSecure }))

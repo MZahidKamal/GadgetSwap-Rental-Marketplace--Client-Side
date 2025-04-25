@@ -11,6 +11,7 @@ import userMessagesReducer from "../Features/userMessages/userMessagesSlice.js";
 import userRentalOrdersReducer from "../Features/userRentalOrders/userRentalOrdersSlice.js";
 
 import adminMessagesReducer from "../Features/adminMessages/adminMessagesSlice.js";
+import adminAllUsersReducer from "../Features/adminAllUsers/adminAllUsersSlice.js";
 
 
 const reduxStore = configureStore({
@@ -27,6 +28,7 @@ const reduxStore = configureStore({
         userRentalOrders: userRentalOrdersReducer,
 
         adminMessages: adminMessagesReducer,
+        adminAllUsers: adminAllUsersReducer,
     },
 });
 

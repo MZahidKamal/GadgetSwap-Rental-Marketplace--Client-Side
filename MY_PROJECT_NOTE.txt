@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "Messaging feature in the AdminAllMessagesComponent has already been implemented successfully."
+git commit -m "All feature in the AdminAllUsersComponent have already been implemented successfully."
 git push
 
 git add .
