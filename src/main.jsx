@@ -81,6 +81,7 @@ ReactDOM.createRoot(root).render(
                                     <Route path={'/dashboard/admin/all_messages'} element={<AdminAllMessagesPage></AdminAllMessagesPage>} />
                                     <Route path={'/dashboard/admin/all_gadgets'} element={<AdminAllGadgetsPage></AdminAllGadgetsPage>} />
                                     <Route path={'/dashboard/admin/all_rentals'} element={<AdminAllRentalsPage></AdminAllRentalsPage>} />
+                                    <Route path={'/dashboard/admin/all_rentals/selected_rental_order/:order_id/invoice'} element={<GenerateAndDownloadInvoicePage></GenerateAndDownloadInvoicePage>} />
                                     <Route path={'/dashboard/admin/settings'} element={<AdminSettingsPage></AdminSettingsPage>} />
                                 </Route>
 

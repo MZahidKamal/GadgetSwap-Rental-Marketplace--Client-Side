@@ -10,8 +10,9 @@ import gadgetWishlistReducer from "../Features/gadgetWishlist/gadgetWishlistSlic
 import userMessagesReducer from "../Features/userMessages/userMessagesSlice.js";
 import userRentalOrdersReducer from "../Features/userRentalOrders/userRentalOrdersSlice.js";
 
-import adminMessagesReducer from "../Features/adminMessages/adminMessagesSlice.js";
 import adminAllUsersReducer from "../Features/adminAllUsers/adminAllUsersSlice.js";
+import adminMessagesReducer from "../Features/adminMessages/adminMessagesSlice.js";
+import adminAllRentalOrdersReducer from "../Features/adminAllRentalOrders/adminAllRentalOrdersSlice.js";
 
 
 const reduxStore = configureStore({
@@ -27,8 +28,9 @@ const reduxStore = configureStore({
         userMessages: userMessagesReducer,
         userRentalOrders: userRentalOrdersReducer,
 
-        adminMessages: adminMessagesReducer,
         adminAllUsers: adminAllUsersReducer,
+        adminMessages: adminMessagesReducer,
+        adminAllRentalOrders: adminAllRentalOrdersReducer,
     },
 });
 

@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "All feature in the AdminAllUsersComponent have already been implemented successfully."
+git commit -m "All features in the AdminAllRentalsComponent have already been implemented successfully."
 git push
 
 git add .
@@ -264,8 +264,8 @@ newsletterEmailCollection
         "2025-04-23",
         "2025-04-24"
     ],
-    "rentalStatus": "active",
-    "shipmentStatus": "processing_order",
+    "rentalStatus": "active",                                                       // active canceled completed
+    "shipmentStatus": "processing_order",                                           // processing_order, shipment_started, delivered, return_started, return_received
     "customerDetails": {
         "name": "Alice Johnson",
         "email": "alice.johnson.testemail@gmail.com",
@@ -284,6 +284,148 @@ newsletterEmailCollection
     "isReviewed": false,
     "rating": 0
 }
+
+{
+    "_id": "680b934050b44dece8a8043b",
+    "order_id": "GSRO_20250425_155045_1018",
+    "gadget_id": "68089e79b46d6f1870f352be",
+    "gadgetName": "Universal Audio Apollo Twin X",
+    "gadgetImage": "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742705272/uaapollotwinx1_c2ibhc.jpg",
+    "category": "Audio",
+    "rentalStreak": [
+        {
+            "perDayPrice": 25,
+            "startDate": "2025-04-26",
+            "endDate": "2025-04-29",
+            "rentalDuration": 3,
+            "onlyRentAmount": 75,
+            "insuranceOption": "premium",
+            "onlyInsuranceAmount": 23.97,
+            "rentAndInsuranceAmount": 98.97,
+            "discountApplied": 0,
+            "onlyShippingAmount": 5,
+            "payableFinalAmount": 103.97,
+            "paymentMethod": "PayPal",
+            "pointsEarned": 75,
+            "pointsRedeemed": 0
+        }
+    ],
+    "blockedDates": [
+        "2025-04-26",
+        "2025-04-27",
+        "2025-04-28",
+        "2025-04-29"
+    ],
+    "rentalStatus": "active",
+    "shipmentStatus": "processing_order",
+    "customerDetails": {
+        "name": "Alice Johnson",
+        "email": "alice.johnson.testemail@gmail.com",
+        "phone": "+4917673251642",
+        "billingAddress": {
+            "street": "Heddernheimer Landstraße 410",
+            "city": "Frankfurt am Main",
+            "zipCode": "60439",
+            "state": "Hessen",
+            "country": "Germany"
+        },
+        "membershipTier": "Bronze",
+        "currentPoint": 780
+    },
+    "hasInvoice": true,
+    "isReviewed": false,
+    "rating": 0
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    "_id": "680b934050b44dece8a8043b",
+    "order_id": "GSRO_20250425_155045_1018",
+    "gadget_id": "68089e79b46d6f1870f352be",
+    "gadgetName": "Universal Audio Apollo Twin X",
+    "gadgetImage": "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742705272/uaapollotwinx1_c2ibhc.jpg",
+    "category": "Audio",
+    "rentalStreak": [
+        {
+            "perDayPrice": 25,
+            "startDate": "2025-04-26",
+            "endDate": "2025-04-30",
+            "rentalDuration": 3,
+            "onlyRentAmount": 75,
+            "insuranceOption": "premium",
+            "onlyInsuranceAmount": 23.97,
+            "rentAndInsuranceAmount": 98.97,
+            "discountApplied": 0,
+            "onlyShippingAmount": 5,
+            "payableFinalAmount": 103.97,
+            "paymentMethod": "PayPal",
+            "pointsEarned": 75,
+            "pointsRedeemed": 0
+        }
+    ],
+    "blockedDates": [
+        "2025-04-26",
+        "2025-04-27",
+        "2025-04-28",
+        "2025-04-29"
+    ],
+    "rentalStatus": "active",
+    "shipmentStatus": "processing_order",
+    "customerDetails": {
+        "name": "Alice Johnson",
+        "email": "alice.johnson.testemail@gmail.com",
+        "phone": "+4917673251642",
+        "billingAddress": {
+            "street": "Heddernheimer Landstraße 41",
+            "city": "Frankfurt am Main",
+            "zipCode": "60439",
+            "state": "Hessen",
+            "country": "Germany"
+        },
+        "membershipTier": "Bronze",
+        "currentPoint": 780
+    },
+    "hasInvoice": true,
+    "isReviewed": false,
+    "rating": 0
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

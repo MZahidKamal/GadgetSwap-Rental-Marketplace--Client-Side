@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { FiSearch, FiEdit2, FiTrash2, FiUserCheck, FiChevronDown, FiChevronUp, FiMoreHorizontal, FiUser, FiUsers, FiUserPlus as FiNewUsers, FiClock, FiCalendar, FiMail, FiPhone, FiMapPin, FiShield, FiAward } from "react-icons/fi"
 import AuthContext from "../../../Providers/AuthContext.jsx"
 import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx"
-import { getAllUsersFullDetailsForAdmin } from "../../../Features/adminAllUsers/adminAllUsersSlice.js"
+import { getAllUsersFullDetailsForAdmin, deleteAUserCompletelyWithNoRentalOrder } from "../../../Features/adminAllUsers/adminAllUsersSlice.js"
 import {toast} from "react-toastify";
 
 
@@ -112,9 +112,12 @@ const AdminAllUsersComponent = () => {
         if (action === "edit") {
             // console.log(`Editing user: ${user.displayName}`)
             toast.warning("Editing users is only possible from the user profile page.")
-        } else if (action === "delete") {
-            // console.log(`User email: ${user.email}, _id: ${user._id}, uid: ${user.uid}`)
-            toast.warning("Deleting users is only possible from database by super admin.")
+        }
+        else if (action === "delete") {
+            if (registeredUser && user?.role === "user") {
+                dispatch(deleteAUserCompletelyWithNoRentalOrder({adminEmail:registeredUser?.email, targetUserId: user._id, axiosSecure}))
+            }
+            toast.success("Successfully deleted user.")
         }
 
         setIsActionMenuOpen((prev) => ({
@@ -307,7 +310,7 @@ const AdminAllUsersComponent = () => {
 
             {/* Users Table */}
             <div
-                className={`max-h-[calc(100vh-417px)] overflow-x-auto rounded-lg border ${darkMode ? "border-gray-700" : "border-gray-200"} shadow-sm mb-6`}
+                className={`max-h-[calc(100vh-400px)] overflow-x-auto rounded-lg border ${darkMode ? "border-gray-700" : "border-gray-200"} shadow-sm mb-6`}
             >
                 <table className={`min-w-full divide-y ${darkMode ? "divide-gray-600" : "divide-gray-200"}`}>
                     <thead className={darkMode ? "bg-gray-700" : "bg-gray-50"}>
