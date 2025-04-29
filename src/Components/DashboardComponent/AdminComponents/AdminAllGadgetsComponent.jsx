@@ -1,45 +1,22 @@
-import { useState, useEffect, useRef } from "react"
-import { useSelector } from "react-redux"
-import {
-    FiSearch,
-    FiPlus,
-    FiEdit2,
-    FiTrash2,
-    FiEye,
-    FiEyeOff,
-    FiStar,
-    FiImage,
-    FiUpload,
-    FiX,
-    FiCheck,
-    FiChevronDown,
-    FiPackage,
-    FiDollarSign,
-    FiCalendar,
-    FiShoppingBag,
-    FiAlertCircle,
-    FiGrid,
-    FiList,
-    FiArrowLeft,
-    FiMessageSquare,
-    FiUser,
-} from "react-icons/fi"
-import {
-    FaLaptop,
-    FaMobileAlt,
-    FaTabletAlt,
-    FaHeadphones,
-    FaCamera,
-    FaGamepad,
-    FaVrCardboard,
-    FaWifi,
-} from "react-icons/fa"
+import { useState, useEffect, useRef, useContext } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { FiSearch, FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff, FiStar, FiImage, FiUpload, FiX, FiCheck, FiChevronDown, FiPackage, FiDollarSign, FiCalendar, FiAlertCircle, FiGrid, FiList, FiArrowLeft, FiMessageSquare, FiUser } from "react-icons/fi"
+import { FaLaptop, FaMobileAlt, FaTabletAlt, FaHeadphones, FaCamera, FaGamepad, FaVrCardboard, FaWifi, FaClock, FaVolumeUp, FaPlane, FaProjectDiagram } from "react-icons/fa"
+import AuthContext from "../../../Providers/AuthContext.jsx"
+import { getAllGadgetsFullDetailsForAdmin, updateTheDetailsOfAGadgetByAdmin, addANewGadgetWithDetailsByAdmin } from "../../../Features/adminAllGadgets/adminAllGadgetsSlice.js"
+import useAxiosSecure from "../../../CustomHooks/useAxiosSecure.jsx"
+import useCloudinary from "../../../CustomHooks/useCloudinary.jsx"
 
 
 const AdminAllGadgetsComponent = () => {
 
     // States
     const darkMode = useSelector((state) => state.darkMode.isDark)
+    const { user: registeredUser } = useContext(AuthContext)
+    const dispatch = useDispatch()
+    const { allGadgetsFullDetails } = useSelector((state) => state.adminAllGadgets)
+
+    const axiosSecure = useAxiosSecure()
     const [gadgets, setGadgets] = useState([])
     const [selectedGadget, setSelectedGadget] = useState(null)
     const [isAddingGadget, setIsAddingGadget] = useState(false)
@@ -59,323 +36,30 @@ const AdminAllGadgetsComponent = () => {
     const [uploadedImages, setUploadedImages] = useState([])
     const [isUploading, setIsUploading] = useState(false)
     const [sortConfig, setSortConfig] = useState({ key: "name", direction: "ascending" })
+    const [newGadget, setNewGadget] = useState(null)
+    const { uploadImageToCloudinaryAndGetURL } = useCloudinary()
 
     const fileInputRef = useRef(null)
 
 
-    // Fake data
-    const fakeGadgets = [
-        {
-            id: "g001",
-            name: "iPhone 15 Pro Max",
-            category: "Smartphones",
-            brand: "Apple",
-            model: "iPhone 15 Pro Max",
-            description: "The latest iPhone with A17 Pro chip, 48MP camera system, and titanium design.",
-            specifications: {
-                display: "6.7-inch Super Retina XDR display",
-                processor: "A17 Pro chip",
-                storage: "256GB",
-                camera: "48MP main camera with 5x optical zoom",
-                battery: "Up to 29 hours video playback",
-                os: "iOS 17",
-            },
-            included: ["iPhone 15 Pro Max", "USB-C to Lightning Cable", "Documentation"],
-            images: [
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"
-            ],
-            pricing: {
-                perDay: 24.99,
-                deposit: 299.99,
-                basicInsuranceFee: 4.99,
-                premiumInsuranceFee: 9.99,
-            },
-            availability: {
-                total_copy: 5,
-                status: true,
-                blockedDates: ["2023-12-24", "2023-12-25"],
-            },
-            ratings: [5.0, 4.5, 5.0, 4.0, 5.0],
-            average_rating: 4.7,
-            reviews: [
-                {
-                    reviewer_id: "u001",
-                    reviewer_name: "John Smith",
-                    reviewer_email: "john@example.com",
-                    review_text: "Amazing phone! The camera quality is outstanding and the battery life is impressive.",
-                    rating: 5.0,
-                    date: "2023-10-15",
-                    hidden: false,
-                },
-                {
-                    reviewer_id: "u002",
-                    reviewer_name: "Sarah Johnson",
-                    reviewer_email: "sarah@example.com",
-                    review_text: "Great device but a bit expensive for rental.",
-                    rating: 4.0,
-                    date: "2023-10-10",
-                    hidden: false,
-                },
-            ],
-            totalRentalCount: 12,
-        },
-        {
-            id: "g002",
-            name: "MacBook Pro 16-inch",
-            category: "Laptops",
-            brand: "Apple",
-            model: "MacBook Pro 16-inch",
-            description:
-                "Powerful laptop with M2 Pro chip, 16-inch Liquid Retina XDR display, and up to 22 hours of battery life.",
-            specifications: {
-                display: "16-inch Liquid Retina XDR display",
-                processor: "M2 Pro chip",
-                storage: "512GB SSD",
-                camera: "1080p FaceTime HD camera",
-                battery: "Up to 22 hours",
-                os: "macOS Ventura",
-            },
-            included: ["MacBook Pro 16-inch", "USB-C Power Adapter", "USB-C Charge Cable"],
-            images: [
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"
-            ],
-            pricing: {
-                perDay: 49.99,
-                deposit: 499.99,
-                basicInsuranceFee: 7.99,
-                premiumInsuranceFee: 14.99,
-            },
-            availability: {
-                total_copy: 3,
-                status: true,
-                blockedDates: [],
-            },
-            ratings: [5.0, 4.0, 4.5, 5.0],
-            average_rating: 4.6,
-            reviews: [
-                {
-                    reviewer_id: "u003",
-                    reviewer_name: "Michael Brown",
-                    reviewer_email: "michael@example.com",
-                    review_text: "Perfect for my video editing needs. The screen is gorgeous!",
-                    rating: 5.0,
-                    date: "2023-09-28",
-                    hidden: false,
-                },
-            ],
-            totalRentalCount: 8,
-        },
-        {
-            id: "g003",
-            name: "Sony A7 IV Camera",
-            category: "Cameras",
-            brand: "Sony",
-            model: "A7 IV",
-            description: "Full-frame mirrorless camera with 33MP sensor, 4K 60p video, and advanced autofocus.",
-            specifications: {
-                display: "3-inch LCD touchscreen",
-                processor: "BIONZ XR",
-                storage: "Dual SD card slots",
-                camera: "33MP full-frame sensor",
-                battery: "Up to 580 shots",
-                os: "Sony Real-time tracking",
-            },
-            included: ["Sony A7 IV Camera Body", "24-70mm f/2.8 Lens", "Battery", "Charger", "Camera Bag"],
-            images: [
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"
-            ],
-            pricing: {
-                perDay: 39.99,
-                deposit: 399.99,
-                basicInsuranceFee: 6.99,
-                premiumInsuranceFee: 12.99,
-            },
-            availability: {
-                total_copy: 2,
-                status: false,
-                blockedDates: ["2023-11-20", "2023-11-21", "2023-11-22"],
-            },
-            ratings: [4.5, 4.0, 5.0],
-            average_rating: 4.5,
-            reviews: [
-                {
-                    reviewer_id: "u004",
-                    reviewer_name: "Emily Davis",
-                    reviewer_email: "emily@example.com",
-                    review_text: "Excellent camera for professional photography. The autofocus is incredibly fast.",
-                    rating: 4.5,
-                    date: "2023-10-05",
-                    hidden: true,
-                },
-            ],
-            totalRentalCount: 15,
-        },
-        {
-            id: "g004",
-            name: "DJI Mavic 3 Pro",
-            category: "Drones",
-            brand: "DJI",
-            model: "Mavic 3 Pro",
-            description: "Professional drone with Hasselblad camera, 4/3 CMOS sensor, and 46 minutes of flight time.",
-            specifications: {
-                display: "N/A",
-                processor: "O3+ Video Transmission",
-                storage: "8GB internal + microSD",
-                camera: "Hasselblad 4/3 CMOS",
-                battery: "46 minutes flight time",
-                os: "DJI Fly App",
-            },
-            included: ["DJI Mavic 3 Pro Drone", "Remote Controller", "3 Batteries", "Charging Hub", "Carrying Case"],
-            images: [
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"
-            ],
-            pricing: {
-                perDay: 59.99,
-                deposit: 599.99,
-                basicInsuranceFee: 9.99,
-                premiumInsuranceFee: 19.99,
-            },
-            availability: {
-                total_copy: 1,
-                status: true,
-                blockedDates: [],
-            },
-            ratings: [5.0, 4.5],
-            average_rating: 4.8,
-            reviews: [
-                {
-                    reviewer_id: "u005",
-                    reviewer_name: "David Wilson",
-                    reviewer_email: "david@example.com",
-                    review_text: "Amazing drone! The image quality is outstanding and the battery life is impressive.",
-                    rating: 5.0,
-                    date: "2023-09-15",
-                    hidden: false,
-                },
-            ],
-            totalRentalCount: 6,
-        },
-        {
-            id: "g005",
-            name: "Oculus Quest 3",
-            category: "VR",
-            brand: "Meta",
-            model: "Quest 3",
-            description:
-                "Advanced VR headset with high-resolution display, wireless design, and immersive gaming experience.",
-            specifications: {
-                display: "2064 x 2208 per eye",
-                processor: "Snapdragon XR2 Gen 2",
-                storage: "128GB",
-                camera: "Mixed reality passthrough cameras",
-                battery: "2-3 hours",
-                os: "Meta Horizon OS",
-            },
-            included: ["Oculus Quest 3 Headset", "2 Touch Controllers", "Charging Cable", "Power Adapter"],
-            images: [
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"
-            ],
-            pricing: {
-                perDay: 29.99,
-                deposit: 299.99,
-                basicInsuranceFee: 4.99,
-                premiumInsuranceFee: 9.99,
-            },
-            availability: {
-                total_copy: 4,
-                status: true,
-                blockedDates: [],
-            },
-            ratings: [4.0, 4.5, 5.0, 4.0],
-            average_rating: 4.4,
-            reviews: [
-                {
-                    reviewer_id: "u006",
-                    reviewer_name: "Jessica Taylor",
-                    reviewer_email: "jessica@example.com",
-                    review_text: "Great VR experience! The controllers are intuitive and the graphics are impressive.",
-                    rating: 4.5,
-                    date: "2023-10-20",
-                    hidden: false,
-                },
-            ],
-            totalRentalCount: 10,
-        },
-        {
-            id: "g006",
-            name: "Bose QuietComfort Ultra",
-            category: "Headphones",
-            brand: "Bose",
-            model: "QuietComfort Ultra",
-            description: "Premium noise-cancelling headphones with spatial audio and up to 24 hours of battery life.",
-            specifications: {
-                display: "LED indicators",
-                processor: "N/A",
-                storage: "N/A",
-                camera: "N/A",
-                battery: "Up to 24 hours",
-                os: "Bose Music App compatible",
-            },
-            included: ["Bose QuietComfort Ultra Headphones", "Carrying Case", "USB-C Charging Cable", "3.5mm Audio Cable"],
-            images: [
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg",
-                "https://res.cloudinary.com/dxh2iyxjs/image/upload/v1742167881/use_rryd6c.jpg"
-            ],
-            pricing: {
-                perDay: 14.99,
-                deposit: 149.99,
-                basicInsuranceFee: 2.99,
-                premiumInsuranceFee: 5.99,
-            },
-            availability: {
-                total_copy: 8,
-                status: true,
-                blockedDates: [],
-            },
-            ratings: [4.5, 5.0, 4.0, 4.5, 5.0],
-            average_rating: 4.6,
-            reviews: [
-                {
-                    reviewer_id: "u007",
-                    reviewer_name: "Robert Garcia",
-                    reviewer_email: "robert@example.com",
-                    review_text: "Best noise-cancelling headphones I've ever used. Perfect for travel.",
-                    rating: 5.0,
-                    date: "2023-10-25",
-                    hidden: false,
-                },
-            ],
-            totalRentalCount: 20,
+    useEffect(() => {
+        if (registeredUser) {
+            dispatch(getAllGadgetsFullDetailsForAdmin({ adminEmail: registeredUser?.email, axiosSecure }))
         }
-    ]
+    }, [axiosSecure, dispatch, registeredUser])
+
+
+    // Initialize gadgets with allGadgetsFullDetails when it's available
+    useEffect(() => {
+        if (allGadgetsFullDetails?.length > 0) {
+            setGadgets(allGadgetsFullDetails)
+        }
+    }, [allGadgetsFullDetails])
 
 
     // Empty gadget template
     const emptyGadget = {
-        id: "",
+        // id: "",
         name: "",
         category: "",
         brand: "",
@@ -404,8 +88,6 @@ const AdminAllGadgetsComponent = () => {
 
     // Initialize data
     useEffect(() => {
-        setGadgets(fakeGadgets)
-
         // Check if mobile view
         const handleResize = () => {
             setIsMobileView(window.innerWidth < 1024)
@@ -420,30 +102,33 @@ const AdminAllGadgetsComponent = () => {
     }, [])
 
 
+    // Categories with their icons
+    const categories = [
+        { name: "All", icon: <FiGrid className="mr-2" /> },
+        { name: "Smartphones", icon: <FaMobileAlt className="text-blue-500" /> },
+        { name: "Laptops", icon: <FaLaptop className="text-purple-500" /> },
+        { name: "Tablets", icon: <FaTabletAlt className="text-green-500" /> },
+        { name: "Smartwatches", icon: <FaClock className="text-pink-500" /> },
+        { name: "Cameras", icon: <FaCamera className="text-red-500" /> },
+        { name: "Gaming", icon: <FaGamepad className="text-indigo-500" /> },
+        { name: "Audio", icon: <FaVolumeUp className="text-yellow-500" /> },
+        { name: "Headphones", icon: <FaHeadphones className="text-cyan-500" /> },
+        { name: "Speakers", icon: <FaVolumeUp className="text-blue-500" /> },
+        { name: "Wearables", icon: <FaWifi className="text-lime-500" /> },
+        { name: "VR", icon: <FaVrCardboard className="text-orange-500" /> },
+        { name: "Drones", icon: <FaPlane className="text-teal-500" /> },
+        { name: "Projectors", icon: <FaProjectDiagram className="text-amber-500" /> },
+    ]
+
+
     // Get category icon
     const getCategoryIcon = (category) => {
-        switch (category) {
-            case "Smartphones":
-                return <FaMobileAlt className="text-blue-500" />
-            case "Laptops":
-                return <FaLaptop className="text-purple-500" />
-            case "Tablets":
-                return <FaTabletAlt className="text-green-500" />
-            case "Headphones":
-                return <FaHeadphones className="text-cyan-500" />
-            case "Cameras":
-                return <FaCamera className="text-red-500" />
-            case "Gaming":
-                return <FaGamepad className="text-indigo-500" />
-            case "Drones":
-                return <FaWifi className="text-orange-500" />
-            case "VR":
-                return <FaVrCardboard className="text-pink-500" />
-            default:
-                return <FiPackage className="text-gray-500" />
+        const foundCategory = categories.find((cat) => cat.name === category)
+        if (foundCategory) {
+            return foundCategory.icon
         }
+        return <FiPackage className="text-gray-500" />
     }
-
 
     // Format currency
     const formatCurrency = (amount) => {
@@ -459,6 +144,12 @@ const AdminAllGadgetsComponent = () => {
     const formatDate = (dateString) => {
         const date = new Date(dateString)
         return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+    }
+
+
+    // Calculate total reviews
+    const getTotalReviews = () => {
+        return gadgets.reduce((sum, gadget) => sum + (gadget?.reviews?.length || 0), 0)
     }
 
 
@@ -493,14 +184,14 @@ const AdminAllGadgetsComponent = () => {
         setEditMode(false)
         setSelectedTab("details")
 
-        // On mobile, hide gadget list when a gadget is selected
+        // On mobile, hide the gadget list when a gadget is selected
         if (isMobileView) {
             setShowGadgetList(false)
         }
     }
 
 
-    // Handle back to gadget list (mobile only)
+    // Handle back to a gadget list (mobile only)
     const handleBackToGadgetList = () => {
         setShowGadgetList(true)
         setSelectedGadget(null)
@@ -508,15 +199,15 @@ const AdminAllGadgetsComponent = () => {
     }
 
 
-    // Handle add new gadget
+    // Handle adds new gadget
     const handleAddNewGadget = () => {
         setIsAddingGadget(true)
         setSelectedGadget(null)
-        setEditedGadget(JSON.parse(JSON.stringify(emptyGadget))) // Deep copy of empty template
+        setNewGadget(JSON.parse(JSON.stringify(emptyGadget))) // Deep copy of an empty template
         setEditMode(true)
         setSelectedTab("details")
 
-        // On mobile, hide gadget list when adding a new gadget
+        // On mobile, hide the gadget list when adding a new gadget
         if (isMobileView) {
             setShowGadgetList(false)
         }
@@ -533,9 +224,10 @@ const AdminAllGadgetsComponent = () => {
     const handleCancelEdit = () => {
         if (isAddingGadget) {
             setIsAddingGadget(false)
+            setNewGadget(null)
             setSelectedGadget(null)
 
-            // On mobile, show gadget list when canceling add
+            // On mobile, show the gadget list when canceling adding
             if (isMobileView) {
                 setShowGadgetList(true)
             }
@@ -546,24 +238,51 @@ const AdminAllGadgetsComponent = () => {
     }
 
 
-    // Handle save gadget
-    const handleSaveGadget = () => {
-        if (isAddingGadget) {
-            // Generate a new ID for the gadget
-            const newId = `g${String(gadgets.length + 1).padStart(3, "0")}`
-            const newGadget = { ...editedGadget, id: newId }
+    // Handle adding a new gadget directly into the database
+    const handleAddGadget = async () => {
+        await dispatch(addANewGadgetWithDetailsByAdmin({adminEmail: registeredUser?.email, newGadgetDetailsObject: newGadget, axiosSecure}))
+        // console.log("New gadget to be added:", newGadget)
 
-            // Add the new gadget to the list
-            setGadgets([...gadgets, newGadget])
-            setSelectedGadget(newGadget)
-            setIsAddingGadget(false)
-        } else {
-            // Update the existing gadget
-            const updatedGadgets = gadgets.map((g) => (g.id === editedGadget.id ? editedGadget : g))
-            setGadgets(updatedGadgets)
-            setSelectedGadget(editedGadget)
-        }
+        // Reset UI state
+        setIsAddingGadget(false)
         setEditMode(false)
+        setNewGadget(null)
+
+        // On mobile, show the gadget list after adding
+        if (isMobileView) {
+            setShowGadgetList(true)
+        }
+    }
+
+
+    // Handle saving an edited gadget directly into the database
+    const handleSaveEditedGadget = async () => {
+        // console.log("Gadget to be updated:", editedGadget)
+        await dispatch(
+            updateTheDetailsOfAGadgetByAdmin({
+                adminEmail: registeredUser?.email,
+                updatedGadgetObject: editedGadget,
+                axiosSecure,
+            }),
+        )
+
+        // Reset UI state
+        setEditMode(false)
+
+        // On mobile, show the gadget list after editing
+        if (isMobileView && !selectedGadget) {
+            setShowGadgetList(true)
+        }
+    }
+
+
+    // Handle save gadget - now just routes to the appropriate function
+    const handleSaveGadget = async () => {
+        if (isAddingGadget) {
+            await handleAddGadget()
+        } else {
+            await handleSaveEditedGadget()
+        }
     }
 
 
@@ -584,7 +303,7 @@ const AdminAllGadgetsComponent = () => {
         setShowDeleteConfirm(false)
         setGadgetToDelete(null)
 
-        // On mobile, show gadget list after delete
+        // On mobile, show a gadget list after delete
         if (isMobileView) {
             setShowGadgetList(true)
         }
@@ -604,32 +323,38 @@ const AdminAllGadgetsComponent = () => {
     }
 
 
-    // Handle input change for edited gadget
+    // Handle input change for an edited gadget
     const handleInputChange = (field, value) => {
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
         if (field.includes(".")) {
             const [parent, child] = field.split(".")
-            setEditedGadget({
-                ...editedGadget,
+            setStateFunction({
+                ...stateToUpdate,
                 [parent]: {
-                    ...editedGadget[parent],
+                    ...stateToUpdate[parent],
                     [child]: value,
                 },
             })
         } else {
-            setEditedGadget({
-                ...editedGadget,
+            setStateFunction({
+                ...stateToUpdate,
                 [field]: value,
             })
         }
     }
 
 
-    // Handle included items change
+    // Handle included item change
     const handleIncludedChange = (index, value) => {
-        const newIncluded = [...editedGadget.included]
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
+        const newIncluded = [...stateToUpdate.included]
         newIncluded[index] = value
-        setEditedGadget({
-            ...editedGadget,
+        setStateFunction({
+            ...stateToUpdate,
             included: newIncluded,
         })
     }
@@ -637,31 +362,40 @@ const AdminAllGadgetsComponent = () => {
 
     // Handle add included item
     const handleAddIncludedItem = () => {
-        setEditedGadget({
-            ...editedGadget,
-            included: [...editedGadget.included, ""],
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
+        setStateFunction({
+            ...stateToUpdate,
+            included: [...stateToUpdate.included, ""],
         })
     }
 
 
     // Handle remove included item
     const handleRemoveIncludedItem = (index) => {
-        const newIncluded = [...editedGadget.included]
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
+        const newIncluded = [...stateToUpdate.included]
         newIncluded.splice(index, 1)
-        setEditedGadget({
-            ...editedGadget,
+        setStateFunction({
+            ...stateToUpdate,
             included: newIncluded,
         })
     }
 
 
-    // Handle add specification field
+    // Handle adds a specification field
     const handleAddSpecification = () => {
-        const newKey = `spec_${Object.keys(editedGadget.specifications).length + 1}`
-        setEditedGadget({
-            ...editedGadget,
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
+        const newKey = `spec_${Object.keys(stateToUpdate.specifications).length + 1}`
+        setStateFunction({
+            ...stateToUpdate,
             specifications: {
-                ...editedGadget.specifications,
+                ...stateToUpdate.specifications,
                 [newKey]: "",
             },
         })
@@ -670,10 +404,13 @@ const AdminAllGadgetsComponent = () => {
 
     // Handle remove specification field
     const handleRemoveSpecification = (key) => {
-        const newSpecifications = { ...editedGadget.specifications }
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
+        const newSpecifications = { ...stateToUpdate.specifications }
         delete newSpecifications[key]
-        setEditedGadget({
-            ...editedGadget,
+        setStateFunction({
+            ...stateToUpdate,
             specifications: newSpecifications,
         })
     }
@@ -681,6 +418,9 @@ const AdminAllGadgetsComponent = () => {
 
     // Handle specification key change
     const handleSpecificationKeyChange = (oldKey, newKey) => {
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
         // Don't proceed if the new key is empty
         if (!newKey.trim()) return
 
@@ -688,18 +428,18 @@ const AdminAllGadgetsComponent = () => {
         const newSpecifications = {}
 
         // Copy all specifications except the one being edited
-        Object.entries(editedGadget.specifications).forEach(([key, value]) => {
+        Object.entries(stateToUpdate.specifications).forEach(([key, value]) => {
             if (key === oldKey) {
                 // For the key being edited, use the new key name but keep the same value
-                newSpecifications[newKey] = editedGadget.specifications[oldKey]
+                newSpecifications[newKey] = stateToUpdate.specifications[oldKey]
             } else {
                 newSpecifications[key] = value
             }
         })
 
         // Update the specifications with the new structure
-        setEditedGadget({
-            ...editedGadget,
+        setStateFunction({
+            ...stateToUpdate,
             specifications: newSpecifications,
         })
     }
@@ -707,10 +447,13 @@ const AdminAllGadgetsComponent = () => {
 
     // Handle specification value change
     const handleSpecificationValueChange = (key, value) => {
-        setEditedGadget({
-            ...editedGadget,
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
+        setStateFunction({
+            ...stateToUpdate,
             specifications: {
-                ...editedGadget.specifications,
+                ...stateToUpdate.specifications,
                 [key]: value,
             },
         })
@@ -724,37 +467,56 @@ const AdminAllGadgetsComponent = () => {
 
 
     // Handle file selection
-    const handleFileSelected = (e) => {
+    const handleFileSelected = async (e) => {
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
         const files = Array.from(e.target.files)
         if (!files.length) return
 
         setIsUploading(true)
 
-        // Simulate upload delay
-        setTimeout(() => {
-            const newImages = files.map((file) => URL.createObjectURL(file))
+        try {
+            // Get current images
+            const currentImages = [...stateToUpdate.images]
 
-            // Limit to 5 images total
-            const currentImages = [...editedGadget.images]
-            const combinedImages = [...currentImages, ...newImages].slice(0, 5)
+            // Upload each file to Cloudinary (up to 5 total images)
+            const uploadPromises = files.slice(0, 5 - currentImages.length).map(async (file) => {
+                const cloudinaryImageUrl = await uploadImageToCloudinaryAndGetURL(file)
+                return cloudinaryImageUrl
+            })
 
-            setEditedGadget({
-                ...editedGadget,
+            // Wait for all uploads to complete
+            const newCloudinaryUrls = await Promise.all(uploadPromises)
+
+            // Combine existing images with new Cloudinary URLs
+            const combinedImages = [...currentImages, ...newCloudinaryUrls].slice(0, 5)
+
+            // Update state with new images
+            setStateFunction({
+                ...stateToUpdate,
                 images: combinedImages,
             })
 
-            setUploadedImages([...uploadedImages, ...newImages])
+            // Update uploaded images state
+            setUploadedImages([...uploadedImages, ...newCloudinaryUrls])
+        } catch (error) {
+            console.error("Error uploading images to Cloudinary:", error)
+        } finally {
             setIsUploading(false)
-        }, 1500)
+        }
     }
 
 
     // Handle remove image
     const handleRemoveImage = (index) => {
-        const newImages = [...editedGadget.images]
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
+        const newImages = [...stateToUpdate.images]
         newImages.splice(index, 1)
-        setEditedGadget({
-            ...editedGadget,
+        setStateFunction({
+            ...stateToUpdate,
             images: newImages,
         })
     }
@@ -762,6 +524,8 @@ const AdminAllGadgetsComponent = () => {
 
     // Handle review delete confirmation
     const handleReviewDeleteConfirm = (reviewIndex) => {
+        const currentGadget = isAddingGadget ? newGadget : editedGadget
+        console.log(`Gadget ID: ${currentGadget?._id || currentGadget?.id}, Review Index: ${reviewIndex}`)
         setReviewToDelete(reviewIndex)
         setShowReviewDeleteConfirm(true)
     }
@@ -769,9 +533,12 @@ const AdminAllGadgetsComponent = () => {
 
     // Handle delete review
     const handleDeleteReview = () => {
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+
         if (reviewToDelete === null || !selectedGadget) return
 
-        const updatedReviews = [...editedGadget.reviews]
+        const updatedReviews = [...stateToUpdate.reviews]
         updatedReviews.splice(reviewToDelete, 1)
 
         // Recalculate average rating
@@ -780,8 +547,8 @@ const AdminAllGadgetsComponent = () => {
             ? updatedRatings.reduce((sum, rating) => sum + rating, 0) / updatedRatings.length
             : 0
 
-        setEditedGadget({
-            ...editedGadget,
+        setStateFunction({
+            ...stateToUpdate,
             reviews: updatedReviews,
             ratings: updatedRatings,
             average_rating: Number.parseFloat(newAverage.toFixed(1)),
@@ -794,11 +561,17 @@ const AdminAllGadgetsComponent = () => {
 
     // Handle toggle review visibility
     const handleToggleReviewVisibility = (index) => {
-        const updatedReviews = [...editedGadget.reviews]
+        const stateToUpdate = isAddingGadget ? newGadget : editedGadget
+        const setStateFunction = isAddingGadget ? setNewGadget : setEditedGadget
+        const currentGadget = isAddingGadget ? newGadget : editedGadget
+
+        console.log(`Gadget ID: ${currentGadget?._id || currentGadget?.id}, Review Index: ${index}`)
+
+        const updatedReviews = [...stateToUpdate.reviews]
         updatedReviews[index].hidden = !updatedReviews[index].hidden
 
-        setEditedGadget({
-            ...editedGadget,
+        setStateFunction({
+            ...stateToUpdate,
             reviews: updatedReviews,
         })
     }
@@ -811,29 +584,19 @@ const AdminAllGadgetsComponent = () => {
     }
 
 
-    // Handle sort
-    /*const requestSort = (key) => {
-          let direction = 'ascending';
-          if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-              direction = 'descending';
-          }
-          setSortConfig({ key, direction });
-      };*/
-
-
     // Filter and sort gadgets
     const filteredGadgets = gadgets.filter((gadget) => {
         const matchesSearch =
-            gadget.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            gadget.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            gadget.model.toLowerCase().includes(searchTerm.toLowerCase())
+            gadget?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            gadget?.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            gadget?.model?.toLowerCase().includes(searchTerm.toLowerCase())
 
-        const matchesCategory = categoryFilter === "all" || gadget.category === categoryFilter
+        const matchesCategory = categoryFilter === "all" || gadget?.category === categoryFilter
 
         const matchesAvailability =
             availabilityFilter === "all" ||
-            (availabilityFilter === "available" && gadget.availability.status) ||
-            (availabilityFilter === "unavailable" && !gadget.availability.status)
+            (availabilityFilter === "available" && gadget?.availability?.status) ||
+            (availabilityFilter === "unavailable" && !gadget?.availability?.status)
 
         return matchesSearch && matchesCategory && matchesAvailability
     })
@@ -843,17 +606,17 @@ const AdminAllGadgetsComponent = () => {
         let aValue, bValue
 
         if (sortConfig.key === "price") {
-            aValue = a.pricing.perDay
-            bValue = b.pricing.perDay
+            aValue = a?.pricing?.perDay
+            bValue = b?.pricing?.perDay
         } else if (sortConfig.key === "rating") {
-            aValue = a.average_rating
-            bValue = b.average_rating
+            aValue = a?.average_rating
+            bValue = b?.average_rating
         } else if (sortConfig.key === "rentals") {
-            aValue = a.totalRentalCount
-            bValue = b.totalRentalCount
+            aValue = a?.totalRentalCount
+            bValue = b?.totalRentalCount
         } else {
-            aValue = a[sortConfig.key]
-            bValue = b[sortConfig.key]
+            aValue = a?.[sortConfig.key]
+            bValue = b?.[sortConfig.key]
         }
 
         if (aValue < bValue) {
@@ -867,25 +630,28 @@ const AdminAllGadgetsComponent = () => {
 
 
     // Updated categories list
-    const allCategories = [
-        "Smartphones",
-        "Laptops",
-        "Tablets",
-        "Smartwatches",
-        "Cameras",
-        "Gaming",
-        "Audio",
-        "Headphones",
-        "Speakers",
-        "Wearables",
-        "VR",
-        "Drones",
-        "Projectors",
-    ]
+    const allCategories = categories.map((cat) => cat.name).filter((name) => name !== "All")
 
 
     // Get unique categories for filter
-    const categories = ["all", ...new Set(gadgets.map((gadget) => gadget.category))]
+    const uniqueCategories = ["all", ...new Set(gadgets.map((gadget) => gadget?.category).filter(Boolean))]
+
+
+    // Get fully booked dates (where count >= total_copy)
+    const getFullyBookedDates = (gadget) => {
+        if (!gadget?.availability?.blockedDates || !gadget?.availability?.total_copy) return []
+
+        // Count occurrences of each date
+        const dateCounts = {}
+        gadget.availability.blockedDates.forEach((date) => {
+            dateCounts[date] = (dateCounts[date] || 0) + 1
+        })
+
+        // Filter dates where count >= total_copy
+        return Object.entries(dateCounts)
+            .filter(([date, count]) => count >= gadget.availability.total_copy)
+            .map(([date]) => date)
+    }
 
 
     return (
@@ -908,12 +674,14 @@ const AdminAllGadgetsComponent = () => {
 
                 <div className={`rounded-lg p-4 ${darkMode ? "bg-gray-800" : "bg-gray-50"} shadow-sm`}>
                     <div className="flex items-center">
-                        <div className={`p-3 rounded-full ${darkMode ? "bg-green-900" : "bg-green-100"} mr-4`}>
-                            <FiShoppingBag className="text-green-500" size={24} />
+                        <div className={`p-3 rounded-full ${darkMode ? "bg-purple-900" : "bg-purple-100"} mr-4`}>
+                            <FiDollarSign className="text-purple-500" size={24} />
                         </div>
                         <div>
-                            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Available Gadgets</p>
-                            <p className="text-2xl font-semibold">{gadgets.filter((g) => g.availability.status).length}</p>
+                            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Total Rentals</p>
+                            <p className="text-2xl font-semibold">
+                                {gadgets.reduce((sum, gadget) => sum + (gadget?.totalRentalCount || 0), 0)}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -926,7 +694,11 @@ const AdminAllGadgetsComponent = () => {
                         <div>
                             <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Average Rating</p>
                             <p className="text-2xl font-semibold">
-                                {(gadgets.reduce((sum, gadget) => sum + gadget.average_rating, 0) / gadgets.length).toFixed(1)}
+                                {gadgets.length
+                                    ? (gadgets.reduce((sum, gadget) => sum + (gadget?.average_rating || 0), 0) / gadgets.length).toFixed(
+                                        1,
+                                    )
+                                    : "0.0"}
                             </p>
                         </div>
                     </div>
@@ -934,14 +706,12 @@ const AdminAllGadgetsComponent = () => {
 
                 <div className={`rounded-lg p-4 ${darkMode ? "bg-gray-800" : "bg-gray-50"} shadow-sm`}>
                     <div className="flex items-center">
-                        <div className={`p-3 rounded-full ${darkMode ? "bg-purple-900" : "bg-purple-100"} mr-4`}>
-                            <FiDollarSign className="text-purple-500" size={24} />
+                        <div className={`p-3 rounded-full ${darkMode ? "bg-green-900" : "bg-green-100"} mr-4`}>
+                            <FiMessageSquare className="text-green-500" size={24} />
                         </div>
                         <div>
-                            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Total Rentals</p>
-                            <p className="text-2xl font-semibold">
-                                {gadgets.reduce((sum, gadget) => sum + gadget.totalRentalCount, 0)}
-                            </p>
+                            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Total Reviews</p>
+                            <p className="text-2xl font-semibold">{getTotalReviews()}</p>
                         </div>
                     </div>
                 </div>
@@ -993,11 +763,13 @@ const AdminAllGadgetsComponent = () => {
                                         } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 cursor-pointer`}
                                     >
                                         <option value="all">All Categories</option>
-                                        {allCategories.map((category) => (
-                                            <option key={category} value={category}>
-                                                {category}
-                                            </option>
-                                        ))}
+                                        {uniqueCategories
+                                            .filter((cat) => cat !== "all")
+                                            .map((category) => (
+                                                <option key={category} value={category}>
+                                                    {category}
+                                                </option>
+                                            ))}
                                     </select>
                                     <FiChevronDown
                                         className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}
@@ -1059,7 +831,7 @@ const AdminAllGadgetsComponent = () => {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
                                         {sortedGadgets.map((gadget) => (
                                             <div
-                                                key={gadget.id}
+                                                key={gadget?.id}
                                                 onClick={() => handleSelectGadget(gadget)}
                                                 className={`rounded-lg border ${
                                                     darkMode
@@ -1069,48 +841,48 @@ const AdminAllGadgetsComponent = () => {
                                             >
                                                 <div className="relative h-40">
                                                     <img
-                                                        src={gadget.images[0] || "/placeholder.svg"}
-                                                        alt={gadget.name}
+                                                        src={gadget?.images?.[0] || "/placeholder.svg"}
+                                                        alt={gadget?.name}
                                                         className="w-full h-full object-cover"
                                                     />
                                                     <div className="absolute top-2 right-2">
                                                         <span
                                                             className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                                gadget.availability.status
+                                                                gadget?.availability?.status
                                                                     ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                                                                     : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
                                                             }`}
                                                         >
-                                                        {gadget.availability.status ? "Available" : "Unavailable"}
+                                                          {gadget?.availability?.status ? "Available" : "Unavailable"}
                                                         </span>
                                                     </div>
                                                 </div>
                                                 <div className="p-4">
                                                     <div className="flex items-center justify-between mb-2">
                                                         <div className="flex items-center">
-                                                            {getCategoryIcon(gadget.category)}
+                                                            {getCategoryIcon(gadget?.category)}
                                                             <span className={`ml-2 text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                                {gadget.category}
+                                                                {gadget?.category}
                                                             </span>
                                                         </div>
                                                         <div className="flex items-center">
                                                             <FiStar className="text-yellow-500 mr-1" size={14} />
-                                                            <span className="text-sm font-medium">{gadget.average_rating.toFixed(1)}</span>
+                                                            <span className="text-sm font-medium">{gadget?.average_rating?.toFixed(1) || "0.0"}</span>
                                                         </div>
                                                     </div>
-                                                    <h3 className="font-medium text-lg mb-1 truncate">{gadget.name}</h3>
+                                                    <h3 className="font-medium text-lg mb-1 truncate">{gadget?.name}</h3>
                                                     <p className={`text-sm mb-2 line-clamp-2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                        {gadget.description}
+                                                        {gadget?.description}
                                                     </p>
                                                     <div className="flex items-center justify-between">
                                                         <div className="font-bold">
-                                                            {formatCurrency(gadget.pricing.perDay)}
+                                                            {formatCurrency(gadget?.pricing?.perDay || 0)}
                                                             <span className={`text-xs font-normal ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
                                                                 /day
                                                             </span>
                                                         </div>
                                                         <div className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                            {gadget.availability.total_copy} in stock
+                                                            {gadget?.availability?.total_copy || 0} in stock
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1119,9 +891,9 @@ const AdminAllGadgetsComponent = () => {
                                     </div>
                                 ) : (
                                     <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                                        {sortedGadgets.map((gadget) => (
+                                        {sortedGadgets.map((gadget, index) => (
                                             <div
-                                                key={gadget.id}
+                                                key={index}
                                                 onClick={() => handleSelectGadget(gadget)}
                                                 className={`p-4 ${
                                                     darkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"
@@ -1130,37 +902,37 @@ const AdminAllGadgetsComponent = () => {
                                                 <div className="flex">
                                                     <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                                                         <img
-                                                            src={gadget.images[0] || "/placeholder.svg"}
-                                                            alt={gadget.name}
+                                                            src={gadget?.images?.[0] || "/placeholder.svg"}
+                                                            alt={gadget?.name}
                                                             className="w-full h-full object-cover"
                                                         />
                                                     </div>
                                                     <div className="ml-4 flex-1">
                                                         <div className="flex items-center justify-between">
-                                                            <h3 className="font-medium">{gadget.name}</h3>
+                                                            <h3 className="font-medium">{gadget?.name}</h3>
                                                             <span
                                                                 className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                                    gadget.availability.status
+                                                                    gadget?.availability?.status
                                                                         ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                                                                         : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
                                                                 }`}
                                                             >
-                                                                {gadget.availability.status ? "Available" : "Unavailable"}
+                                                                {gadget?.availability?.status ? "Available" : "Unavailable"}
                                                             </span>
                                                         </div>
                                                         <div className="flex items-center mt-1">
-                                                            {getCategoryIcon(gadget.category)}
+                                                            {getCategoryIcon(gadget?.category)}
                                                             <span className={`ml-2 text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                                {gadget.category}
+                                                                {gadget?.category}
                                                             </span>
                                                             <span className="mx-2">•</span>
                                                             <span className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                                {gadget.brand} {gadget.model}
+                                                                {gadget?.brand} {gadget?.model}
                                                             </span>
                                                         </div>
                                                         <div className="flex items-center justify-between mt-2">
                                                             <div className="font-bold">
-                                                                {formatCurrency(gadget.pricing.perDay)}
+                                                                {formatCurrency(gadget?.pricing?.perDay || 0)}
                                                                 <span className={`text-xs font-normal ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
                                                                     /day
                                                                 </span>
@@ -1171,11 +943,11 @@ const AdminAllGadgetsComponent = () => {
                                                                         className={`mr-1 ${darkMode ? "text-gray-400" : "text-gray-500"}`}
                                                                         size={14}
                                                                     />
-                                                                    <span className="text-sm">{gadget.availability.total_copy}</span>
+                                                                    <span className="text-sm">{gadget?.availability?.total_copy || 0}</span>
                                                                 </div>
                                                                 <div className="flex items-center">
                                                                     <FiStar className="text-yellow-500 mr-1" size={14} />
-                                                                    <span className="text-sm">{gadget.average_rating.toFixed(1)}</span>
+                                                                    <span className="text-sm">{gadget?.average_rating?.toFixed(1) || "0.0"}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1356,7 +1128,7 @@ const AdminAllGadgetsComponent = () => {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value={editedGadget.name}
+                                                    value={isAddingGadget ? newGadget?.name : editedGadget?.name || ""}
                                                     onChange={(e) => handleInputChange("name", e.target.value)}
                                                     className={`w-full px-3 py-2 rounded-lg border ${
                                                         darkMode
@@ -1374,7 +1146,7 @@ const AdminAllGadgetsComponent = () => {
                                                         Category
                                                     </label>
                                                     <select
-                                                        value={editedGadget.category}
+                                                        value={isAddingGadget ? newGadget?.category : editedGadget?.category || ""}
                                                         onChange={(e) => handleInputChange("category", e.target.value)}
                                                         className={`w-full px-3 py-2 rounded-lg border ${
                                                             darkMode
@@ -1399,7 +1171,7 @@ const AdminAllGadgetsComponent = () => {
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        value={editedGadget.brand}
+                                                        value={isAddingGadget ? newGadget?.brand : editedGadget?.brand || ""}
                                                         onChange={(e) => handleInputChange("brand", e.target.value)}
                                                         className={`w-full px-3 py-2 rounded-lg border ${
                                                             darkMode
@@ -1418,7 +1190,7 @@ const AdminAllGadgetsComponent = () => {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value={editedGadget.model}
+                                                    value={isAddingGadget ? newGadget?.model : editedGadget?.model || ""}
                                                     onChange={(e) => handleInputChange("model", e.target.value)}
                                                     className={`w-full px-3 py-2 rounded-lg border ${
                                                         darkMode
@@ -1435,7 +1207,7 @@ const AdminAllGadgetsComponent = () => {
                                                     Description
                                                 </label>
                                                 <textarea
-                                                    value={editedGadget.description}
+                                                    value={isAddingGadget ? newGadget?.description : editedGadget?.description || ""}
                                                     onChange={(e) => handleInputChange("description", e.target.value)}
                                                     rows="3"
                                                     className={`w-full px-3 py-2 rounded-lg border ${
@@ -1465,7 +1237,9 @@ const AdminAllGadgetsComponent = () => {
                                                     </button>
                                                 </div>
                                                 <div className="space-y-3">
-                                                    {Object.entries(editedGadget.specifications).map(([key, value]) => (
+                                                    {Object.entries(
+                                                        isAddingGadget ? newGadget?.specifications || {} : editedGadget?.specifications || {},
+                                                    ).map(([key, value]) => (
                                                         <div key={key} className="flex items-center gap-2">
                                                             <input
                                                                 type="text"
@@ -1484,7 +1258,7 @@ const AdminAllGadgetsComponent = () => {
                                                             />
                                                             <input
                                                                 type="text"
-                                                                value={value}
+                                                                value={value || ""}
                                                                 onChange={(e) => handleSpecificationValueChange(key, e.target.value)}
                                                                 placeholder="Value"
                                                                 className={`flex-1 px-3 py-2 rounded-lg border ${
@@ -1527,31 +1301,36 @@ const AdminAllGadgetsComponent = () => {
                                                     </button>
                                                 </div>
                                                 <div className="space-y-2">
-                                                    {editedGadget.included.map((item, index) => (
-                                                        <div key={index} className="flex items-center">
-                                                            <input
-                                                                type="text"
-                                                                value={item}
-                                                                onChange={(e) => handleIncludedChange(index, e.target.value)}
-                                                                className={`flex-1 px-3 py-2 rounded-lg border ${
-                                                                    darkMode
-                                                                        ? "bg-gray-700 border-gray-600 text-gray-100"
-                                                                        : "bg-white border-gray-300 text-gray-800"
-                                                                } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
-                                                            />
-                                                            <button
-                                                                onClick={() => handleRemoveIncludedItem(index)}
-                                                                className={`ml-2 p-2 rounded-lg ${
-                                                                    darkMode
-                                                                        ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
-                                                                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                                                                } cursor-pointer`}
-                                                                disabled={editedGadget.included.length <= 1}
-                                                            >
-                                                                <FiX size={16} />
-                                                            </button>
-                                                        </div>
-                                                    ))}
+                                                    {(isAddingGadget ? newGadget?.included || [] : editedGadget?.included || []).map(
+                                                        (item, index) => (
+                                                            <div key={index} className="flex items-center">
+                                                                <input
+                                                                    type="text"
+                                                                    value={item || ""}
+                                                                    onChange={(e) => handleIncludedChange(index, e.target.value)}
+                                                                    className={`flex-1 px-3 py-2 rounded-lg border ${
+                                                                        darkMode
+                                                                            ? "bg-gray-700 border-gray-600 text-gray-100"
+                                                                            : "bg-white border-gray-300 text-gray-800"
+                                                                    } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+                                                                />
+                                                                <button
+                                                                    onClick={() => handleRemoveIncludedItem(index)}
+                                                                    className={`ml-2 p-2 rounded-lg ${
+                                                                        darkMode
+                                                                            ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
+                                                                            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                                                                    } cursor-pointer`}
+                                                                    disabled={
+                                                                        (isAddingGadget ? newGadget?.included || [] : editedGadget?.included || [])
+                                                                            .length <= 1
+                                                                    }
+                                                                >
+                                                                    <FiX size={16} />
+                                                                </button>
+                                                            </div>
+                                                        ),
+                                                    )}
                                                 </div>
                                             </div>
                                         </>
@@ -1560,28 +1339,28 @@ const AdminAllGadgetsComponent = () => {
                                             <div className="flex items-center">
                                                 <div className="w-16 h-16 rounded-lg overflow-hidden">
                                                     <img
-                                                        src={selectedGadget.images[0] || "/placeholder.svg"}
-                                                        alt={selectedGadget.name}
+                                                        src={selectedGadget?.images?.[0] || "/placeholder.svg"}
+                                                        alt={selectedGadget?.name}
                                                         className="w-full h-full object-cover"
                                                     />
                                                 </div>
                                                 <div className="ml-4">
-                                                    <h3 className="text-xl font-semibold">{selectedGadget.name}</h3>
+                                                    <h3 className="text-xl font-semibold">{selectedGadget?.name}</h3>
                                                     <div className="flex items-center mt-1">
-                                                        {getCategoryIcon(selectedGadget.category)}
+                                                        {getCategoryIcon(selectedGadget?.category)}
                                                         <span className={`ml-2 text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                            {selectedGadget.category}
+                                                            {selectedGadget?.category}
                                                         </span>
                                                         <span className="mx-2">•</span>
                                                         <span className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                            {selectedGadget.brand} {selectedGadget.model}
+                                                            {selectedGadget?.brand} {selectedGadget?.model}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div className={`mt-4 p-4 rounded-lg ${darkMode ? "bg-gray-700" : "bg-gray-50"}`}>
-                                                <p>{selectedGadget.description}</p>
+                                                <p>{selectedGadget?.description}</p>
                                             </div>
 
                                             <div className="mt-4">
@@ -1591,7 +1370,7 @@ const AdminAllGadgetsComponent = () => {
                                                 <div
                                                     className={`grid grid-cols-1 md:grid-cols-2 gap-3 p-4 rounded-lg ${darkMode ? "bg-gray-700" : "bg-gray-50"}`}
                                                 >
-                                                    {Object.entries(selectedGadget.specifications).map(([key, value]) => (
+                                                    {Object.entries(selectedGadget?.specifications || {}).map(([key, value]) => (
                                                         <div key={key} className="flex items-start">
                                                             <div>
                                                                 <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
@@ -1611,7 +1390,7 @@ const AdminAllGadgetsComponent = () => {
                                                 <ul
                                                     className={`list-disc list-inside p-4 rounded-lg ${darkMode ? "bg-gray-700" : "bg-gray-50"}`}
                                                 >
-                                                    {selectedGadget.included.map((item, index) => (
+                                                    {(selectedGadget?.included || []).map((item, index) => (
                                                         <li key={index} className="text-sm mb-1">
                                                             {item}
                                                         </li>
@@ -1628,14 +1407,19 @@ const AdminAllGadgetsComponent = () => {
                                 <div>
                                     <div className="flex items-center justify-between mb-4">
                                         <h3 className={`text-sm font-medium ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                            Gadget Images ({editedGadget.images.length}/5)
+                                            Gadget Images ({(isAddingGadget ? newGadget?.images?.length : editedGadget?.images?.length) || 0}
+                                            /5)
                                         </h3>
                                         {(editMode || isAddingGadget) && (
                                             <button
                                                 onClick={handleImageUpload}
-                                                disabled={editedGadget.images.length >= 5 || isUploading}
+                                                disabled={
+                                                    ((isAddingGadget ? newGadget?.images?.length : editedGadget?.images?.length) || 0) >= 5 ||
+                                                    isUploading
+                                                }
                                                 className={`px-3 py-1.5 rounded-lg text-sm flex items-center ${
-                                                    editedGadget.images.length >= 5 || isUploading
+                                                    ((isAddingGadget ? newGadget?.images?.length : editedGadget?.images?.length) || 0) >= 5 ||
+                                                    isUploading
                                                         ? darkMode
                                                             ? "bg-gray-700 text-gray-500"
                                                             : "bg-gray-200 text-gray-400"
@@ -1664,13 +1448,13 @@ const AdminAllGadgetsComponent = () => {
                                         />
                                     </div>
 
-                                    {editedGadget.images.length > 0 ? (
+                                    {((isAddingGadget ? newGadget?.images?.length : editedGadget?.images?.length) || 0) > 0 ? (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            {editedGadget.images.map((image, index) => (
+                                            {((isAddingGadget ? newGadget?.images : editedGadget?.images) || []).map((image, index) => (
                                                 <div key={index} className="relative rounded-lg overflow-hidden h-48">
                                                     <img
                                                         src={image || "/placeholder.svg"}
-                                                        alt={`${editedGadget.name} - ${index + 1}`}
+                                                        alt={`${(isAddingGadget ? newGadget?.name : editedGadget?.name) || "Gadget"} - ${index + 1}`}
                                                         className="w-full h-full object-cover"
                                                     />
                                                     {(editMode || isAddingGadget) && (
@@ -1716,7 +1500,7 @@ const AdminAllGadgetsComponent = () => {
                                                         type="number"
                                                         step="0.01"
                                                         min="0"
-                                                        value={editedGadget.pricing.perDay}
+                                                        value={(isAddingGadget ? newGadget?.pricing?.perDay : editedGadget?.pricing?.perDay) || 0}
                                                         onChange={(e) =>
                                                             handleInputChange("pricing.perDay", Number.parseFloat(e.target.value) || 0)
                                                         }
@@ -1732,13 +1516,13 @@ const AdminAllGadgetsComponent = () => {
                                                     <label
                                                         className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}
                                                     >
-                                                        Deposit ($)
+                                                        Deposit
                                                     </label>
                                                     <input
                                                         type="number"
                                                         step="0.01"
                                                         min="0"
-                                                        value={editedGadget.pricing.deposit}
+                                                        value={(isAddingGadget ? newGadget?.pricing?.deposit : editedGadget?.pricing?.deposit) || 0}
                                                         onChange={(e) =>
                                                             handleInputChange("pricing.deposit", Number.parseFloat(e.target.value) || 0)
                                                         }
@@ -1762,7 +1546,11 @@ const AdminAllGadgetsComponent = () => {
                                                         type="number"
                                                         step="0.01"
                                                         min="0"
-                                                        value={editedGadget.pricing.basicInsuranceFee}
+                                                        value={
+                                                            (isAddingGadget
+                                                                ? newGadget?.pricing?.basicInsuranceFee
+                                                                : editedGadget?.pricing?.basicInsuranceFee) || 0
+                                                        }
                                                         onChange={(e) =>
                                                             handleInputChange("pricing.basicInsuranceFee", Number.parseFloat(e.target.value) || 0)
                                                         }
@@ -1784,7 +1572,11 @@ const AdminAllGadgetsComponent = () => {
                                                         type="number"
                                                         step="0.01"
                                                         min="0"
-                                                        value={editedGadget.pricing.premiumInsuranceFee}
+                                                        value={
+                                                            (isAddingGadget
+                                                                ? newGadget?.pricing?.premiumInsuranceFee
+                                                                : editedGadget?.pricing?.premiumInsuranceFee) || 0
+                                                        }
                                                         onChange={(e) =>
                                                             handleInputChange("pricing.premiumInsuranceFee", Number.parseFloat(e.target.value) || 0)
                                                         }
@@ -1802,25 +1594,25 @@ const AdminAllGadgetsComponent = () => {
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
                                                     <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Daily Rate</p>
-                                                    <p className="text-xl font-bold">{formatCurrency(selectedGadget.pricing.perDay)}</p>
+                                                    <p className="text-xl font-bold">{formatCurrency(selectedGadget?.pricing?.perDay || 0)}</p>
                                                 </div>
 
                                                 <div>
                                                     <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Deposit</p>
-                                                    <p className="text-xl font-bold">{formatCurrency(selectedGadget.pricing.deposit)}</p>
+                                                    <p className="text-xl font-bold">{formatCurrency(selectedGadget?.pricing?.deposit || 0)}</p>
                                                 </div>
 
                                                 <div>
                                                     <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Basic Insurance</p>
                                                     <p className="text-lg font-medium">
-                                                        {formatCurrency(selectedGadget.pricing.basicInsuranceFee)}
+                                                        {formatCurrency(selectedGadget?.pricing?.basicInsuranceFee || 0)}
                                                     </p>
                                                 </div>
 
                                                 <div>
                                                     <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Premium Insurance</p>
                                                     <p className="text-lg font-medium">
-                                                        {formatCurrency(selectedGadget.pricing.premiumInsuranceFee)}
+                                                        {formatCurrency(selectedGadget?.pricing?.premiumInsuranceFee || 0)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -1831,8 +1623,7 @@ const AdminAllGadgetsComponent = () => {
                                                         Weekly Rate (7 days)
                                                     </p>
                                                     <p className="font-medium">
-                                                        {formatCurrency(selectedGadget.pricing.perDay * 7 * 0.9)}{" "}
-                                                        <span className="text-green-500 text-sm">-10%</span>
+                                                        {formatCurrency((selectedGadget?.pricing?.perDay || 0) * 7 * 0.9)}
                                                     </p>
                                                 </div>
                                                 <div className="flex justify-between items-center mt-2">
@@ -1840,8 +1631,7 @@ const AdminAllGadgetsComponent = () => {
                                                         Monthly Rate (30 days)
                                                     </p>
                                                     <p className="font-medium">
-                                                        {formatCurrency(selectedGadget.pricing.perDay * 30 * 0.8)}{" "}
-                                                        <span className="text-green-500 text-sm">-20%</span>
+                                                        {formatCurrency((selectedGadget?.pricing?.perDay || 0) * 30 * 0.8)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -1865,7 +1655,11 @@ const AdminAllGadgetsComponent = () => {
                                                     <input
                                                         type="number"
                                                         min="0"
-                                                        value={editedGadget.availability.total_copy}
+                                                        value={
+                                                            (isAddingGadget
+                                                                ? newGadget?.availability?.total_copy
+                                                                : editedGadget?.availability?.total_copy) || 0
+                                                        }
                                                         onChange={(e) =>
                                                             handleInputChange("availability.total_copy", Number.parseInt(e.target.value) || 0)
                                                         }
@@ -1884,7 +1678,11 @@ const AdminAllGadgetsComponent = () => {
                                                         Status
                                                     </label>
                                                     <select
-                                                        value={editedGadget.availability.status ? "true" : "false"}
+                                                        value={
+                                                            (isAddingGadget ? newGadget?.availability?.status : editedGadget?.availability?.status)
+                                                                ? "true"
+                                                                : "false"
+                                                        }
                                                         onChange={(e) => handleInputChange("availability.status", e.target.value === "true")}
                                                         className={`w-full px-3 py-2 rounded-lg border ${
                                                             darkMode
@@ -1905,13 +1703,21 @@ const AdminAllGadgetsComponent = () => {
                                                     Blocked Dates
                                                 </label>
                                                 <div className="space-y-2">
-                                                    {editedGadget.availability.blockedDates.map((date, index) => (
+                                                    {(
+                                                        (isAddingGadget
+                                                            ? newGadget?.availability?.blockedDates
+                                                            : editedGadget?.availability?.blockedDates) || []
+                                                    ).map((date, index) => (
                                                         <div key={index} className="flex items-center">
                                                             <input
                                                                 type="date"
                                                                 value={date}
                                                                 onChange={(e) => {
-                                                                    const newDates = [...editedGadget.availability.blockedDates]
+                                                                    const newDates = [
+                                                                        ...((isAddingGadget
+                                                                            ? newGadget?.availability?.blockedDates
+                                                                            : editedGadget?.availability?.blockedDates) || []),
+                                                                    ]
                                                                     newDates[index] = e.target.value
                                                                     handleInputChange("availability.blockedDates", newDates)
                                                                 }}
@@ -1923,7 +1729,11 @@ const AdminAllGadgetsComponent = () => {
                                                             />
                                                             <button
                                                                 onClick={() => {
-                                                                    const newDates = [...editedGadget.availability.blockedDates]
+                                                                    const newDates = [
+                                                                        ...((isAddingGadget
+                                                                            ? newGadget?.availability?.blockedDates
+                                                                            : editedGadget?.availability?.blockedDates) || []),
+                                                                    ]
                                                                     newDates.splice(index, 1)
                                                                     handleInputChange("availability.blockedDates", newDates)
                                                                 }}
@@ -1941,7 +1751,9 @@ const AdminAllGadgetsComponent = () => {
                                                         onClick={() => {
                                                             const today = new Date().toISOString().split("T")[0]
                                                             handleInputChange("availability.blockedDates", [
-                                                                ...editedGadget.availability.blockedDates,
+                                                                ...((isAddingGadget
+                                                                    ? newGadget?.availability?.blockedDates
+                                                                    : editedGadget?.availability?.blockedDates) || []),
                                                                 today,
                                                             ])
                                                         }}
@@ -1966,35 +1778,35 @@ const AdminAllGadgetsComponent = () => {
                                                         <div className="flex items-center mt-1">
                                                             <span
                                                                 className={`inline-block w-3 h-3 rounded-full mr-2 ${
-                                                                    selectedGadget.availability.status ? "bg-green-500" : "bg-red-500"
+                                                                    selectedGadget?.availability?.status ? "bg-green-500" : "bg-red-500"
                                                                 }`}
                                                             ></span>
                                                             <p className="font-medium">
-                                                                {selectedGadget.availability.status ? "Available" : "Unavailable"}
+                                                                {selectedGadget?.availability?.status ? "Available" : "Unavailable"}
                                                             </p>
                                                         </div>
                                                     </div>
 
                                                     <div>
                                                         <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Total Quantity</p>
-                                                        <p className="text-xl font-bold">{selectedGadget.availability.total_copy}</p>
+                                                        <p className="text-xl font-bold">{selectedGadget?.availability?.total_copy || 0}</p>
                                                     </div>
 
                                                     <div>
                                                         <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Total Rentals</p>
-                                                        <p className="text-xl font-bold">{selectedGadget.totalRentalCount}</p>
+                                                        <p className="text-xl font-bold">{selectedGadget?.totalRentalCount || 0}</p>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div>
                                                 <h4 className={`text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                                    Blocked Dates
+                                                    Fully Booked Dates
                                                 </h4>
-                                                {selectedGadget.availability.blockedDates.length > 0 ? (
+                                                {getFullyBookedDates(selectedGadget).length > 0 ? (
                                                     <div className={`p-4 rounded-lg ${darkMode ? "bg-gray-700" : "bg-gray-50"}`}>
                                                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                                            {selectedGadget.availability.blockedDates.map((date, index) => (
+                                                            {getFullyBookedDates(selectedGadget).map((date, index) => (
                                                                 <div key={index} className="flex items-center">
                                                                     <FiCalendar
                                                                         className={`mr-2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}
@@ -2008,7 +1820,7 @@ const AdminAllGadgetsComponent = () => {
                                                 ) : (
                                                     <div className={`p-4 rounded-lg ${darkMode ? "bg-gray-700" : "bg-gray-50"} text-center`}>
                                                         <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                            No blocked dates
+                                                            No fully booked dates
                                                         </p>
                                                     </div>
                                                 )}
@@ -2023,21 +1835,23 @@ const AdminAllGadgetsComponent = () => {
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between mb-2">
                                         <h3 className={`text-sm font-medium ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                            Customer Reviews ({editedGadget.reviews.length})
+                                            Customer Reviews ({(isAddingGadget ? newGadget : editedGadget)?.reviews?.length || 0})
                                         </h3>
                                         <div className="flex items-center">
                                             <FiStar className="text-yellow-500 mr-1" size={16} />
-                                            <span className="font-medium">{editedGadget.average_rating.toFixed(1)}</span>
+                                            <span className="font-medium">
+                                                {(isAddingGadget ? newGadget : editedGadget)?.average_rating?.toFixed(1) || "0.0"}
+                                            </span>
                                         </div>
                                     </div>
 
-                                    {editedGadget.reviews.length > 0 ? (
+                                    {((isAddingGadget ? newGadget : editedGadget)?.reviews?.length || 0) > 0 ? (
                                         <div className="space-y-4">
-                                            {editedGadget.reviews.map((review, index) => (
+                                            {((isAddingGadget ? newGadget : editedGadget)?.reviews || []).map((review, index) => (
                                                 <div
                                                     key={index}
                                                     className={`p-4 rounded-lg ${
-                                                        review.hidden
+                                                        review?.hidden
                                                             ? darkMode
                                                                 ? "bg-gray-700/50 border border-gray-600"
                                                                 : "bg-gray-100/50 border border-gray-200"
@@ -2052,16 +1866,16 @@ const AdminAllGadgetsComponent = () => {
                                                                 <FiUser className={darkMode ? "text-gray-600" : "text-gray-500"} size={20} />
                                                             </div>
                                                             <div className="ml-3">
-                                                                <p className="font-medium">{review.reviewer_name}</p>
+                                                                <p className="font-medium">{review?.reviewer_name}</p>
                                                                 <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                                                    {formatDate(review.date)}
+                                                                    {formatDate(review?.date)}
                                                                 </p>
                                                                 <div className="flex items-center mt-1">
                                                                     {[...Array(5)].map((_, i) => (
                                                                         <FiStar
                                                                             key={i}
                                                                             className={`${
-                                                                                i < review.rating
+                                                                                i < review?.rating
                                                                                     ? "text-yellow-500 fill-current"
                                                                                     : darkMode
                                                                                         ? "text-gray-600"
@@ -2070,7 +1884,7 @@ const AdminAllGadgetsComponent = () => {
                                                                             size={14}
                                                                         />
                                                                     ))}
-                                                                    <span className="ml-1 text-xs">{review.rating.toFixed(1)}</span>
+                                                                    <span className="ml-1 text-xs">{review?.rating?.toFixed(1) || "0.0"}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -2083,7 +1897,7 @@ const AdminAllGadgetsComponent = () => {
                                                                         darkMode ? "hover:bg-gray-600" : "hover:bg-gray-200"
                                                                     } cursor-pointer`}
                                                                 >
-                                                                    {review.hidden ? <FiEye size={16} /> : <FiEyeOff size={16} />}
+                                                                    {review?.hidden ? <FiEye size={16} /> : <FiEyeOff size={16} />}
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleReviewDeleteConfirm(index)}
@@ -2097,11 +1911,11 @@ const AdminAllGadgetsComponent = () => {
                                                         )}
                                                     </div>
 
-                                                    <div className={`mt-3 ${review.hidden ? "opacity-50" : ""}`}>
-                                                        <p className="text-sm">{review.review_text}</p>
+                                                    <div className={`mt-3 ${review?.hidden ? "opacity-50" : ""}`}>
+                                                        <p className="text-sm">{review?.review_text}</p>
                                                     </div>
 
-                                                    {review.hidden && (
+                                                    {review?.hidden && (
                                                         <div className="mt-2 flex items-center">
                                                             <FiEyeOff className="text-yellow-500 mr-1" size={14} />
                                                             <span className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
@@ -2239,5 +2053,6 @@ const AdminAllGadgetsComponent = () => {
         </div>
     )
 }
+
 
 export default AdminAllGadgetsComponent;

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
 const initialState = {
-    allRentalOrdersDellDetails: [],
+    allRentalOrdersFullDetails: [],
     isLoading: false,
     isError: false,
     error: null,
@@ -55,19 +55,19 @@ const adminAllRentalOrdersSlice = createSlice({
 
             //To get all the rental orders from all users.
             .addCase(getAllRentalOrdersOfAllUsersForAdmin.pending, (state) => {
-                state.allRentalOrdersDellDetails = [];
+                state.allRentalOrdersFullDetails = [];
                 state.isLoading = true;
                 state.isError = false;
                 state.error = null;
             })
             .addCase(getAllRentalOrdersOfAllUsersForAdmin.fulfilled, (state, action) => {
-                state.allRentalOrdersDellDetails = action.payload;
+                state.allRentalOrdersFullDetails = action.payload;
                 state.isLoading = false;
                 state.isError = false;
                 state.error = null;
             })
             .addCase(getAllRentalOrdersOfAllUsersForAdmin.rejected, (state, action) => {
-                state.allRentalOrdersDellDetails = [];
+                state.allRentalOrdersFullDetails = [];
                 state.isLoading = false;
                 state.isError = true;
                 state.error = action.payload;
@@ -75,19 +75,19 @@ const adminAllRentalOrdersSlice = createSlice({
 
             //To update the details of a rental order by admin.
             .addCase(updateTheDetailsOfARentalOrderByAdmin.pending, (state) => {
-                state.allRentalOrdersDellDetails = [];
+                state.allRentalOrdersFullDetails = [];
                 state.isLoading = true;
                 state.isError = false;
                 state.error = null;
             })
             .addCase(updateTheDetailsOfARentalOrderByAdmin.fulfilled, (state, action) => {
-                state.allRentalOrdersDellDetails = action.payload;
+                state.allRentalOrdersFullDetails = action.payload;
                 state.isLoading = false;
                 state.isError = false;
                 state.error = null;
             })
             .addCase(updateTheDetailsOfARentalOrderByAdmin.rejected, (state, action) => {
-                state.allRentalOrdersDellDetails = [];
+                state.allRentalOrdersFullDetails = [];
                 state.isLoading = false;
                 state.isError = true;
                 state.error = action.payload;

@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "All features in the AdminAllRentalsComponent have already been implemented successfully."
+git commit -m "All features in the AdminAllGadgetsComponent have already been implemented successfully."
 git push
 
 git add .
@@ -552,4 +552,157 @@ newsletterEmailCollection
     "lastFailedLoginAttempt": 1745177642423,
     "loginRestricted": false,
     "loginRestrictedUntil": null
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    "_id": "68089e79b46d6f1870f352bc",
+    "name": "Focusrite Scarlett 2i2",
+    "category": "Audio",
+    "brand": "Focusrite",
+    "model": "2i2",
+    "description": "The Focusrite Scarlett 2i2 is a compact and portable audio interface with 2 inputs, 2 outputs, and high-quality preamps, perfect for home studios.",
+    "specifications": {
+        "type": "Audio Interface",
+        "inputs": "2 XLR/TRS combo",
+        "outputs": "2 TRS",
+        "sample_rate": "192kHz",
+        "bit_depth": "24-bit",
+        "phantom_power": "Yes",
+        "weight": "1.1 lbs"
+    },
+    "included": [
+        "Focusrite Scarlett 2i2 audio interface",
+        "USB cable",
+        "Power adapter",
+        "Documentation"
+    ],
+    "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742704847/focusrite2i21_o8n3sz.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742704847/focusrite2i22_zfmcks.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742704849/focusrite2i23_zkvulc.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742704850/focusrite2i24_f1jtr6.webp",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1742704852/focusrite2i25_eq06eh.webp"
+    ],
+    "pricing": {
+        "perDay": 12,
+        "deposit": 120,
+        "basicInsuranceFee": 1.99,
+        "premiumInsuranceFee": 3.99
+    },
+    "availability": {
+        "total_copy": 4,
+        "status": true,
+        "blockedDates": [
+            "2023-12-03",
+            "2023-12-04"
+        ]
+    },
+    "ratings": [
+        4.8,
+        4.9,
+        5,
+        4.7,
+        4.8
+    ],
+    "average_rating": 4.84,
+    "reviews": [
+        {
+            "reviewer_id": "user101",
+            "reviewer_name": "John D.",
+            "reviewer_email": "john@example.com",
+            "review_text": "Great audio interface for beginners! The sound quality is excellent, and it's very easy to set up."
+        }
+    ],
+    "totalRentalCount": 15
+}
+
+
+{
+    "name": "NewGadgetName",
+    "category": "Smartphones",
+    "brand": "NewGadgetBrand",
+    "model": "NewGadgetModel",
+    "description": "NewGadgetDescription",
+    "specifications": {
+        "spec_1": "NewGadgetSpecification1",
+        "spec_2": "NewGadgetSpecification2"
+    },
+    "included": [
+        "NewGadgetIncludedItems1",
+        "NewGadgetIncludedItems1"
+    ],
+    "images": [
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1745955228/fll7g4v7e0qb8zdkaemm.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1745955298/zbdijfvyqiklbttj0c0a.jpg",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1745955360/vb5lpqr0j1jwrpkjfew0.png",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1745955364/knigs195tpij95yjmhdp.png",
+        "https://res.cloudinary.com/zahids-cloudinary/image/upload/v1745955369/iysihidhkrgxazjv1ici.png"
+    ],
+    "pricing": {
+        "perDay": 99.99,
+        "deposit": 99.99,
+        "basicInsuranceFee": 99.99,
+        "premiumInsuranceFee": 99.99
+    },
+    "availability": {
+        "total_copy": 99,
+        "status": true,
+        "blockedDates": [
+            "2025-04-29",
+            "2025-04-29",
+            "2025-04-29",
+            "2025-04-29"
+        ]
+    },
+    "ratings": [],
+    "average_rating": 0,
+    "reviews": [],
+    "totalRentalCount": 0
 }

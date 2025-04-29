@@ -12,6 +12,7 @@ import userRentalOrdersReducer from "../Features/userRentalOrders/userRentalOrde
 
 import adminAllUsersReducer from "../Features/adminAllUsers/adminAllUsersSlice.js";
 import adminMessagesReducer from "../Features/adminMessages/adminMessagesSlice.js";
+import adminAllGadgetsReducer from "../Features/adminAllGadgets/adminAllGadgetsSlice.js";
 import adminAllRentalOrdersReducer from "../Features/adminAllRentalOrders/adminAllRentalOrdersSlice.js";
 
 
@@ -30,6 +31,7 @@ const reduxStore = configureStore({
 
         adminAllUsers: adminAllUsersReducer,
         adminMessages: adminMessagesReducer,
+        adminAllGadgets: adminAllGadgetsReducer,
         adminAllRentalOrders: adminAllRentalOrdersReducer,
     },
 });

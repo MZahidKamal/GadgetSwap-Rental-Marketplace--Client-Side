@@ -15,7 +15,7 @@ const AdminAllRentalsComponent = () => {
     const darkMode = useSelector((state) => state.darkMode.isDark)
     const { user: registeredUser } = useContext(AuthContext)
     const dispatch = useDispatch()
-    const { allRentalOrdersDellDetails } = useSelector((state) => state.adminAllRentalOrders)
+    const { allRentalOrdersFullDetails } = useSelector((state) => state.adminAllRentalOrders)
 
     const axiosSecure = useAxiosSecure()
     const [rentals, setRentals] = useState([])
@@ -40,10 +40,10 @@ const AdminAllRentalsComponent = () => {
     }, [axiosSecure, dispatch, registeredUser])
 
 
-    // Initialize rentals from allRentalOrdersDellDetails when it's available
+    // Initialize rentals from allRentalOrdersFullDetails when it's available
     useEffect(() => {
-        if (allRentalOrdersDellDetails?.length > 0) {
-            const formattedRentals = allRentalOrdersDellDetails.map((rental) => {
+        if (allRentalOrdersFullDetails?.length > 0) {
+            const formattedRentals = allRentalOrdersFullDetails.map((rental) => {
                 const rentalStreak = rental.rentalStreak[0] || {}
                 return {
                     gadget_id: rental.gadget_id,
@@ -77,7 +77,7 @@ const AdminAllRentalsComponent = () => {
             setRentals(formattedRentals)
             setFilteredRentals(formattedRentals)
         }
-    }, [allRentalOrdersDellDetails])
+    }, [allRentalOrdersFullDetails])
 
 
     // Status options for filtering and editing
@@ -259,9 +259,6 @@ const AdminAllRentalsComponent = () => {
             isReviewed: editedRental.isReviewed,
             rating: editedRental.rating,
         }
-
-        // Log the full order details object
-        console.log(updatedRentalOrderObj)
 
         // Send the updated order details to the backend
         await dispatch(

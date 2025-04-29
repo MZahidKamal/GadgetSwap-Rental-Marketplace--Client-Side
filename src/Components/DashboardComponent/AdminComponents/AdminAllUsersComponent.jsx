@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, {useState, useEffect, useContext, useRef} from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { FiSearch, FiEdit2, FiTrash2, FiUserCheck, FiChevronDown, FiChevronUp, FiMoreHorizontal, FiUser, FiUsers, FiUserPlus as FiNewUsers, FiClock, FiCalendar, FiMail, FiPhone, FiMapPin, FiShield, FiAward } from "react-icons/fi"
 import AuthContext from "../../../Providers/AuthContext.jsx"
@@ -18,7 +18,7 @@ const AdminAllUsersComponent = () => {
     const axiosSecure = useAxiosSecure()
     const [searchTerm, setSearchTerm] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
-    const [usersPerPage] = useState(7)
+    const [usersPerPage, setUsersPerPage] = useState(2)
     const [sortConfig, setSortConfig] = useState({ key: "displayName", direction: "ascending" })
     const [filterStatus, setFilterStatus] = useState("all")
     const [filterRole, setFilterRole] = useState("all")
@@ -181,6 +181,18 @@ const AdminAllUsersComponent = () => {
     })
 
 
+    // User rows per page, according to window size.
+    useEffect(() => {
+        let userTableHeight = document.getElementById("users_table")?.offsetHeight || 0;
+        let userRowHeight = document.getElementById("user_row")?.offsetHeight || 0;
+        if (userTableHeight && userRowHeight) {
+            const numberOfPossibleUserRows = Math.floor(userTableHeight / userRowHeight) - 1;
+            setUsersPerPage(numberOfPossibleUserRows);
+            // console.log(userTableHeight, userRowHeight, numberOfPossibleUserRows);
+        }
+    }, []);
+
+
     // Pagination
     const indexOfLastUser = currentPage * usersPerPage
     const indexOfFirstUser = indexOfLastUser - usersPerPage
@@ -310,7 +322,8 @@ const AdminAllUsersComponent = () => {
 
             {/* Users Table */}
             <div
-                className={`max-h-[calc(100vh-400px)] overflow-x-auto rounded-lg border ${darkMode ? "border-gray-700" : "border-gray-200"} shadow-sm mb-6`}
+                id="users_table"
+                className={`h-[calc(100vh-310px)] overflow-x-auto rounded-lg border ${darkMode ? "border-gray-700" : "border-gray-200"} shadow-sm mb-6`}
             >
                 <table className={`min-w-full divide-y ${darkMode ? "divide-gray-600" : "divide-gray-200"}`}>
                     <thead className={darkMode ? "bg-gray-700" : "bg-gray-50"}>
@@ -386,6 +399,7 @@ const AdminAllUsersComponent = () => {
                         currentUsers.map((user) => (
                             <React.Fragment key={user._id}>
                                 <tr
+                                    id="user_row"
                                     className={`${expandedUser === user._id ? (darkMode ? "bg-gray-800" : "bg-gray-50") : ""} hover:${darkMode ? "bg-gray-800" : "bg-gray-50"}`}
                                 >
                                     <td className="px-6 py-4 whitespace-nowrap">
