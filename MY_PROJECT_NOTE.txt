@@ -9,7 +9,7 @@ git push -u origin main
 // Commands to push code from now on.-----------------------------------------------------------------------------------
 
 git add .
-git commit -m "All features in the AdminAllGadgetsComponent have already been implemented successfully."
+git commit -m "Search suggestion feature in the Gadgets tab is implemented successfully."
 git push
 
 git add .
@@ -54,26 +54,6 @@ Now got to your forked repository,
 
 Categories: Smartphones, Laptops, Tablets, Smartwatches, Cameras, Gaming, Audio, Headphones, Speakers, Wearables, VR, Drones, Projectors
 
-
-
-// Limitations ---------------------------------------------------------------------------------------------------------
-
-This component will not receive any params.
-
-Use all your creativity to make it uniquely beautiful with clean minimalistic slik design. Don't install/import/use Shadcn, but make the design looks like shadcn.
-
-Make it container-sized maximum width. Do not use Next.js. Use only React and TailwindCSS. Don't use any raw CSS, inline CSS or style attribute. Give me the code in .jsx file.
-
-All necessary icons you can take from React-icons. You may use colours only on icons. Not svg icon. Also correct the image sizes using TailwindCSS not Query Parameters.
-
-Create a state called 'darkMode'. If can be true or false. While using colors, use both colors for dark and light mode.
-
-Make it fully responsive for all devices. Use breakpoints mentioned in TailwindCSS. Avoid writing unnecessary hooks. If the screen size comes below the breakpoing lg, show up the collapsed menu button.
-
-And avoid writing any function inside return. Better to write all functions above the return and use functions inside return.
-
-After writing the code, no need to write any explanation. Only code in component is alright.
-
 ------------------------------------------------------------------------------------------------------------------------
 
 Learning Redux ---
@@ -88,15 +68,6 @@ To learn more, visit the tutorial: [ https://www.youtube.com/watch?v=qhll3DXuLHI
 
 ------------------------------------------------------------------------------------------------------------------------
 
-User Dashboard
-- Profile
-- My Rentals
-- My Loyalty & Rewards
-- My Wishlist
-- Notifications
-Admin Dashboard
-
-------------------------------------------------------------------------------------------------------------------------
 GadgetSwapApplicationSystemDB
 gadgetsCollection
 userCollection
@@ -106,6 +77,7 @@ activityHistoriesCollection
 rentalOrdersCollection
 newsletterEmailCollection
 
+------------------------------------------------------------------------------------------------------------------------
 
 
 
